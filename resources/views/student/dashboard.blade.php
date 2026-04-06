@@ -1,165 +1,325 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Étudiant - Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .header {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .header h1 {
-            color: #333;
-        }
-        .logout-btn {
-            background-color: #dc3545;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .welcome-box {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #007bff;
-        }
-        .stat-label {
-            color: #666;
-            margin-top: 0.5rem;
-        }
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        .action-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            text-align: center;
-            text-decoration: none;
-            color: #333;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: all 0.3s;
-        }
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .action-card h3 {
-            color: #007bff;
-            margin-bottom: 1rem;
-        }
-        .action-card.highlight {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .action-card.highlight h3 {
-            color: white;
-        }
-        .action-card.highlight p {
-            color: rgba(255,255,255,0.9);
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Espace Étudiant</h1>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="logout-btn">Déconnexion</button>
-            </form>
+```blade
+@extends('layouts.student')
+
+@section('title', 'Accueil')
+@section('page-title', 'Accueil')
+
+@section('extra-styles')
+<style>
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+        transition: transform 0.2s;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 0.5rem;
+    }
+    .stat-label {
+        color: #666;
+        font-size: 1rem;
+    }
+    .quick-actions {
+        background: white;
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 2rem;
+    }
+    .quick-actions h2 {
+        margin-top: 0;
+        color: #333;
+        margin-bottom: 1.5rem;
+    }
+    .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+    .action-btn {
+        padding: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        text-align: center;
+        transition: all 0.3s;
+        font-weight: bold;
+    }
+    .action-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .action-btn-alt {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    /* Feed Styles */
+    .feed-section {
+        margin-top: 2rem;
+    }
+    .feed-header {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 8px 8px 0 0;
+        border-bottom: 2px solid #f0f0f0;
+    }
+    .feed-header h2 {
+        margin: 0;
+        color: #333;
+    }
+    .post-card {
+        background: white;
+        padding: 2rem;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s;
+    }
+    .post-card:hover {
+        background: #f8f9fa;
+    }
+    .post-card:last-child {
+        border-bottom: none;
+        border-radius: 0 0 8px 8px;
+    }
+    .post-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+    }
+    .post-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .author-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    .author-info {
+        flex: 1;
+    }
+    .author-name {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.25rem;
+    }
+    .post-meta {
+        font-size: 0.85rem;
+        color: #666;
+    }
+    .post-type-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    .type-announcement {
+        background: #fff3cd;
+        color: #856404;
+    }
+    .type-tp_posted {
+        background: #d4edda;
+        color: #155724;
+    }
+    .type-reminder {
+        background: #f8d7da;
+        color: #721c24;
+    }
+    .type-general {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+    .post-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    .post-content {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+    .post-course {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #e7f3ff;
+        border-left: 4px solid #007bff;
+        border-radius: 4px;
+        margin-top: 1rem;
+        font-size: 0.9rem;
+    }
+    .post-attachment {
+        margin-top: 1rem;
+    }
+    .attachment-btn {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+    .attachment-btn:hover {
+        background: #0056b3;
+    }
+    .no-posts {
+        background: white;
+        padding: 3rem;
+        text-align: center;
+        color: #999;
+        border-radius: 0 0 8px 8px;
+    }
+</style>
+@endsection
+
+@section('content')
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number">{{ $enrolledCoursesCount }}</div>
+            <div class="stat-label">Cours suivis</div>
         </div>
-
-        <div class="welcome-box">
-            <h2>Bienvenue, {{ Auth::user()->name }}</h2>
-            <p>Tableau de bord étudiant</p>
+        
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-number">{{ $availableTPs }}</div>
+            <div class="stat-label">TP disponibles</div>
         </div>
-
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number">{{ $availableTPs }}</div>
-                <div class="stat-label">TP disponibles</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ $submittedCount }}</div>
-                <div class="stat-label">TP soumis</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">{{ $gradedCount }}</div>
-                <div class="stat-label">TP notés</div>
-            </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-number">{{ $submittedCount }}</div>
+            <div class="stat-label">TP soumis</div>
         </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-number">{{ $gradedCount }}</div>
+            <div class="stat-label">TP notés</div>
+        </div>
+    </div>
 
-        <div class="actions-grid">
-            <a href="{{ route('student.join-course.form') }}" class="action-card highlight">
-                <h3>➕ Rejoindre un Cours</h3>
-                <p>Utilisez un code pour rejoindre un nouveau cours</p>
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+        <h2>🚀 Actions rapides</h2>
+        <div class="action-buttons">
+            <a href="{{ route('student.join-course.form') }}" class="action-btn">
+                ➕ Rejoindre un cours
             </a>
-
-            <a href="{{ route('student.my-courses') }}" class="action-card">
-                <h3>📚 Mes Cours</h3>
-                <p>Voir tous les cours auxquels je suis inscrit</p>
+            <a href="{{ route('student.my-courses') }}" class="action-btn action-btn-alt">
+                📚 Voir mes cours
             </a>
-            
-            <a href="{{ route('student.tps.index') }}" class="action-card">
-                <h3>📝 Voir les TP</h3>
-                <p>Consulter les travaux pratiques disponibles</p>
+            <a href="{{ route('student.submissions.index') }}" class="action-btn">
+                📄 Mes soumissions
             </a>
-            
-            <a href="{{ route('student.submissions.index') }}" class="action-card">
-                <h3>📄 Mes soumissions</h3>
-                <p>Voir mes travaux soumis et mes notes</p>
-            </a>
-            
-            <a href="{{ route('student.progress') }}" class="action-card">
-                <h3>📊 Ma progression</h3>
-                <p>Visualiser mes résultats et statistiques</p>
+            <a href="{{ route('student.progress') }}" class="action-btn action-btn-alt">
+                📊 Ma progression
             </a>
         </div>
     </div>
-</body>
-</html>
+
+    <!-- Feed Section -->
+    <div class="feed-section">
+        <div class="feed-header">
+            <h2>📰 Fil d'actualité</h2>
+        </div>
+
+        @forelse($posts as $post)
+            <div class="post-card">
+                <div class="post-header">
+                    <div class="post-author">
+                        <div class="author-avatar">
+                            {{ strtoupper(substr($post->user->name, 0, 1)) }}
+                        </div>
+                        <div class="author-info">
+                            <div class="author-name">{{ $post->user->name }}</div>
+                            <div class="post-meta">
+                                {{ $post->created_at->diffForHumans() }}
+                            </div>
+                        </div>
+                    </div>
+                    <span class="post-type-badge type-{{ $post->type }}">
+                        @if($post->type === 'announcement') 📢 Annonce
+                        @elseif($post->type === 'tp_posted') 📝 Nouveau TP
+                        @elseif($post->type === 'reminder') ⏰ Rappel
+                        @else 📌 Général
+                        @endif
+                    </span>
+                </div>
+
+                <a href="{{ route('posts.show', $post->id) }}" style="text-decoration: none; color: inherit;">
+                    <div class="post-title">{{ $post->title }}</div>
+                </a>
+                <div class="post-content">{{ $post->content }}</div>
+
+                @if($post->class)
+                    <div class="post-course">
+                        📚 {{ $post->class->name }}
+                    </div>
+                @endif
+
+                @if($post->tp)
+                    <div style="margin-top: 1rem;">
+                        <a href="{{ route('student.tps.show', $post->tp->id) }}" class="attachment-btn">
+                            👁️ Voir le TP
+                        </a>
+                    </div>
+                @endif
+
+                @if($post->attachment)
+                    <div class="post-attachment">
+                        <a href="{{ asset('storage/' . $post->attachment) }}" 
+                           target="_blank" 
+                           class="attachment-btn">
+                            📎 Télécharger la pièce jointe
+                        </a>
+                    </div>
+                @endif
+            </div>
+        @empty
+            <div class="no-posts">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
+                <h3>Aucune publication</h3>
+                <p>Les annonces de vos enseignants apparaîtront ici</p>
+            </div>
+        @endforelse
+
+        @if($posts->hasPages())
+            <div style="background: white; padding: 1.5rem; border-radius: 0 0 8px 8px;">
+                {{ $posts->links() }}
+            </div>
+        @endif
+    </div>
+@endsection
+```

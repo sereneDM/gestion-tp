@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',  // ADD THIS LINE
+        'must_reset_password', 
+        'profile_picture', // NEW
     ];
 
     /**
@@ -44,6 +46,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'must_reset_password' => 'boolean',
         ];
     }
 
@@ -73,4 +76,16 @@ public function classes()
     return $this->belongsToMany(ClassModel::class, 'class_student', 'student_id', 'class_id')
                 ->withTimestamps();
 }
-} 
+public function getProfilePictureUrlAttribute()
+{
+    return $this->profile_picture
+        ? asset('storage/' . $this->profile_picture)
+        : asset('images/default-avatar.jpg'); // fallback image
+}
+
+public function enrolledClasses()
+{
+    return $this->belongsToMany(ClassModel::class, 'class_student', 'student_id', 'class_id')
+                ->withTimestamps();
+}
+}

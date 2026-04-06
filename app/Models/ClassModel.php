@@ -72,4 +72,8 @@ class ClassModel extends Model
     {
         return $query->where('teacher_id', $teacherId);
     }
+    public function tps()
+{
+    return $this->hasMany(TP::class, 'class_id');
+}
 }

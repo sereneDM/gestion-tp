@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AccountCreated;
 
 use App\Models\User;
 use App\Models\ClassModel;
@@ -10,6 +12,8 @@ use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
@@ -36,28 +40,62 @@ class AdminController extends Controller
         return view('admin.users.create');
     }
 
-    // Store a new user in database
-    public function store(Request $request)
-    {
-        // Validate the input
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:6',
-            'role' => 'required|in:student,teacher',
-        ]);
+  
 
-        // Create the user
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
+// Update the store method
+
+public function store(Request $request)
+{
+    // Validate the input (no password needed)
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'role' => 'required|in:student,teacher',
+    ]);
+
+    // Generate random temporary password (8 characters)
+    $temporaryPassword = Str::random(12);
+    
+    // Generate password reset token
+    $token = Str::random(60);
+
+    // Create the user with temporary password
+    $user = User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($temporaryPassword),
+        'role' => $request->role,
+        'must_reset_password' => true, // Force password reset
+    ]);
+
+    // Store password reset token
+    DB::table('password_reset_tokens')->updateOrInsert(
+        ['email' => $user->email],
+        [
+            'token' => Hash::make($token),
+            'created_at' => now(),
+        ]
+    );
+
+    // Send welcome email with setup link
+    try {
+        Mail::to($user->email)->send(
+            new AccountCreated(
+                $user->name,
+                $user->email,
+                $temporaryPassword,
+                $user->role,
+                $token
+            )
+        );
 
         return redirect()->route('admin.users.index')
-                         ->with('success', 'Utilisateur créé avec succès!');
+                         ->with('success', 'Utilisateur créé avec succès! Un email avec les instructions a été envoyé à ' . $user->email);
+    } catch (\Exception $e) {
+        return redirect()->route('admin.users.index')
+                         ->with('success', 'Utilisateur créé avec succès! Cependant, l\'email n\'a pas pu être envoyé: ' . $e->getMessage());
     }
+}
 
     // Show form to edit an existing user
     public function edit($id)
