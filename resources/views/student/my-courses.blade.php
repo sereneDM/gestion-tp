@@ -101,12 +101,11 @@
 @endsection
 
 @section('content')
+
+
     <div class="header-actions">
         <a href="{{ route('student.join-course.form') }}" class="btn btn-primary">
             ➕ Rejoindre un cours
-        </a>
-        <a href="{{ route('student.dashboard') }}" class="btn btn-secondary">
-            ← Retour
         </a>
     </div>
 

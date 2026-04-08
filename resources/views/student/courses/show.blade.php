@@ -158,11 +158,7 @@
 @endsection
 
 @section('content')
-    <div class="back-button">
-        <a href="{{ route('student.my-courses') }}" class="btn btn-secondary">
-            ← Retour à mes cours
-        </a>
-    </div>
+    
 
     <div class="course-header">
         <h2>{{ $course->name }}</h2>

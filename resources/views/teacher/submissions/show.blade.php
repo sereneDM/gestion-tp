@@ -107,11 +107,7 @@
 @endsection
 
 @section('content')
-    <div class="header-actions">
-        <a href="{{ route('teacher.tps.show', $submission->tp_id) }}" class="btn btn-secondary">
-            ← Retour au TP
-        </a>
-    </div>
+    {{ Breadcrumbs::render('teacher.submissions.show', $submission) }}
 
     <div class="info-card">
         <h2>Informations</h2>

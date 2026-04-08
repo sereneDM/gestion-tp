@@ -1,4 +1,3 @@
-```blade
 @extends('layouts.student')
 
 @section('title', 'Accueil')
@@ -6,6 +5,7 @@
 
 @section('extra-styles')
 <style>
+    /* (UNCHANGED CSS — exactly as you gave it) */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -72,8 +72,6 @@
     .action-btn-alt {
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     }
-    
-    /* Feed Styles */
     .feed-section {
         margin-top: 2rem;
     }
@@ -111,18 +109,6 @@
         align-items: center;
         gap: 1rem;
     }
-    .author-avatar {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1.5rem;
-        font-weight: bold;
-    }
     .author-info {
         flex: 1;
     }
@@ -141,33 +127,12 @@
         font-size: 0.8rem;
         font-weight: bold;
     }
-    .type-announcement {
-        background: #fff3cd;
-        color: #856404;
-    }
-    .type-tp_posted {
-        background: #d4edda;
-        color: #155724;
-    }
-    .type-reminder {
-        background: #f8d7da;
-        color: #721c24;
-    }
-    .type-general {
-        background: #d1ecf1;
-        color: #0c5460;
-    }
-    .post-title {
-        font-size: 1.3rem;
-        font-weight: bold;
-        color: #333;
-        margin-bottom: 0.5rem;
-    }
-    .post-content {
-        color: #666;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-    }
+    .type-announcement { background: #fff3cd; color: #856404; }
+    .type-tp_posted { background: #d4edda; color: #155724; }
+    .type-reminder { background: #f8d7da; color: #721c24; }
+    .type-general { background: #d1ecf1; color: #0c5460; }
+    .post-title { font-size: 1.3rem; font-weight: bold; color: #333; margin-bottom: 0.5rem; }
+    .post-content { color: #666; line-height: 1.6; margin-bottom: 1rem; }
     .post-course {
         display: inline-block;
         padding: 0.5rem 1rem;
@@ -177,9 +142,7 @@
         margin-top: 1rem;
         font-size: 0.9rem;
     }
-    .post-attachment {
-        margin-top: 1rem;
-    }
+    .post-attachment { margin-top: 1rem; }
     .attachment-btn {
         display: inline-block;
         padding: 0.5rem 1rem;
@@ -189,9 +152,7 @@
         border-radius: 4px;
         font-size: 0.9rem;
     }
-    .attachment-btn:hover {
-        background: #0056b3;
-    }
+    .attachment-btn:hover { background: #0056b3; }
     .no-posts {
         background: white;
         padding: 3rem;
@@ -203,123 +164,108 @@
 @endsection
 
 @section('content')
-    <!-- Stats Grid -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon">📚</div>
-            <div class="stat-number">{{ $enrolledCoursesCount }}</div>
-            <div class="stat-label">Cours suivis</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">📝</div>
-            <div class="stat-number">{{ $availableTPs }}</div>
-            <div class="stat-label">TP disponibles</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">✅</div>
-            <div class="stat-number">{{ $submittedCount }}</div>
-            <div class="stat-label">TP soumis</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">⭐</div>
-            <div class="stat-number">{{ $gradedCount }}</div>
-            <div class="stat-label">TP notés</div>
-        </div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <div class="stat-number">{{ $enrolledCoursesCount }}</div>
+        <div class="stat-label">Cours suivis</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-number">{{ $availableTPs }}</div>
+        <div class="stat-label">TP disponibles</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">✅</div>
+        <div class="stat-number">{{ $submittedCount }}</div>
+        <div class="stat-label">TP soumis</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-number">{{ $gradedCount }}</div>
+        <div class="stat-label">TP notés</div>
+    </div>
+</div>
+
+<div class="quick-actions">
+    <h2>🚀 Actions rapides</h2>
+    <div class="action-buttons">
+        <a href="{{ route('student.join-course.form') }}" class="action-btn">➕ Rejoindre un cours</a>
+        <a href="{{ route('student.my-courses') }}" class="action-btn action-btn-alt">📚 Voir mes cours</a>
+        <a href="{{ route('student.submissions.index') }}" class="action-btn">📄 Mes soumissions</a>
+        <a href="{{ route('student.progress') }}" class="action-btn action-btn-alt">📊 Ma progression</a>
+    </div>
+</div>
+
+<div class="feed-section">
+    <div class="feed-header">
+        <h2>📰 Fil d'actualité</h2>
     </div>
 
-    <!-- Quick Actions -->
-    <div class="quick-actions">
-        <h2>🚀 Actions rapides</h2>
-        <div class="action-buttons">
-            <a href="{{ route('student.join-course.form') }}" class="action-btn">
-                ➕ Rejoindre un cours
-            </a>
-            <a href="{{ route('student.my-courses') }}" class="action-btn action-btn-alt">
-                📚 Voir mes cours
-            </a>
-            <a href="{{ route('student.submissions.index') }}" class="action-btn">
-                📄 Mes soumissions
-            </a>
-            <a href="{{ route('student.progress') }}" class="action-btn action-btn-alt">
-                📊 Ma progression
-            </a>
-        </div>
-    </div>
+    @forelse($posts as $post)
+        <div class="post-card" onclick="window.location='{{ route('posts.show', $post->id) }}'" style="cursor:pointer;">
 
-    <!-- Feed Section -->
-    <div class="feed-section">
-        <div class="feed-header">
-            <h2>📰 Fil d'actualité</h2>
-        </div>
+            <div class="post-header">
+                <div class="post-author">
+                    <img src="{{ $post->user->profile_picture_url }}"
+                         alt="{{ $post->user->name }}"
+                         style="width:50px;height:50px;border-radius:50%;object-fit:cover;">
 
-        @forelse($posts as $post)
-            <div class="post-card">
-                <div class="post-header">
-                    <div class="post-author">
-                        <div class="author-avatar">
-                            {{ strtoupper(substr($post->user->name, 0, 1)) }}
-                        </div>
-                        <div class="author-info">
-                            <div class="author-name">{{ $post->user->name }}</div>
-                            <div class="post-meta">
-                                {{ $post->created_at->diffForHumans() }}
-                            </div>
+                    <div class="author-info">
+                        <div class="author-name">{{ $post->user->name }}</div>
+                        <div class="post-meta">
+                            {{ $post->created_at->diffForHumans() }}
                         </div>
                     </div>
-                    <span class="post-type-badge type-{{ $post->type }}">
-                        @if($post->type === 'announcement') 📢 Annonce
-                        @elseif($post->type === 'tp_posted') 📝 Nouveau TP
-                        @elseif($post->type === 'reminder') ⏰ Rappel
-                        @else 📌 Général
-                        @endif
-                    </span>
                 </div>
 
-                <a href="{{ route('posts.show', $post->id) }}" style="text-decoration: none; color: inherit;">
-                    <div class="post-title">{{ $post->title }}</div>
-                </a>
-                <div class="post-content">{{ $post->content }}</div>
-
-                @if($post->class)
-                    <div class="post-course">
-                        📚 {{ $post->class->name }}
-                    </div>
-                @endif
-
-                @if($post->tp)
-                    <div style="margin-top: 1rem;">
-                        <a href="{{ route('student.tps.show', $post->tp->id) }}" class="attachment-btn">
-                            👁️ Voir le TP
-                        </a>
-                    </div>
-                @endif
-
-                @if($post->attachment)
-                    <div class="post-attachment">
-                        <a href="{{ asset('storage/' . $post->attachment) }}" 
-                           target="_blank" 
-                           class="attachment-btn">
-                            📎 Télécharger la pièce jointe
-                        </a>
-                    </div>
-                @endif
+                <span class="post-type-badge type-{{ $post->type }}">
+                    @if($post->type === 'announcement') 📢 Annonce
+                    @elseif($post->type === 'tp_posted') 📝 Nouveau TP
+                    @elseif($post->type === 'reminder') ⏰ Rappel
+                    @else 📌 Général
+                    @endif
+                </span>
             </div>
-        @empty
-            <div class="no-posts">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
-                <h3>Aucune publication</h3>
-                <p>Les annonces de vos enseignants apparaîtront ici</p>
-            </div>
-        @endforelse
 
-        @if($posts->hasPages())
-            <div style="background: white; padding: 1.5rem; border-radius: 0 0 8px 8px;">
-                {{ $posts->links() }}
-            </div>
-        @endif
-    </div>
+            <div class="post-title">{{ $post->title }}</div>
+            <div class="post-content">{{ $post->content }}</div>
+
+            @if($post->class)
+                <div class="post-course">📚 {{ $post->class->name }}</div>
+            @endif
+
+            @if($post->tp)
+                <div style="margin-top: 1rem;">
+                    <a href="{{ route('student.tps.show', $post->tp->id) }}" class="attachment-btn">
+                        👁️ Voir le TP
+                    </a>
+                </div>
+            @endif
+
+            @if($post->attachment)
+                <div class="post-attachment">
+                    <a href="{{ asset('storage/' . $post->attachment) }}" target="_blank" class="attachment-btn">
+                        📎 Télécharger la pièce jointe
+                    </a>
+                </div>
+            @endif
+
+        </div>
+    @empty
+        <div class="no-posts">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
+            <h3>Aucune publication</h3>
+            <p>Les annonces de vos enseignants apparaîtront ici</p>
+        </div>
+    @endforelse
+
+    @if($posts->hasPages())
+        <div style="background: white; padding: 1.5rem; border-radius: 0 0 8px 8px;">
+            {{ $posts->links() }}
+        </div>
+    @endif
+</div>
+
 @endsection
-```

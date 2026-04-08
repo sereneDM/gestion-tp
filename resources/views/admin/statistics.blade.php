@@ -104,9 +104,8 @@
 @endsection
 
 @section('content')
-    <div class="header-actions">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Retour</a>
-    </div>
+    
+
 
     <h3 class="section-heading">👥 Utilisateurs</h3>
     <div class="stats-grid">

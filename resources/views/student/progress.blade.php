@@ -122,9 +122,8 @@
 @endsection
 
 @section('content')
-    <div class="header-actions">
-        <a href="{{ route('student.dashboard') }}" class="btn btn-secondary">← Retour</a>
-    </div>
+    {{ Breadcrumbs::render('student.progress') }}
+
 
     <div class="stats-grid">
         <div class="stat-card">

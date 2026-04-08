@@ -65,9 +65,8 @@
 @endsection
 
 @section('content')
-    <div class="header-actions">
-        <a href="{{ route('teacher.dashboard') }}" class="btn btn-secondary">← Retour</a>
-    </div>
+  
+
 
     @forelse($classes as $class)
         <div class="class-section">

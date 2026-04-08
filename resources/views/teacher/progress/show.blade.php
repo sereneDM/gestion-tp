@@ -105,10 +105,10 @@
 </style>
 @endsection
 
+
 @section('content')
-    <div class="header-actions">
-        <a href="{{ route('teacher.progress.index') }}" class="btn btn-secondary">← Retour</a>
-    </div>
+    
+
 
     <div class="stats-grid">
         <div class="stat-card">

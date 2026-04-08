@@ -59,9 +59,7 @@
 @endsection
 
 @section('content')
-    <div class="header-actions">
-        <a href="{{ route('teacher.dashboard') }}" class="btn btn-secondary">← Retour</a>
-    </div>
+ 
 
     <div class="form-container">
         <h2 style="margin-bottom: 1.5rem;">Prendre les présences</h2>

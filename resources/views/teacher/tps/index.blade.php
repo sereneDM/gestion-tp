@@ -90,12 +90,10 @@
 @endsection
 
 @section('content')
+    {{ Breadcrumbs::render('teacher.courses.index') }}
     <div class="header-actions">
         <a href="{{ route('teacher.tps.create') }}" class="btn btn-primary">
             ➕ Créer un TP
-        </a>
-        <a href="{{ route('teacher.dashboard') }}" class="btn btn-secondary">
-            ← Retour
         </a>
     </div>
 

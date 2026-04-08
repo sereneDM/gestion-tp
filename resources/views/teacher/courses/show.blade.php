@@ -209,12 +209,7 @@
 
 @section('content')
 
-    {{-- Flash messages --}}
-    @if(session('success'))
-        <div style="background: #d4edda; color: #155724; padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">
-            ✅ {{ session('success') }}
-        </div>
-    @endif
+    
 
     <!-- Course Actions -->
     <div class="course-actions">

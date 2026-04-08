@@ -80,7 +80,7 @@
         <h2 style="text-align: center; margin-bottom: 1rem;">Rejoindre un Cours</h2>
         
         <div class="info-box">
-            ℹ️ Entrez le code d'accès fourni par votre enseignant (8 caractères)
+           ℹ️ Entrez le code d'accès fourni par votre enseignant (format: XXX-XXX-123)
         </div>
 
         <form method="POST" action="{{ route('student.join-course') }}">
@@ -92,8 +92,8 @@
                        id="join_code" 
                        name="join_code" 
                        value="{{ old('join_code') }}"
-                       placeholder="ABC12345"
-                       maxlength="8"
+                       placeholder="EQY-ZIH-439"
+maxlength="11"
                        required
                        autofocus>
                 @error('join_code')

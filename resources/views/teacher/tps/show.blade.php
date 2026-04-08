@@ -131,10 +131,8 @@
 @endsection
 
 @section('content')
+  
     <div class="header-actions">
-        <a href="{{ route('teacher.courses.show', $tp->class_id) }}" class="btn btn-secondary">
-            ← Retour au cours
-        </a>
         <a href="{{ route('teacher.tps.edit', $tp->id) }}" class="btn btn-warning" style="margin-left: 0.5rem;">
             ✏️ Modifier
         </a>

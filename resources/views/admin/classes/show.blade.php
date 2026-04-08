@@ -75,11 +75,8 @@
 @endsection
 
 @section('content')
-    <div style="margin-bottom: 1.5rem; text-align: right;">
-        <a href="{{ route('admin.classes.index') }}" class="btn btn-secondary">
-            ← Retour
-        </a>
-    </div>
+    
+
 
     <div class="section">
         <h2>Informations de la Classe</h2>

@@ -237,13 +237,16 @@ body{font-family:Arial,sans-serif;background:#f4f4f4;overflow-x:hidden}
         <div class="alert alert-error">✗ {{ session('error') }}</div>
     @endif
 
-    <div class="content-wrapper">
-        <div class="page-header">
+   <div class="content-wrapper">
+    <div class="page-header">
+        @if(Breadcrumbs::exists())
+            {{ Breadcrumbs::render() }}
+        @else
             <h1>@yield('page-title')</h1>
-        </div>
-
-        @yield('content')
+        @endif
     </div>
+    @yield('content')
+</div>
 
 </main>
 

@@ -86,9 +86,7 @@
 @endsection
 
 @section('content')
-    <div class="header-actions">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">← Retour</a>
-    </div>
+  
 
     <div class="section">
         <h2>ℹ️ Informations Système</h2>

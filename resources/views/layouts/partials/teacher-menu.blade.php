@@ -1,10 +1,7 @@
-<a href="{{ route('teacher.dashboard') }}" class="menu-item {{ request()->routeIs('teacher.dashboard') ? 'active' : '' }}">
-    <span class="menu-item-icon">🏠</span>
-    <span class="menu-item-text">Accueil</span>
-</a>
+
 <a href="{{ route('feed.index') }}" class="menu-item {{ request()->routeIs('feed.*') || request()->routeIs('posts.*') ? 'active' : '' }}">
     <span class="menu-item-icon">📰</span>
-    <span class="menu-item-text">Publications</span>
+    <span class="menu-item-text">Accueil</span>
 </a>
 <a href="{{ route('notifications.index') }}" class="menu-item {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
     <span class="menu-item-icon">🔔</span>

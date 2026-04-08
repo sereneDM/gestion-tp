@@ -122,10 +122,9 @@
 @endsection
 
 @section('content')
+    
+
     <div class="header-buttons">
-        <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
-            ← Retour au tableau de bord
-        </a>
         <form method="POST"
               action="{{ route('admin.settings.reset') }}"
               onsubmit="return confirm('Êtes-vous sûr de vouloir réinitialiser tous les paramètres?')">

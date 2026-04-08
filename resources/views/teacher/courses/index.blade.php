@@ -117,13 +117,12 @@
 </style>
 @endsection
 
+
 @section('content')
+
     <div class="header-actions">
         <a href="{{ route('teacher.courses.create') }}" class="btn btn-primary">
             ➕ Créer un cours
-        </a>
-        <a href="{{ route('teacher.dashboard') }}" class="btn btn-secondary">
-            ← Retour
         </a>
     </div>
 

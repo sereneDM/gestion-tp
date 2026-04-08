@@ -103,6 +103,7 @@
 @endsection
 
 @section('content')
+
     <form method="POST" action="{{ route('notification-settings.update') }}">
         @csrf
 
@@ -228,10 +229,6 @@
             <button type="submit" class="btn btn-primary">
                 ✓ Enregistrer les paramètres
             </button>
-            <a href="{{ Auth::user()->isStudent() ? route('student.dashboard') : route('teacher.dashboard') }}" 
-               class="btn btn-secondary">
-                ← Retour
-            </a>
         </div>
     </form>
 @endsection

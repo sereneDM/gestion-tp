@@ -164,11 +164,8 @@
 @endsection
 
 @section('content')
-    <div class="back-button">
-        <a href="{{ route('student.courses.show', $tp->class_id) }}" class="btn btn-secondary">
-            ← Retour au cours
-        </a>
-    </div>
+    
+
 
     <!-- TP Information -->
     <div class="tp-info-card">
