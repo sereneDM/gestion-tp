@@ -142,7 +142,7 @@
                               style="display: inline;">
                             @csrf
                             @method('PUT')
-                            <select name="role" onchange="if(confirm('Changer le rôle de cet utilisateur?')) this.form.submit();">
+                            <select name="role" onchange="handleRoleChange(this)">
                                 <option value="student" {{ $user->role === 'student' ? 'selected' : '' }}>
                                     Étudiant
                                 </option>

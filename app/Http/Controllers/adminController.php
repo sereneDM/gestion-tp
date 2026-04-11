@@ -12,7 +12,7 @@ use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class AdminController extends Controller
@@ -49,8 +49,8 @@ public function store(Request $request)
     // Validate the input (no password needed)
     $request->validate([
         'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users,email',
-        'role' => 'required|in:student,teacher',
+        'email' => 'required|email:rfc|unique:users,email',
+        'role' => 'required|in:student,teacher,admin',
     ]);
 
     // Generate random temporary password (8 characters)
@@ -67,6 +67,10 @@ public function store(Request $request)
         'role' => $request->role,
         'must_reset_password' => true, // Force password reset
     ]);
+    activity()
+    ->causedBy(Auth::user())
+    ->performedOn($user)
+    ->log("Utilisateur créé: {$user->email} ({$user->role})");
 
     // Store password reset token
     DB::table('password_reset_tokens')->updateOrInsert(
@@ -119,8 +123,8 @@ public function store(Request $request)
         // Validate the input
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required|in:student,teacher',
+            'email' => 'required|email:rfc|unique:users,email,' . $id,
+            'role' => 'required|in:student,teacher,admin',
         ]);
 
         // Update user data
@@ -152,6 +156,9 @@ public function store(Request $request)
         }
         
         $user->delete();
+        activity()
+    ->causedBy(Auth::user())
+    ->log("Utilisateur supprimé: {$user->email}");
 
         return redirect()->route('admin.users.index')
                          ->with('success', 'Utilisateur supprimé avec succès!');
@@ -253,39 +260,22 @@ public function store(Request $request)
     }
 
     // System logs and monitoring
-    public function systemLogs()
-    {
-        // Get recent activities (you can expand this with a proper activity log table)
-        $activities = [
-            [
-                'action' => 'Connexion',
-                'user' => 'admin@example.com',
-                'timestamp' => now()->subMinutes(5),
-                'details' => 'Connexion réussie',
-            ],
-            [
-                'action' => 'Création TP',
-                'user' => 'teacher@example.com',
-                'timestamp' => now()->subHour(),
-                'details' => 'TP "Introduction à Laravel" créé',
-            ],
-            [
-                'action' => 'Soumission',
-                'user' => 'student@example.com',
-                'timestamp' => now()->subHours(2),
-                'details' => 'TP soumis pour correction',
-            ],
-        ];
-        
-        $systemInfo = [
-            'php_version' => PHP_VERSION,
-            'laravel_version' => app()->version(),
-            'database' => config('database.default'),
-            'environment' => config('app.env'),
-            'debug_mode' => config('app.debug') ? 'Activé' : 'Désactivé',
-            'timezone' => config('app.timezone'),
-        ];
-        
-        return view('admin.system-logs', compact('activities', 'systemInfo'));
-    }
+   public function systemLogs()
+{
+    $activities = \Spatie\Activitylog\Models\Activity::with('causer')
+        ->latest()
+        ->limit(50)
+        ->get();
+
+    $systemInfo = [
+        'php_version'     => PHP_VERSION,
+        'laravel_version' => app()->version(),
+        'database'        => config('database.default'),
+        'environment'     => config('app.env'),
+        'debug_mode'      => config('app.debug') ? 'Activé' : 'Désactivé',
+        'timezone'        => config('app.timezone'),
+    ];
+
+    return view('admin.system-logs', compact('activities', 'systemInfo'));
+}
 }

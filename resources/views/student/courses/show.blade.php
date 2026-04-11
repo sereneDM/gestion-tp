@@ -179,7 +179,9 @@
                     $isGraded = $hasSubmitted && $submission->grade !== null;
                 @endphp
 
-                <div class="tp-card {{ $isGraded ? 'graded' : ($hasSubmitted ? 'submitted' : '') }}">
+                <div class="tp-card {{ $isGraded ? 'graded' : ($hasSubmitted ? 'submitted' : '') }}"
+                     onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'"
+                     style="cursor: pointer;">
                     <div class="tp-title">{{ $tp->title }}</div>
                     
                     @if($isGraded)
@@ -208,15 +210,15 @@
                     </div>
 
                     @if($isGraded)
-                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-success">
+                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-success" onclick="event.stopPropagation();">
                             👁️ Voir ma note & commentaires
                         </a>
                     @elseif($hasSubmitted)
-                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-success">
+                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-success" onclick="event.stopPropagation();">
                             👁️ Voir ma soumission
                         </a>
                     @else
-                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-primary">
+                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-primary" onclick="event.stopPropagation();">
                             📝 Voir et soumettre
                         </a>
                     @endif

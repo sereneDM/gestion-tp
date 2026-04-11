@@ -115,7 +115,8 @@
                 </div>
                 <input type="password"
                        id="password"
-                       name="password">
+                       name="password"
+                       >
                 @error('password')
                     <div class="error">{{ $message }}</div>
                 @enderror
@@ -129,6 +130,9 @@
                     </option>
                     <option value="teacher" {{ $user->role === 'teacher' ? 'selected' : '' }}>
                         Enseignant
+                    </option>
+                    <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>
+                        Administrateur
                     </option>
                 </select>
                 @error('role')

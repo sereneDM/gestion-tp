@@ -28,18 +28,20 @@ class NotificationController extends Controller
 
     // Mark single notification as read
     public function markAsRead($id)
-    {
-        $notification = Notification::where('user_id', Auth::id())
-                                   ->findOrFail($id);
-        
-        $notification->markAsRead();
+{
+    $notification = Notification::where('user_id', Auth::id())
+                               ->findOrFail($id);
 
-        if ($notification->link) {
-            return redirect($notification->link);
-        }
+    $notification->markAsRead();
 
-        return back();
+    if ($notification->link && $notification->link !== url('/')) {
+        return redirect($notification->link);
     }
+
+    return redirect()->route(
+        Auth::user()->isTeacher() ? 'feed.index' : 'student.dashboard'
+    );
+}
 
     // Mark all notifications as read
     public function markAllAsRead()

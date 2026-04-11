@@ -164,10 +164,6 @@ input:focus { outline: none; border-color: #007bff; }
     <div class="profile-card">
         <h2>📧 Informations Personnelles</h2>
 
-        <div class="info-box">
-            ℹ️ Modifier votre nom et photo. Pour changer votre email, utilisez la section dédiée ci-dessous.
-        </div>
-
         @if($user->profile_picture)
             <div class="current-photo-row">
                 <img src="{{ $user->profile_picture_url }}" alt="Photo de profil">
@@ -185,8 +181,15 @@ input:focus { outline: none; border-color: #007bff; }
 
             <div class="form-group">
                 <label>Photo de profil</label>
-                <input type="file" name="profile_picture" accept="image/*" onchange="previewImage(event)">
-                <img id="cropper-preview" style="max-width:100%;display:none;margin-top:1rem;">
+                <input type="file" name="profile_picture" id="profile_picture" accept="image/*" onchange="previewImage(event)">
+                <div id="cropper-container" style="display:none; margin-top:1rem;">
+                    <div style="display:flex; justify-content:flex-end; margin-bottom:0.5rem;">
+                        <button type="button" onclick="cancelImage()" style="background:#dc3545;color:white;border:none;border-radius:4px;padding:0.4rem 0.8rem;cursor:pointer;font-size:0.85rem;">
+                            ✕ Annuler la photo
+                        </button>
+                    </div>
+                    <img id="cropper-preview" style="max-width:100%;">
+                </div>
                 <input type="hidden" id="crop_x" name="crop_x">
                 <input type="hidden" id="crop_y" name="crop_y">
                 <input type="hidden" id="crop_width" name="crop_width">
@@ -200,7 +203,7 @@ input:focus { outline: none; border-color: #007bff; }
                 @error('name') <div class="error">{{ $message }}</div> @enderror
             </div>
 
-            <button class="btn btn-primary" type="submit">✓ Enregistrer le nom</button>
+            <button class="btn btn-primary" type="submit" id="profile-submit">✓ Enregistrer le nom</button>
         </form>
     </div>
 
@@ -216,6 +219,11 @@ input:focus { outline: none; border-color: #007bff; }
                 <label>Mot de passe actuel</label>
                 <input type="password" name="current_password" required>
                 @error('current_password') <div class="error">{{ $message }}</div> @enderror
+                <div style="text-align: right; margin-top: 0.5rem;">
+                    <a href="{{ route('password.forgot') }}" style="color: #007bff; font-size: 0.85rem; text-decoration: none;">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
             </div>
 
             <div class="form-group">
@@ -265,7 +273,6 @@ input:focus { outline: none; border-color: #007bff; }
         </div>
     @endif
 
-    {{-- Step 1: request email change --}}
     @if(!session('email_code_sent') && !$user->pending_email)
         <form method="POST" action="{{ route('profile.request-email-change') }}" style="max-width: 500px;">
             @csrf
@@ -279,7 +286,6 @@ input:focus { outline: none; border-color: #007bff; }
         </form>
     @endif
 
-    {{-- Step 2: enter the code --}}
     @if(session('email_code_sent') || $user->pending_email)
         <form method="POST" action="{{ route('profile.confirm-email-change') }}" style="max-width: 500px;">
             @csrf
@@ -320,10 +326,21 @@ function previewImage(event) {
     const file = event.target.files[0];
     if (!file) return;
     const img = document.getElementById('cropper-preview');
+    const container = document.getElementById('cropper-container');
     img.src = URL.createObjectURL(file);
-    img.style.display = 'block';
+    container.style.display = 'block';
     if (cropper) cropper.destroy();
     cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1, autoCropArea: 1 });
+    checkChanges();
+}
+
+function cancelImage() {
+    const container = document.getElementById('cropper-container');
+    const fileInput = document.getElementById('profile_picture');
+    container.style.display = 'none';
+    if (cropper) { cropper.destroy(); cropper = null; }
+    fileInput.value = '';
+    checkChanges();
 }
 
 document.getElementById('profile-form').addEventListener('submit', function () {
@@ -343,7 +360,7 @@ function checkStrength(password) {
         upper:   { el: document.getElementById('req-upper'),   test: /[A-Z]/.test(password) },
         lower:   { el: document.getElementById('req-lower'),   test: /[a-z]/.test(password) },
         digit:   { el: document.getElementById('req-digit'),   test: /\d/.test(password) },
-        special: { el: document.getElementById('req-special'), test: /[@$!%*?&]/.test(password) },
+        special: { el: document.getElementById('req-special'), test: /[\W_]/.test(password) },
     };
 
     let score = 0;
@@ -358,5 +375,32 @@ function checkStrength(password) {
     else if (score <= 4) { bar.style.background = '#ffc107'; }
     else                 { bar.style.background = '#28a745'; }
 }
+</script>
+@endsection
+
+@section('extra-scripts')
+<script>
+const originalName = {{ Js::from(old('name', $user->name)) }};
+
+function checkChanges() {
+    const nameField = document.querySelector('input[name="name"]');
+    const fileInput = document.getElementById('profile_picture');
+    const submitBtn = document.getElementById('profile-submit');
+
+    const nameChanged = nameField.value.trim() !== originalName.trim();
+    const photoSelected = fileInput.files && fileInput.files.length > 0;
+    const hasChanged = nameChanged || photoSelected;
+
+    submitBtn.disabled = !hasChanged;
+    submitBtn.style.opacity = hasChanged ? '1' : '0.4';
+    submitBtn.style.cursor = hasChanged ? 'pointer' : 'not-allowed';
+    submitBtn.style.pointerEvents = hasChanged ? 'auto' : 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    checkChanges();
+    document.querySelector('input[name="name"]').addEventListener('input', checkChanges);
+    document.getElementById('profile_picture').addEventListener('change', checkChanges);
+});
 </script>
 @endsection

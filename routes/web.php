@@ -11,6 +11,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\NotificationController;
 
+Route::put('/tps/{id}/submit', [StudentController::class, 'updateSubmission'])->name('student.tps.update-submission');
+
 Route::delete('/profile/picture', [ProfileController::class, 'deletePicture'])
     ->name('profile.delete-picture')
     ->middleware('auth');
@@ -59,6 +61,7 @@ Route::delete('/comments/{id}', [FeedController::class, 'destroyComment'])->name
         Route::get('/courses/{courseId}', [StudentController::class, 'showCourse'])->name('courses.show');
         Route::get('/tps/{id}', [StudentController::class, 'showTP'])->name('tps.show');
         Route::post('/tps/{id}/submit', [StudentController::class, 'submitTP'])->name('tps.submit');
+        Route::put('/tps/{id}/submit', [StudentController::class, 'updateSubmission'])->name('tps.update-submission');
         Route::get('/submissions', [StudentController::class, 'mySubmissions'])->name('submissions.index');
         Route::get('/progress', [StudentController::class, 'myProgress'])->name('progress');
     });
@@ -115,3 +118,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
 Route::get('/', function () {
     return redirect()->route('login');
 });
+//forgot password
+Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.forgot');
+Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');

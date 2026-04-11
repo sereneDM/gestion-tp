@@ -127,7 +127,9 @@
     @if($courses->count() > 0)
         <div class="courses-grid">
             @foreach($courses as $course)
-                <div class="course-card">
+                <div class="course-card"
+                     onclick="window.location.href='{{ route('student.courses.show', $course->id) }}'"
+                     style="cursor: pointer;">
                     <div class="course-header">
                         <div class="course-name">{{ $course->name }}</div>
                         <div class="course-teacher">👨‍🏫 {{ $course->teacher->name }}</div>
@@ -150,10 +152,10 @@
                         </div>
                         
                         <div class="course-actions">
-                            <a href="{{ route('student.courses.show', $course->id) }}" class="btn-view">
+                            <a href="{{ route('student.courses.show', $course->id) }}" class="btn-view" onclick="event.stopPropagation();">
                                 📚 Voir le cours
                             </a>
-                            <form method="POST" action="{{ route('student.leave-course', $course->id) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('student.leave-course', $course->id) }}" style="display: inline;" onclick="event.stopPropagation();">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn-leave" onclick="return confirm('Quitter ce cours?')">

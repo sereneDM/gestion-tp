@@ -76,16 +76,20 @@
                 @enderror
             </div>
 
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required>
-                @error('password')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-            </div>
+           <div class="form-group">
+    <label for="password">Mot de passe</label>
+    <input type="password" id="password" name="password" required>
+    @error('password')
+        <div class="error">{{ $message }}</div>
+    @enderror
 
-            <button type="submit">Se connecter</button>
-        </form>
+    <div style="text-align: right; margin-top: 0.5rem;">
+        <a href="{{ route('password.forgot') }}" style="color: #007bff; font-size: 0.85rem; text-decoration: none;">
+            Mot de passe oublié ?
+        </a>
     </div>
+</div>
+
+<button type="submit">Se connecter</button>
 </body>
 </html>

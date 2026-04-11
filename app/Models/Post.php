@@ -43,16 +43,24 @@ class Post extends Model
                     ->orderBy('created_at', 'asc');
     }
 
-    public static function visibleToStudent($studentId)
-    {
-        $student = User::find($studentId);
-        $enrolledClassIds = $student->enrolledClasses()->pluck('classes.id');
+  public static function visibleToStudent($studentId)
+{
+    $student = User::find($studentId);
+    $enrolledClassIds = $student->enrolledClasses()->pluck('classes.id');
 
-        return self::with(['user', 'class', 'tp'])
-                   ->where(function($query) use ($enrolledClassIds) {
-                       $query->whereNull('class_id')
-                             ->orWhereIn('class_id', $enrolledClassIds);
-                   })
-                   ->orderBy('created_at', 'desc');
-    }
+    // Get teacher IDs of enrolled classes
+    $teacherIds = ClassModel::whereIn('id', $enrolledClassIds)->pluck('teacher_id');
+
+    return self::with(['user', 'class', 'tp'])
+               ->where(function($query) use ($enrolledClassIds, $teacherIds) {
+                   // Posts from enrolled classes
+                   $query->whereIn('class_id', $enrolledClassIds)
+                         // OR general posts from their teachers
+                         ->orWhere(function($q) use ($teacherIds) {
+                             $q->whereNull('class_id')
+                               ->whereIn('user_id', $teacherIds);
+                         });
+               })
+               ->orderBy('created_at', 'desc');
+}
 }

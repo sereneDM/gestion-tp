@@ -1,5 +1,9 @@
 @extends('layouts.teacher')
 
+@section('breadcrumbs')
+    {{ Breadcrumbs::render('teacher.courses.create') }}
+@endsection
+
 @section('title', 'Créer un Cours')
 @section('page-title', 'Créer un Nouveau Cours')
 

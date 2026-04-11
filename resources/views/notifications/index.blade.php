@@ -143,10 +143,14 @@
     </div>
 
     @forelse($notifications as $notification)
-        <form method="POST" action="{{ route('notifications.mark-read', $notification->id) }}" style="margin: 0 0 1rem 0;">
-            @csrf
-            <button type="submit" style="background: none; border: none; width: 100%; text-align: left; padding: 0; cursor: pointer;">
-                <div class="notification-card {{ $notification->is_read ? 'read' : 'unread' }}">
+        <div style="margin: 0 0 1rem 0;">
+            <form method="POST"
+                  action="{{ route('notifications.mark-read', $notification->id) }}"
+                  id="form-{{ $notification->id }}">
+                @csrf
+                <div class="notification-card {{ $notification->is_read ? 'read' : 'unread' }}"
+                     id="notif-{{ $notification->id }}"
+                     onclick="markRead({{ $notification->id }})">
                     <div class="notification-header">
                         <div style="flex: 1;">
                             <span class="type-badge type-{{ $notification->type }}">
@@ -165,8 +169,8 @@
                     <div class="notification-title">{{ $notification->title }}</div>
                     <div class="notification-message">{{ $notification->message }}</div>
                 </div>
-            </button>
-        </form>
+            </form>
+        </div>
     @empty
         <div class="empty-state">
             <div style="font-size: 4rem; margin-bottom: 1rem;">🔔</div>
@@ -180,4 +184,39 @@
             {{ $notifications->links() }}
         </div>
     @endif
+
+@endsection
+
+@section('extra-scripts')
+<script>
+function markRead(id) {
+    const card = document.getElementById('notif-' + id);
+    if (card && card.classList.contains('unread')) {
+        card.classList.remove('unread');
+        card.classList.add('read');
+
+        // Update page counter
+        const countEl = document.querySelector('.notifications-header span');
+        if (countEl) {
+            const current = parseInt(countEl.textContent);
+            if (!isNaN(current) && current > 0) {
+                countEl.textContent = (current - 1) + ' notification(s) non lue(s)';
+            }
+        }
+
+        // Update sidebar badge
+        const badge = document.getElementById('notif-badge');
+        if (badge) {
+            const badgeCount = parseInt(badge.textContent) - 1;
+            if (badgeCount <= 0) {
+                badge.style.display = 'none';
+            } else {
+                badge.textContent = badgeCount;
+            }
+        }
+    }
+
+    document.getElementById('form-' + id).submit();
+}
+</script>
 @endsection

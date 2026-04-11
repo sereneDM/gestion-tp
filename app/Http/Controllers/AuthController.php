@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetPasswordMail;
 
 class AuthController extends Controller
 {
@@ -18,41 +20,46 @@ class AuthController extends Controller
     }
 
     // Handle login
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+   public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => 'required|email:rfc',
+        'password' => 'required',
+    ]);
 
-        $remember = $request->has('remember');
+    $remember = $request->has('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
+    if (Auth::attempt($credentials, $remember)) {
+        $request->session()->regenerate();
 
-            $user = Auth::user();
+        $user = Auth::user();
 
-            // Check if user must reset password
-            if ($user->must_reset_password) {
-                Auth::logout();
-                return redirect()->route('login')
-                    ->withErrors(['email' => 'Vous devez configurer votre mot de passe. Veuillez vérifier votre email pour le lien de configuration.']);
-            }
-
-            // Redirect based on role
-            if ($user->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard'));
-            } elseif ($user->isTeacher()) {
-                return redirect()->intended(route('feed.index'));
-            } else {
-                return redirect()->intended(route('student.dashboard'));
-            }
+        // Check if user must reset password
+        if ($user->must_reset_password) {
+            Auth::logout();
+            return redirect()->route('login')
+                ->withErrors(['email' => 'Vous devez configurer votre mot de passe. Veuillez vérifier votre email pour le lien de configuration.']);
         }
 
-        return back()->withErrors([
-            'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
-        ])->onlyInput('email');
+        // Log the activity
+        activity()
+            ->causedBy($user)
+            ->log('Connexion réussie');
+
+        // Redirect based on role
+        if ($user->isAdmin()) {
+            return redirect()->intended(route('admin.dashboard'));
+        } elseif ($user->isTeacher()) {
+            return redirect()->intended(route('feed.index'));
+        } else {
+            return redirect()->intended(route('student.dashboard'));
+        }
     }
+
+    return back()->withErrors([
+        'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
+    ])->onlyInput('email');
+}
 
     // Handle logout
     public function logout(Request $request)
@@ -96,13 +103,13 @@ class AuthController extends Controller
     public function setupPassword(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email' => 'required|email:rfc|exists:users,email',
             'token' => 'required',
             'password' => [
                 'required',
                 'min:8',
                 'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
             ],
         ], [
             'password.regex' => 'Le mot de passe doit contenir au moins: 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.',
@@ -154,31 +161,29 @@ class AuthController extends Controller
     }
 
     // Send password reset link
-    public function sendResetLink(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-        ]);
+   public function sendResetLink(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email:rfc|exists:users,email',
+    ], [
+        'email.exists' => 'Aucun compte associé à cet email.',
+    ]);
 
-        // Generate token
-        $token = Str::random(60);
+    $token = Str::random(60);
 
-        // Delete old tokens for this email
-        DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+    DB::table('password_reset_tokens')->where('email', $request->email)->delete();
+    DB::table('password_reset_tokens')->insert([
+        'email'      => $request->email,
+        'token'      => Hash::make($token),
+        'created_at' => now(),
+    ]);
 
-        // Create new token
-        DB::table('password_reset_tokens')->insert([
-            'email' => $request->email,
-            'token' => Hash::make($token),
-            'created_at' => now(),
-        ]);
+    $resetLink = route('password.reset', ['token' => $token, 'email' => $request->email]);
 
-        // In a real application, you would send an email here
-        // For now, we'll just show the reset link on the page
-        $resetLink = route('password.reset', ['token' => $token, 'email' => $request->email]);
+    Mail::to($request->email)->send(new ResetPasswordMail($resetLink));
 
-        return back()->with('reset_link', $resetLink);
-    }
+    return back()->with('success', 'Un lien de réinitialisation a été envoyé à votre adresse email.');
+}
 
     // Show reset password form
     public function showResetPasswordForm(Request $request, $token)
@@ -192,11 +197,25 @@ class AuthController extends Controller
     // Reset password
     public function resetPassword(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'password' => 'required|min:6|confirmed',
-            'token' => 'required',
-        ]);
+        
+    $request->validate([
+        'email' => 'required|email:rfc|exists:users,email',
+        'token' => 'required',
+        'password' => [
+            'required',
+            'min:8',
+            'confirmed',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            function ($attribute, $value, $fail) use ($request) {
+                $user = User::where('email', $request->email)->first();
+                if ($user && Hash::check($value, $user->password)) {
+                    $fail('Le nouveau mot de passe doit être différent de l\'ancien.');
+                }
+            },
+        ],
+    ]);
+
+    // ... rest of your existing code unchanged
 
         // Check if token exists and is valid
         $passwordReset = DB::table('password_reset_tokens')

@@ -290,7 +290,9 @@
         @if($course->tps->count() > 0)
             <div class="tps-grid">
                 @foreach($course->tps->sortBy('created_at') as $tp)
-                    <div class="tp-card">
+                    <div class="tp-card"
+                         onclick="window.location.href='{{ route('teacher.tps.show', $tp->id) }}'"
+                         style="cursor: pointer;">
                         <div class="tp-header">
                             <div class="tp-title">{{ $tp->title }}</div>
                             <span class="status-badge status-{{ $tp->status }}">
@@ -311,13 +313,13 @@
                         </div>
 
                         <div class="tp-actions">
-                            <a href="{{ route('teacher.tps.show', $tp->id) }}" class="btn btn-primary btn-small">
+                            <a href="{{ route('teacher.tps.show', $tp->id) }}" class="btn btn-primary btn-small" onclick="event.stopPropagation();">
                                 👁️ Voir
                             </a>
-                            <a href="{{ route('teacher.tps.edit', $tp->id) }}" class="btn btn-warning btn-small">
+                            <a href="{{ route('teacher.tps.edit', $tp->id) }}" class="btn btn-warning btn-small" onclick="event.stopPropagation();">
                                 ✏️ Modifier
                             </a>
-                            <form method="POST" action="{{ route('teacher.tps.destroy', $tp->id) }}" style="display: inline;">
+                            <form method="POST" action="{{ route('teacher.tps.destroy', $tp->id) }}" style="display: inline;" onclick="event.stopPropagation();">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger btn-small"
@@ -384,7 +386,6 @@
         @endif
     </div>
 @endsection
-
 @section('extra-scripts')
 <script>
     function switchTab(tabName, event) {
@@ -393,6 +394,9 @@
 
         event.target.classList.add('active');
         document.getElementById('tab-' + tabName).classList.add('active');
+
+        // update URL fragment without reloading
+        history.replaceState(null, null, '#' + tabName);
     }
 
     function copyJoinCode() {
@@ -401,5 +405,23 @@
             alert('Code copié: ' + code);
         });
     }
+
+    // on page load, activate tab from URL fragment
+    document.addEventListener('DOMContentLoaded', function () {
+        const fragment = window.location.hash.replace('#', '');
+        const validTabs = ['info', 'tps', 'students'];
+        if (fragment && validTabs.includes(fragment)) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            document.getElementById('tab-' + fragment).classList.add('active');
+            // activate the matching tab button
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.getAttribute('onclick').includes("'" + fragment + "'")) {
+                    tab.classList.add('active');
+                }
+            });
+        }
+    });
 </script>
 @endsection

@@ -117,6 +117,9 @@
                     <option value="teacher" {{ old('role') === 'teacher' ? 'selected' : '' }}>
                         Enseignant
                     </option>
+                    <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>
+                        Administrateur
+                    </option>
                 </select>
                 @error('role')
                     <div class="error">{{ $message }}</div>

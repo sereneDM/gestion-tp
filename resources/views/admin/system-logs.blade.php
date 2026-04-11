@@ -82,11 +82,15 @@
         color: #666;
         font-size: 0.9rem;
     }
+    .empty-state {
+        text-align: center;
+        color: #999;
+        padding: 2rem;
+    }
 </style>
 @endsection
 
 @section('content')
-  
 
     <div class="section">
         <h2>ℹ️ Informations Système</h2>
@@ -120,24 +124,26 @@
 
     <div class="section">
         <h2>🕐 Activité Récente</h2>
-        @foreach($activities as $activity)
+        @forelse($activities as $activity)
             <div class="activity-item">
                 <div class="activity-header">
-                    <div class="activity-action">{{ $activity['action'] }}</div>
-                    <div class="activity-time">{{ $activity['timestamp']->diffForHumans() }}</div>
+                    <div class="activity-action">{{ $activity->description }}</div>
+                    <div class="activity-time">{{ $activity->created_at->diffForHumans() }}</div>
                 </div>
-                <div class="activity-user">👤 {{ $activity['user'] }}</div>
-                <div class="activity-details">{{ $activity['details'] }}</div>
+                <div class="activity-user">
+                    👤 {{ $activity->causer?->email ?? 'Système' }}
+                </div>
+                @if($activity->subject_type)
+                    <div class="activity-details">
+                        {{ class_basename($activity->subject_type) }} #{{ $activity->subject_id }}
+                    </div>
+                @endif
             </div>
-        @endforeach
+        @empty
+            <div class="empty-state">
+                Aucune activité enregistrée pour le moment.
+            </div>
+        @endforelse
     </div>
 
-    <div class="section">
-        <h2>⚠️ Note</h2>
-        <p style="color: #666;">
-            Pour un système de logs plus avancé avec suivi complet des activités,
-            il est recommandé d'utiliser un package comme <strong>spatie/laravel-activitylog</strong>
-            pour enregistrer automatiquement toutes les actions des utilisateurs.
-        </p>
-    </div>
 @endsection

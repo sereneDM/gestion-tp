@@ -40,6 +40,9 @@ Breadcrumbs::for('teacher.dashboard', fn (Trail $t) =>
 Breadcrumbs::for('teacher.courses.index', fn (Trail $t) =>
     $t->push('Mes cours', route('teacher.courses.index'))
 );
+Breadcrumbs::for('teacher.courses.create', fn (Trail $t) =>
+    $t->parent('teacher.courses.index')->push('Créer un Nouveau Cours', route('teacher.courses.create'))
+);
 Breadcrumbs::for('teacher.courses.show', function (Trail $t, $course) {
     $course = is_object($course) ? $course : ClassModel::find($course);
     $t->parent('teacher.courses.index')->push($course->name, route('teacher.courses.show', $course->id));
@@ -50,7 +53,8 @@ Breadcrumbs::for('teacher.tps.show', function (Trail $t, $tp) {
       ->push($tp->title, route('teacher.tps.show', $tp->id));
 });
 Breadcrumbs::for('teacher.submissions.show', function (Trail $t, $submission) {
-    $submission = is_object($submission) ? $submission : Submission::find($submission);
+    $submission = is_object($submission) ? $submission : Submission::with(['tp', 'student'])->find($submission);
+    if (!$submission || !$submission->tp_id) return;
     $t->parent('teacher.tps.show', $submission->tp_id)
       ->push('Soumission de ' . $submission->student->name);
 });

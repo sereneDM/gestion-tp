@@ -9,11 +9,13 @@
     @php
         $unreadCount = App\Models\Notification::where('user_id', Auth::id())->where('is_read', false)->count();
     @endphp
-    @if($unreadCount > 0)
-        <span style="background: #dc3545; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.75rem; margin-left: auto;">
-            {{ $unreadCount }}
-        </span>
-    @endif
+   @if($unreadCount > 0)
+    <span id="notif-badge" style="background: #dc3545; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.75rem; margin-left: auto;">
+        {{ $unreadCount }}
+    </span>
+@else
+    <span id="notif-badge" style="display:none; background: #dc3545; color: white; padding: 0.2rem 0.5rem; border-radius: 10px; font-size: 0.75rem; margin-left: auto;"></span>
+@endif
 </a>
 
 <div class="menu-section">Mes Cours</div>

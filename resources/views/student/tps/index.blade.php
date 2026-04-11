@@ -97,7 +97,9 @@
                     $submission = $tp->submissions->where('student_id', Auth::id())->first();
                 @endphp
                 
-                <div class="tp-card {{ $submission ? 'submitted' : 'pending' }}">
+                <div class="tp-card {{ $submission ? 'submitted' : 'pending' }}"
+                     onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'"
+                     style="cursor: pointer;">
                     <div class="tp-title">{{ $tp->title }}</div>
                     
                     <div class="tp-description">
@@ -115,16 +117,15 @@
                         @if($tp->class)
                             <div>👥 Classe: {{ $tp->class->name }}</div>
                         @endif
-                        <p>📅 Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y') : 'Non définie' }}</p>
-
+                       <p>📅 Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Non définie' }}</p>
                     </div>
 
                     @if($submission)
-                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-success">
+                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-success" onclick="event.stopPropagation();">
                             👁️ Voir ma soumission
                         </a>
                     @else
-                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-primary">
+                        <a href="{{ route('student.tps.show', $tp->id) }}" class="btn btn-primary" onclick="event.stopPropagation();">
                             🖊️ Voir et soumettre
                         </a>
                     @endif

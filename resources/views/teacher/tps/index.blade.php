@@ -100,7 +100,9 @@
     @if($tps->count() > 0)
         <div class="tps-grid">
             @foreach($tps as $tp)
-                <div class="tp-card">
+                <div class="tp-card"
+                     onclick="window.location.href='{{ route('teacher.tps.show', $tp->id) }}'"
+                     style="cursor: pointer;">
                     <div class="tp-title">{{ $tp->title }}</div>
 
                     <span class="status-badge status-{{ $tp->status }}">
@@ -109,9 +111,7 @@
 
                     <div class="tp-description">{{ $tp->description }}</div>
 
-                    <div class="tp-meta">
-                        📅 Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y') : 'Non définie' }}
-                    </div>
+                    📅 Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Non définie' }}
                     <div class="tp-meta">
                         👥 Classe: {{ $tp->class ? $tp->class->name : 'Toutes les classes' }}
                     </div>
@@ -120,16 +120,17 @@
                     </div>
 
                     <div class="action-buttons">
-                        <a href="{{ route('teacher.tps.show', $tp->id) }}" class="btn btn-info btn-small">
+                        <a href="{{ route('teacher.tps.show', $tp->id) }}" class="btn btn-info btn-small" onclick="event.stopPropagation();">
                             👁️ Voir détails
                         </a>
-                        <a href="{{ route('teacher.tps.edit', $tp->id) }}" class="btn btn-warning btn-small">
+                        <a href="{{ route('teacher.tps.edit', $tp->id) }}" class="btn btn-warning btn-small" onclick="event.stopPropagation();">
                             ✏️ Modifier
                         </a>
                         <form method="POST"
                               action="{{ route('teacher.tps.destroy', $tp->id) }}"
                               class="delete-form"
-                              onsubmit="return confirm('Supprimer ce TP?')">
+                              onsubmit="return confirm('Supprimer ce TP?')"
+                              onclick="event.stopPropagation();">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger btn-small">

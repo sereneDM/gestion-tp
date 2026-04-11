@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class TeacherController extends Controller
 {
@@ -133,14 +134,20 @@ class TeacherController extends Controller
 
     public function storeTP(Request $request)
     {
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'class_id'    => 'nullable|exists:classes,id',
-            'due_date'    => 'nullable|date',
-            'status'      => 'required|in:draft,published,closed',
-            'attachment'  => 'nullable|file|mimes:pdf|max:10240',
-        ]);
+       $request->validate([
+    'title'      => 'required|string|max:255',
+    'description' => 'nullable|string',
+    'class_id'   => 'nullable|exists:classes,id',
+    'due_date'   => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:now',
+    'status'     => 'required|in:draft,published,closed',
+    'attachment' => 'nullable|file|mimes:pdf|max:10240',
+]);
+
+if (!$request->filled('description') && !$request->hasFile('attachment')) {
+    return back()->withErrors([
+        'description' => 'Veuillez fournir une description ou un fichier PDF.'
+    ])->withInput();
+}
 
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
@@ -154,7 +161,7 @@ class TeacherController extends Controller
             'description' => $request->description,
             'teacher_id'  => Auth::id(),
             'class_id'    => $request->class_id,
-            'due_date'    => $request->due_date,
+            'due_date'    => $request->due_date ? Carbon::parse($request->due_date) : null,
             'status'      => $request->status ?? 'published',
             'attachments' => $attachmentPath,
         ]);
@@ -172,14 +179,19 @@ class TeacherController extends Controller
     public function storeTPForCourse(Request $request, $courseId)
     {
         $course = ClassModel::where('teacher_id', Auth::id())->findOrFail($courseId);
+$request->validate([
+    'title'      => 'required|string|max:255',
+    'description' => 'nullable|string',
+    'due_date'   => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:now',
+    'status'     => 'required|in:draft,published,closed',
+    'attachment' => 'nullable|file|mimes:pdf|max:10240',
+]);
 
-        $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'due_date'    => 'nullable|date',
-            'status'      => 'required|in:draft,published,closed',
-            'attachment'  => 'nullable|file|mimes:pdf|max:10240',
-        ]);
+if (!$request->filled('description') && !$request->hasFile('attachment')) {
+    return back()->withErrors([
+        'description' => 'Veuillez fournir une description ou un fichier PDF.'
+    ])->withInput();
+}
 
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
@@ -188,17 +200,18 @@ class TeacherController extends Controller
             $attachmentPath = $file->storeAs('tp_attachments', $filename, 'public');
         }
 
+        $dueDate = $request->due_date ? Carbon::parse($request->due_date) : null;
+
         $tp = TP::create([
             'title'       => $request->title,
             'description' => $request->description,
             'teacher_id'  => Auth::id(),
             'class_id'    => $courseId,
-            'due_date'    => $request->due_date,
+            'due_date'    => $dueDate,
             'status'      => $request->status,
             'attachments' => $attachmentPath,
         ]);
 
-        // If published, notify students and optionally create a feed post
         if ($request->status === 'published') {
             $this->notifyStudentsNewTP($tp, $course);
 
@@ -210,13 +223,13 @@ class TeacherController extends Controller
                     'type'     => 'tp_posted',
                     'title'    => '📝 Nouveau TP: ' . $tp->title,
                     'content'  => $tp->description . "\n\nÉchéance: " .
-                                  ($tp->due_date ? $tp->due_date->format('d/m/Y') : 'Non définie'),
+                                  ($dueDate ? $dueDate->format('d/m/Y à H:i') : 'Non définie'),
                 ]);
             }
         }
 
-        return redirect()->route('teacher.courses.show', $courseId)
-                         ->with('success', 'TP créé avec succès!');
+        return redirect(route('teacher.courses.show', $courseId) . '#tps')
+                 ->with('success', 'TP créé avec succès!');
     }
 
     private function notifyStudentsNewTP($tp, $course)
@@ -266,12 +279,18 @@ class TeacherController extends Controller
         }
 
         $request->validate([
-            'title'       => 'required|string|max:255',
-            'description' => 'required|string',
-            'due_date'    => 'nullable|date',
-            'status'      => 'required|in:draft,published,closed',
-            'attachment'  => 'nullable|file|mimes:pdf|max:10240',
-        ]);
+    'title'      => 'required|string|max:255',
+    'description' => 'nullable|string',
+    'due_date'   => 'nullable|date',
+    'status'     => 'required|in:draft,published,closed',
+    'attachment' => 'nullable|file|mimes:pdf|max:10240',
+]);
+
+if (!$request->filled('description') && !$request->hasFile('attachment') && !$tp->attachments) {
+    return back()->withErrors([
+        'description' => 'Veuillez fournir une description ou un fichier PDF.'
+    ])->withInput();
+}
 
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
@@ -281,12 +300,12 @@ class TeacherController extends Controller
 
         $tp->title       = $request->title;
         $tp->description = $request->description;
-        $tp->due_date    = $request->due_date;
+        $tp->due_date    = $request->due_date ? Carbon::parse($request->due_date) : null;
         $tp->status      = $request->status;
         $tp->save();
 
-        return redirect()->route('teacher.courses.show', $tp->class_id)
-                         ->with('success', 'TP mis à jour avec succès!');
+       return redirect(route('teacher.courses.show', $tp->class_id) . '#tps')
+         ->with('success', 'TP mis à jour avec succès!');
     }
 
     public function destroyTP($id)
@@ -335,7 +354,6 @@ class TeacherController extends Controller
             'status'          => 'graded',
         ]);
 
-        // Notify student about grade
         if (NotificationSetting::shouldNotify(
             $submission->student_id,
             $submission->tp->class_id,
@@ -455,72 +473,76 @@ class TeacherController extends Controller
                          ->with('success', 'Présence enregistrée avec succès!');
     }
 
-    public function statistics()
-    {
-        $teacher = Auth::user();
+    public function statistics(Request $request)
+{
+    $teacher = Auth::user();
+    $selectedClassId = $request->class_id;
 
-        $totalTPs    = TP::where('teacher_id', $teacher->id)->count();
-        $publishedTPs = TP::where('teacher_id', $teacher->id)->where('status', 'published')->count();
-        $draftTPs    = TP::where('teacher_id', $teacher->id)->where('status', 'draft')->count();
+    $totalTPs     = TP::where('teacher_id', $teacher->id)->count();
+    $publishedTPs = TP::where('teacher_id', $teacher->id)->where('status', 'published')->count();
+    $draftTPs     = TP::where('teacher_id', $teacher->id)->where('status', 'draft')->count();
 
-        $totalSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
-            $q->where('teacher_id', $teacher->id);
-        })->count();
+    $totalSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
+        $q->where('teacher_id', $teacher->id);
+    })->count();
 
-        $gradedSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
-            $q->where('teacher_id', $teacher->id);
-        })->where('status', 'graded')->count();
+    $gradedSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
+        $q->where('teacher_id', $teacher->id);
+    })->where('status', 'graded')->count();
 
-        $pendingSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
-            $q->where('teacher_id', $teacher->id);
-        })->where('status', 'submitted')->count();
+    $pendingSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
+        $q->where('teacher_id', $teacher->id);
+    })->where('status', 'submitted')->count();
 
-        $averageGrade = Submission::whereHas('tp', function($q) use ($teacher) {
-            $q->where('teacher_id', $teacher->id);
-        })->where('status', 'graded')->avg('grade');
+    $averageGrade = Submission::whereHas('tp', function($q) use ($teacher) {
+        $q->where('teacher_id', $teacher->id);
+    })->where('status', 'graded')->avg('grade');
 
-        $gradeDistribution = Submission::whereHas('tp', function($q) use ($teacher) {
-            $q->where('teacher_id', $teacher->id);
-        })
-        ->where('status', 'graded')
-        ->whereNotNull('grade')
-        ->select(
-            DB::raw('CASE
-                WHEN grade >= 16 THEN "16-20"
-                WHEN grade >= 14 THEN "14-16"
-                WHEN grade >= 12 THEN "12-14"
-                WHEN grade >= 10 THEN "10-12"
-                ELSE "0-10"
-            END as grade_range'),
-            DB::raw('COUNT(*) as count')
-        )
-        ->groupBy('grade_range')
-        ->get()
-        ->pluck('count', 'grade_range');
+    // Grade distribution — filtered by course if selected
+    $gradeQuery = Submission::whereHas('tp', function($q) use ($teacher, $selectedClassId) {
+        $q->where('teacher_id', $teacher->id);
+        if ($selectedClassId) {
+            $q->where('class_id', $selectedClassId);
+        }
+    })->where('status', 'graded')->whereNotNull('grade');
 
-        $classes = ClassModel::where('teacher_id', $teacher->id)
-                             ->withCount('students')
-                             ->get();
+    $gradeDistribution = $gradeQuery->select(
+        DB::raw('CASE
+            WHEN grade >= 16 THEN "16-20"
+            WHEN grade >= 14 THEN "14-16"
+            WHEN grade >= 12 THEN "12-14"
+            WHEN grade >= 10 THEN "10-12"
+            ELSE "0-10"
+        END as grade_range'),
+        DB::raw('COUNT(*) as count')
+    )
+    ->groupBy('grade_range')
+    ->get()
+    ->pluck('count', 'grade_range');
 
-        $recentSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
-            $q->where('teacher_id', $teacher->id);
-        })
-        ->with(['student', 'tp'])
-        ->orderBy('submitted_at', 'desc')
-        ->limit(10)
-        ->get();
+    $classes = ClassModel::where('teacher_id', $teacher->id)
+                         ->withCount('students')
+                         ->get();
 
-        $attendanceStats = Attendance::where('teacher_id', $teacher->id)
-                                     ->select('status', DB::raw('COUNT(*) as count'))
-                                     ->groupBy('status')
-                                     ->get()
-                                     ->pluck('count', 'status');
+    $recentSubmissions = Submission::whereHas('tp', function($q) use ($teacher) {
+        $q->where('teacher_id', $teacher->id);
+    })
+    ->with(['student', 'tp'])
+    ->orderBy('submitted_at', 'desc')
+    ->limit(10)
+    ->get();
 
-        return view('teacher.statistics.index', compact(
-            'totalTPs', 'publishedTPs', 'draftTPs',
-            'totalSubmissions', 'gradedSubmissions', 'pendingSubmissions',
-            'averageGrade', 'gradeDistribution', 'classes',
-            'recentSubmissions', 'attendanceStats'
-        ));
-    }
+    $attendanceStats = Attendance::where('teacher_id', $teacher->id)
+                                 ->select('status', DB::raw('COUNT(*) as count'))
+                                 ->groupBy('status')
+                                 ->get()
+                                 ->pluck('count', 'status');
+
+    return view('teacher.statistics.index', compact(
+        'totalTPs', 'publishedTPs', 'draftTPs',
+        'totalSubmissions', 'gradedSubmissions', 'pendingSubmissions',
+        'averageGrade', 'gradeDistribution', 'classes',
+        'recentSubmissions', 'attendanceStats', 'selectedClassId'
+    ));
+}
 }

@@ -132,11 +132,7 @@
 
 @section('content')
   
-    <div class="header-actions">
-        <a href="{{ route('teacher.tps.edit', $tp->id) }}" class="btn btn-warning" style="margin-left: 0.5rem;">
-            ✏️ Modifier
-        </a>
-    </div>
+    
 
     <!-- TP Information -->
     <div class="info-card">

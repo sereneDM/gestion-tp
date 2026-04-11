@@ -128,63 +128,108 @@ class StudentController extends Controller
     }
 
     public function submitTP(Request $request, $id)
+{
+    $student = Auth::user();
+
+    $tp = TP::where('id', $id)
+            ->whereHas('class.students', fn($q) => $q->where('users.id', $student->id))
+            ->firstOrFail();
+
+    if ($tp->status === 'closed') {
+        return back()->withErrors(['error' => 'Ce TP n\'accepte plus de soumissions.']);
+    }
+
+    $request->validate([
+        'submission_file' => 'nullable|file|mimes:pdf,zip,doc,docx|max:10240',
+        'comments'        => 'nullable|string',
+    ]);
+
+    // At least one must be provided
+    if (!$request->hasFile('submission_file') && !$request->filled('comments')) {
+        return back()->withErrors([
+            'comments' => 'Veuillez fournir un fichier ou un commentaire.'
+        ])->withInput();
+    }
+
+    if (Submission::where('tp_id', $tp->id)->where('student_id', $student->id)->exists()) {
+        return back()->withErrors(['error' => 'Vous avez déjà soumis ce TP.']);
+    }
+
+    $filePath = null;
+    if ($request->hasFile('submission_file')) {
+        $file     = $request->file('submission_file');
+        $filename = uniqid($student->id . '_') . '.' . $file->getClientOriginalExtension();
+        $filePath = $file->storeAs('submissions', $filename, 'public');
+    }
+
+    $status = ($tp->due_date && now()->gt($tp->due_date)) ? 'late' : 'submitted';
+
+    $submission = Submission::create([
+        'tp_id'       => $tp->id,
+        'student_id'  => $student->id,
+        'attachments' => $filePath,
+        'content'     => $request->comments,
+        'submitted_at' => now(),
+        'status'      => $status,
+    ]);
+
+    if (NotificationSetting::shouldNotify($tp->teacher_id, $tp->class_id, 'new_submission')) {
+        Notification::createFor(
+            $tp->teacher_id,
+            'new_submission',
+            '📤 Nouvelle soumission: ' . $tp->title,
+            $student->name . ' a soumis le TP',
+            route('teacher.submissions.show', [$tp->id, $submission->id]),
+            $submission->id
+        );
+    }
+
+    return redirect()->route('student.tps.show', $tp->id);
+}
+
+    public function updateSubmission(Request $request, $id)
     {
         $student = Auth::user();
 
-        $tp = TP::whereHas('class.students', function($query) use ($student) {
-                    $query->where('users.id', $student->id);
-                })
-                ->findOrFail($id);
+        $tp = TP::where('id', $id)
+                ->whereHas('class.students', fn($q) => $q->where('users.id', $student->id))
+                ->firstOrFail();
 
-        if ($tp->status === 'closed') {
-            return back()->withErrors(['error' => 'Ce TP n\'accepte plus de soumissions.']);
+        if ($tp->due_date && now()->gt($tp->due_date)) {
+            return back()->withErrors(['error' => 'La date limite est dépassée.']);
+        }
+
+        $submission = Submission::where('tp_id', $tp->id)
+                                ->where('student_id', $student->id)
+                                ->firstOrFail();
+
+        if ($submission->grade) {
+            return back()->withErrors(['error' => 'Vous ne pouvez pas modifier une soumission déjà notée.']);
         }
 
         $request->validate([
-            'submission_file' => 'required|file|mimes:pdf,zip,doc,docx|max:10240',
+            'submission_file' => 'nullable|file|mimes:pdf,zip,doc,docx|max:10240',
             'comments'        => 'nullable|string',
         ]);
 
-        $existingSubmission = Submission::where('tp_id', $tp->id)
-                                        ->where('student_id', $student->id)
-                                        ->first();
-
-        if ($existingSubmission) {
-            return back()->withErrors(['error' => 'Vous avez déjà soumis ce TP.']);
+        if (!$request->hasFile('submission_file') && !$request->filled('comments')) {
+            return back()->withErrors([
+                'comments' => 'Veuillez fournir un fichier ou un commentaire.'
+            ])->withInput();
         }
 
-        $file     = $request->file('submission_file');
-        $filename = time() . '_' . $student->id . '_' . $file->getClientOriginalName();
-        $filePath = $file->storeAs('submissions', $filename, 'public');
-
-        $status = 'submitted';
-        if ($tp->due_date && now()->gt($tp->due_date)) {
-            $status = 'late';
+        if ($request->hasFile('submission_file')) {
+            $file     = $request->file('submission_file');
+            $filename = uniqid($student->id . '_') . '.' . $file->getClientOriginalExtension();
+            $submission->attachments = $file->storeAs('submissions', $filename, 'public');
         }
 
-        $submission = Submission::create([
-            'tp_id'           => $tp->id,
-            'student_id'      => $student->id,
-            'submission_file' => $filePath,
-            'comments'        => $request->comments,
-            'submitted_at'    => now(),
-            'status'          => $status,
-        ]);
+        $submission->content      = $request->comments;
+        $submission->submitted_at = now();
+        $submission->save();
 
-        // Notify teacher about new submission
-        if (NotificationSetting::shouldNotify($tp->teacher_id, $tp->class_id, 'new_submission')) {
-            Notification::createFor(
-                $tp->teacher_id,
-                'new_submission',
-                '📤 Nouvelle soumission: ' . $tp->title,
-                $student->name . ' a soumis le TP',
-                route('teacher.submissions.show', [$tp->id, $submission->id]),
-                $submission->id
-            );
-        }
-
-        return redirect()->route('student.courses.show', $tp->class_id)
-                         ->with('success', 'TP soumis avec succès!');
+        return redirect()->route('student.tps.show', $tp->id)
+                         ->with('success', 'Soumission modifiée avec succès.');
     }
 
     public function mySubmissions()

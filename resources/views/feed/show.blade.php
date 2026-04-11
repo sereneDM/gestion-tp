@@ -184,7 +184,7 @@
 </div>
 
 <div class="comments-section">
-    <h3>💬 Commentaires ({{ $post->comments->count() }})</h3>
+    <h3 style="margin-bottom: 1.5rem;">💬 Commentaires ({{ $post->comments->count() }})</h3>
 
     @forelse($post->comments as $comment)
         <div class="comment">
@@ -224,9 +224,14 @@
                     <form method="POST" action="{{ route('posts.comments.store', $post->id) }}">
                         @csrf
                         <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                        <textarea name="content" class="comment-input" rows="3" required></textarea>
+                        <textarea name="content"
+                                  class="comment-input"
+                                  rows="3"
+                                  required
+                                  placeholder="Ctrl+Entrée pour envoyer..."></textarea>
                         <button type="submit" class="submit-comment-btn">↩️ Répondre</button>
-                        <button type="button" class="cancel-reply-btn" onclick="toggleReply('reply-form-{{ $comment->id }}')">Annuler</button>
+                        <button type="button" class="cancel-reply-btn"
+                                onclick="toggleReply('reply-form-{{ $comment->id }}')">Annuler</button>
                     </form>
                 </div>
 
@@ -272,7 +277,10 @@
     <div class="add-comment-form">
         <form method="POST" action="{{ route('posts.comments.store', $post->id) }}">
             @csrf
-            <textarea name="content" class="comment-input" required></textarea>
+            <textarea name="content"
+                      class="comment-input"
+                      required
+                      placeholder="Écrivez un commentaire... (Ctrl+Entrée pour envoyer)"></textarea>
             <button type="submit" class="submit-comment-btn">💬 Commenter</button>
         </form>
     </div>
@@ -283,4 +291,5 @@ function toggleReply(id) {
     document.getElementById(id).classList.toggle('active');
 }
 </script>
+
 @endsection

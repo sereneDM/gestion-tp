@@ -1,261 +1,354 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>@yield('title','Plateforme TP')</title>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:Arial,sans-serif;background:#f4f4f4;overflow-x:hidden}
-
-/* Topbar */
-.topbar{
-    position:fixed;top:0;left:0;width:260px;height:52px;
-    background:#2c3e50;display:flex;align-items:center;
-    padding:0 1rem;z-index:101;gap:1rem;transition:.25s
-}
-.topbar.collapsed{width:60px}
-.topbar-title{color:#fff;font-size:1rem;font-weight:700}
-.topbar.collapsed .topbar-title{display:none}
-
-.toggle-btn{
-    background:none;border:none;color:#fff;cursor:pointer;
-    padding:6px 8px;border-radius:6px;font-size:1.2rem
-}
-.toggle-btn:hover{background:rgba(255,255,255,.15)}
-
-/* Sidebar */
-.sidebar{
-    width:260px;
-    background:#2c3e50;
-    color:#fff;
-    position:fixed;
-    top:52px;
-    left:0;
-    height:calc(100vh - 52px);
-    display:flex;
-    flex-direction:column;
-    transition:.25s;
-}
-.sidebar.collapsed{width:60px}
-
-/* Header */
-.sidebar-header{
-    padding:1.2rem;
-    background:#1a252f;
-    border-bottom:1px solid #34495e;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    min-height: 72px;
-}
-.sidebar-header img{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    flex-shrink: 0;
-}
-.sidebar-header div {
-    overflow: hidden;
-}
-.sidebar-header div h2 {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #fff;
-    word-break: break-word;
-    overflow-wrap: break-word;
-    white-space: normal;
-    line-height: 1.3;
-}
-.sidebar-header div p {
-    font-size: 0.8rem;
-    color: #95a5a6;
-    margin-top: 2px;
-}
-
-/* Collapse header */
-.sidebar.collapsed .sidebar-header{
-    justify-content:center;
-}
-.sidebar.collapsed .sidebar-header div{
-    display:none;
-}
-
-/* Menu */
-.sidebar-menu{
-    flex: 1;
-    overflow: hidden;
-    padding-bottom: 60px;
-}
-
-/* Sections */
-.menu-section{
-    padding:0.8rem 1.5rem 0.4rem;
-    font-size:0.7rem;
-    color:#95a5a6;
-    text-transform:uppercase;
-    font-weight:700;
-}
-.sidebar.collapsed .menu-section{display:none}
-
-/* Items */
-.menu-item{
-    display:flex;
-    align-items:center;
-    padding:0.9rem 1.5rem;
-    color:#fff;
-    text-decoration:none;
-    border-left:3px solid transparent;
-    transition:.2s;
-}
-.menu-item:hover,
-.menu-item.active{
-    background:#34495e;
-    border-left-color:#3498db;
-}
-
-/* Icons */
-.menu-item-icon{
-    font-size:1.1rem;
-    width:24px;
-    text-align:center;
-    margin-right:1rem;
-    flex-shrink: 0;
-}
-
-/* Text */
-.menu-item-text{
-    font-size:0.95rem;
-}
-
-/* Collapsed */
-.sidebar.collapsed .menu-item{
-    justify-content:center;
-    padding:1rem 0;
-}
-.sidebar.collapsed .menu-item-icon{
-    margin:0;
-}
-.sidebar.collapsed .menu-item-text{
-    display:none;
-}
-
-/* Logout */
-.logout-section{
-    height: 60px;
-}
-
-/* Main */
-.main-content{
-    margin-left:260px;
-    padding:2rem;
-    min-height:100vh;
-    transition:.25s;
-}
-.main-content.collapsed{margin-left:60px}
-
-.content-wrapper{
-    background:#fff;
-    padding:2rem;
-    border-radius:8px;
-    box-shadow:0 2px 4px rgba(0,0,0,.1);
-}
-
-.page-header{
-    margin-bottom:2rem;
-    padding-bottom:1rem;
-    border-bottom:2px solid #f0f0f0;
-}
-.page-header h1{
-    font-size:1.6rem;
-}
-
-/* Alerts */
-.alert{padding:1rem;border-radius:4px;margin-bottom:1rem}
-.alert-success{background:#d4edda;color:#155724}
-.alert-error{background:#f8d7da;color:#721c24}
-
-</style>
-
+@vite(['resources/css/app.css', 'resources/js/app.js'])
 @yield('extra-styles')
 </head>
 
-<body>
+<body class="bg-[#0f172a] text-slate-200 min-h-screen">
 
-<!-- Topbar -->
-<div class="topbar" id="topbar">
-    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
-    <span class="topbar-title">Plateforme TP</span>
-</div>
+{{-- TOP NAVBAR --}}
+<nav class="fixed top-0 left-0 right-0 h-14 bg-[#0f172a] border-b border-slate-800 flex items-center px-4 gap-4 z-50">
 
-<!-- Sidebar -->
-<aside class="sidebar" id="sidebar">
+    {{-- Logo --}}
+    <div class="flex items-center gap-2 min-w-[44px]">
+        <div class="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center flex-shrink-0">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="1" width="4" height="4" rx="1" fill="white"/>
+                <rect x="9" y="1" width="4" height="4" rx="1" fill="white"/>
+                <rect x="1" y="9" width="4" height="4" rx="1" fill="white"/>
+                <rect x="9" y="9" width="4" height="4" rx="1" fill="white"/>
+            </svg>
+        </div>
+        <span class="text-white font-semibold text-sm hidden md:block">Plateforme TP</span>
+    </div>
 
-    <div class="sidebar-header">
-        <img src="{{ Auth::user()->profile_picture_url }}" alt="Avatar">
-        <div>
-            <h2>{{ Auth::user()->name }}</h2>
-            <p>
-                @if(Auth::user()->isAdmin())Administrateur
-                @elseif(Auth::user()->isTeacher())Enseignant
-                @else Étudiant @endif
-            </p>
+    {{-- Divider --}}
+    <div class="w-px h-6 bg-slate-700"></div>
+
+    {{-- Nav links --}}
+    <div class="flex items-center gap-1 flex-1 overflow-x-auto hide-scrollbar">
+        @if(Auth::user()->isTeacher())
+            <a href="{{ route('feed.index') }}"
+               class="nav-link {{ request()->routeIs('feed.*') ? 'nav-link-active' : '' }}">
+                🏠 Fil d'actualité
+            </a>
+            <a href="{{ route('teacher.courses.index') }}"
+               class="nav-link {{ request()->routeIs('teacher.courses.*') ? 'nav-link-active' : '' }}">
+                📚 Mes cours
+            </a>
+            <a href="{{ route('teacher.progress.index') }}"
+               class="nav-link {{ request()->routeIs('teacher.progress.*') ? 'nav-link-active' : '' }}">
+                📊 Suivi
+            </a>
+            <a href="{{ route('teacher.attendance.index') }}"
+               class="nav-link {{ request()->routeIs('teacher.attendance.*') ? 'nav-link-active' : '' }}">
+                ✓ Présences
+            </a>
+            <a href="{{ route('teacher.statistics') }}"
+               class="nav-link {{ request()->routeIs('teacher.statistics') ? 'nav-link-active' : '' }}">
+                📈 Statistiques
+            </a>
+        @elseif(Auth::user()->isStudent())
+            <a href="{{ route('feed.index') }}"
+               class="nav-link {{ request()->routeIs('feed.*') ? 'nav-link-active' : '' }}">
+                🏠 Accueil
+            </a>
+            <a href="{{ route('student.my-courses') }}"
+               class="nav-link {{ request()->routeIs('student.my-courses') || request()->routeIs('student.courses.*') ? 'nav-link-active' : '' }}">
+                📚 Mes cours
+            </a>
+            <a href="{{ route('student.submissions.index') }}"
+               class="nav-link {{ request()->routeIs('student.submissions.*') ? 'nav-link-active' : '' }}">
+                📄 Soumissions
+            </a>
+            <a href="{{ route('student.progress') }}"
+               class="nav-link {{ request()->routeIs('student.progress') ? 'nav-link-active' : '' }}">
+                📈 Progression
+            </a>
+        @elseif(Auth::user()->isAdmin())
+            <a href="{{ route('admin.dashboard') }}"
+               class="nav-link {{ request()->routeIs('admin.dashboard') ? 'nav-link-active' : '' }}">
+                🏠 Dashboard
+            </a>
+            <a href="{{ route('admin.users.index') }}"
+               class="nav-link {{ request()->routeIs('admin.users.*') ? 'nav-link-active' : '' }}">
+                👥 Utilisateurs
+            </a>
+            <a href="{{ route('admin.classes.index') }}"
+               class="nav-link {{ request()->routeIs('admin.classes.*') ? 'nav-link-active' : '' }}">
+                🏫 Classes
+            </a>
+            <a href="{{ route('admin.statistics') }}"
+               class="nav-link {{ request()->routeIs('admin.statistics') ? 'nav-link-active' : '' }}">
+                📈 Statistiques
+            </a>
+            <a href="{{ route('admin.system-logs') }}"
+               class="nav-link {{ request()->routeIs('admin.system-logs') ? 'nav-link-active' : '' }}">
+                🖥️ Logs
+            </a>
+            <a href="{{ route('admin.settings.index') }}"
+               class="nav-link {{ request()->routeIs('admin.settings.*') ? 'nav-link-active' : '' }}">
+                ⚙️ Paramètres
+            </a>
+        @endif
+    </div>
+
+    {{-- Right side --}}
+    <div class="flex items-center gap-3 flex-shrink-0">
+
+        {{-- Notifications bell --}}
+        @php
+            $unreadNotifs = \App\Models\Notification::where('user_id', Auth::id())->where('is_read', false)->count();
+        @endphp
+        <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg hover:bg-slate-800 transition-colors">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="text-slate-200">
+                <path d="M9 1a5 5 0 0 0-5 5v3l-1.5 2.5h13L14 9V6a5 5 0 0 0-5-5z" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M7 14a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            @if($unreadNotifs > 0)
+                <span class="absolute top-1 right-1 w-4 h-4 bg-violet-600 rounded-full text-white text-[9px] flex items-center justify-center font-bold">
+                    {{ $unreadNotifs > 9 ? '9+' : $unreadNotifs }}
+                </span>
+            @endif
+        </a>
+
+        {{-- User dropdown --}}
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="flex items-center gap-2 cursor-pointer p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
+                <img src="{{ Auth::user()->profile_picture_url }}"
+                     alt="Avatar"
+                     class="w-7 h-7 rounded-full object-cover flex-shrink-0">
+                <div class="hidden md:block text-left">
+                    <div class="text-xs font-medium text-white leading-tight">{{ Auth::user()->name }}</div>
+                    <div class="text-[10px] text-slate-200 leading-tight">
+                        @if(Auth::user()->isAdmin()) Administrateur
+                        @elseif(Auth::user()->isTeacher()) Enseignant
+                        @else Étudiant @endif
+                    </div>
+                </div>
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="text-slate-300 hidden md:block">
+                    <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <ul tabindex="0" class="dropdown-content menu bg-[#1e293b] border border-slate-700 rounded-xl shadow-xl mt-2 w-48 p-1 z-50">
+                <li>
+                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg px-3 py-2 text-sm">
+                        👤 Mon profil
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('notifications.index') }}" class="flex items-center gap-2 text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg px-3 py-2 text-sm">
+                        🔔 Notifications
+                        @if($unreadNotifs > 0)
+                            <span class="ml-auto bg-violet-600 text-white text-[9px] px-1.5 py-0.5 rounded-full">{{ $unreadNotifs }}</span>
+                        @endif
+                    </a>
+                </li>
+                <div class="border-t border-slate-700 my-1"></div>
+                <li>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex items-center gap-2 text-red-400 hover:text-red-300 hover:bg-slate-700 rounded-lg px-3 py-2 text-sm w-full text-left">
+                            🚪 Déconnexion
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <nav class="sidebar-menu">
-        @if(Auth::user()->isAdmin())
-            @include('layouts.partials.admin-menu')
-        @elseif(Auth::user()->isTeacher())
-            @include('layouts.partials.teacher-menu')
-        @else
-            @include('layouts.partials.student-menu')
+{{-- MAIN CONTENT --}}
+<main class="pt-14 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+
+        {{-- Alerts --}}
+        @if(session('success'))
+            <div class="alert-success-bar mb-4">
+                ✓ {{ session('success') }}
+            </div>
         @endif
-    </nav>
-
-    <div class="logout-section">
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="menu-item" style="width:100%;background:none;border:none;cursor:pointer">
-                <span class="menu-item-icon">🚪</span>
-                <span class="menu-item-text">Déconnexion</span>
-            </button>
-        </form>
-    </div>
-
-</aside>
-
-<!-- Main -->
-<main class="main-content" id="mainContent">
-
-    @if(session('success'))
-        <div class="alert alert-success">✓ {{ session('success') }}</div>
-    @endif
-
-    @if(session('error'))
-        <div class="alert alert-error">✗ {{ session('error') }}</div>
-    @endif
-
-   <div class="content-wrapper">
-    <div class="page-header">
-        @if(Breadcrumbs::exists())
-            {{ Breadcrumbs::render() }}
-        @else
-            <h1>@yield('page-title')</h1>
+        @if(session('error'))
+            <div class="alert-error-bar mb-4">
+                ✗ {{ session('error') }}
+            </div>
         @endif
-    </div>
-    @yield('content')
-</div>
 
+        {{-- Page header / breadcrumbs --}}
+        <div class="mb-6">
+            @hasSection('breadcrumbs')
+                @yield('breadcrumbs')
+            @else
+                @if(Breadcrumbs::exists())
+                    {{ Breadcrumbs::render() }}
+                @else
+                    <h1 class="text-xl font-semibold text-white">@yield('page-title')</h1>
+                @endif
+            @endif
+        </div>
+
+        {{-- Content --}}
+        <div class="bg-[#1e293b] rounded-2xl border border-slate-700/50 p-6">
+            @yield('content')
+        </div>
+
+    </div>
 </main>
 
-<script>
-function toggleSidebar(){
-    document.getElementById('sidebar').classList.toggle('collapsed');
-    document.getElementById('topbar').classList.toggle('collapsed');
-    document.getElementById('mainContent').classList.toggle('collapsed');
+{{-- Custom Confirm Modal --}}
+<div id="confirm-modal" class="hidden fixed inset-0 bg-black/60 z-[9999] items-center justify-center">
+    <div class="bg-[#1e293b] border border-slate-700 rounded-2xl p-8 max-w-sm w-[90%] text-center shadow-2xl" style="animation: popIn 0.2s ease;">
+        <div id="confirm-icon" class="text-4xl mb-4">⚠️</div>
+        <div id="confirm-message" class="text-slate-200 text-sm mb-6 leading-relaxed"></div>
+        <div class="flex gap-3 justify-center">
+            <button id="confirm-cancel" class="px-5 py-2 border border-slate-600 rounded-lg text-slate-200 hover:bg-slate-700 text-sm transition-colors">Annuler</button>
+            <button id="confirm-ok" class="px-5 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-white text-sm font-medium transition-colors">Confirmer</button>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #cbd5e1;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.15s;
 }
+.nav-link:hover { background: #1e293b; color: #e2e8f0; }
+.nav-link-active { background: rgba(139,92,246,0.15); color: #a78bfa; }
+
+.alert-success-bar {
+    background: rgba(34,197,94,0.1);
+    border: 1px solid rgba(34,197,94,0.3);
+    color: #86efac;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+}
+.alert-error-bar {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #fca5a5;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+}
+
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+
+<script>
+document.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file'){
+        const form = e.target.closest('form');
+        if(form){ e.preventDefault(); form.submit(); }
+    }
+    if(e.key === 'Enter' && (e.ctrlKey || e.metaKey) && e.target.tagName === 'TEXTAREA'){
+        const form = e.target.closest('form');
+        if(form){ e.preventDefault(); form.submit(); }
+    }
+});
+
+function customConfirm(message, icon){
+    return new Promise((resolve) => {
+        const modal     = document.getElementById('confirm-modal');
+        const msgEl     = document.getElementById('confirm-message');
+        const iconEl    = document.getElementById('confirm-icon');
+        const okBtn     = document.getElementById('confirm-ok');
+        const cancelBtn = document.getElementById('confirm-cancel');
+        msgEl.textContent   = message;
+        iconEl.textContent  = icon || '⚠️';
+        modal.style.display = 'flex';
+        const cleanup = () => modal.style.display = 'none';
+        okBtn.onclick     = () => { cleanup(); resolve(true); };
+        cancelBtn.onclick = () => { cleanup(); resolve(false); };
+        modal.onclick     = (e) => { if(e.target === modal){ cleanup(); resolve(false); } };
+    });
+}
+
+function pickIcon(msg){
+    const m = msg.toLowerCase();
+    if(m.includes('supprimer') || m.includes('irréversible')) return '🗑️';
+    if(m.includes('quitter'))   return '🚪';
+    if(m.includes('générer') || m.includes('nouveau code'))   return '🔄';
+    if(m.includes('réinitialiser')) return '🔄';
+    if(m.includes('rôle') || m.includes('role')) return '👤';
+    return '⚠️';
+}
+
+async function handleRoleChange(select){
+    const confirmed = await customConfirm('Changer le rôle de cet utilisateur?', '👤');
+    if(confirmed){ select.closest('form').submit(); }
+    else { select.value = select.dataset.original; }
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('select[name="role"]').forEach(select => {
+        select.dataset.original = select.value;
+    });
+
+    document.querySelectorAll('[onclick]').forEach(el => {
+        const original = el.getAttribute('onclick');
+        if(!original.includes('confirm(')) return;
+        const match   = original.match(/confirm\(['"](.+?)['"]\)/);
+        const message = match ? match[1] : 'Êtes-vous sûr?';
+        const icon    = pickIcon(message);
+        el.removeAttribute('onclick');
+        el.addEventListener('click', async function(e){
+            e.preventDefault();
+            e.stopPropagation();
+            const confirmed = await customConfirm(message, icon);
+            if(confirmed){
+                const form = el.closest('form') || el.form;
+                if(form) form.submit();
+                else if(el.tagName === 'A' && el.href) window.location = el.href;
+            }
+        });
+    });
+
+    document.querySelectorAll('form[onsubmit]').forEach(form => {
+        const original = form.getAttribute('onsubmit');
+        if(!original.includes('confirm(')) return;
+        const match   = original.match(/confirm\(['"](.+?)['"]\)/);
+        const message = match ? match[1] : 'Êtes-vous sûr?';
+        const icon    = pickIcon(message);
+        form.removeAttribute('onsubmit');
+        form.addEventListener('submit', async function(e){
+            e.preventDefault();
+            const confirmed = await customConfirm(message, icon);
+            if(confirmed) form.submit();
+        });
+    });
+
+    document.querySelectorAll('input[type="email"]').forEach(input => {
+        const feedback = document.createElement('div');
+        feedback.style.cssText = 'font-size:0.8rem; margin-top:0.4rem; display:none;';
+        input.parentNode.insertBefore(feedback, input.nextSibling);
+        function validate() {
+            const val = input.value.trim();
+            if (!val) { feedback.style.display = 'none'; return; }
+            const valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val);
+            feedback.textContent = valid ? '✓ Email valide' : '✗ Adresse email invalide';
+            feedback.style.color = valid ? '#86efac' : '#fca5a5';
+            feedback.style.display = 'block';
+        }
+        input.addEventListener('input', validate);
+        input.addEventListener('blur', validate);
+    });
+});
 </script>
 
 @yield('extra-scripts')

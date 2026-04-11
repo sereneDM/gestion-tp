@@ -118,13 +118,7 @@
 
         <div class="requirements">
             <strong>🛡️ Exigences du mot de passe:</strong>
-            <ul>
-                <li>Au moins 8 caractères</li>
-                <li>Au moins 1 lettre majuscule (A-Z)</li>
-                <li>Au moins 1 lettre minuscule (a-z)</li>
-                <li>Au moins 1 chiffre (0-9)</li>
-                <li>Au moins 1 caractère spécial (@$!%*?&)</li>
-            </ul>
+            <ul>Min. 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</ul>
         </div>
 
         <form method="POST" action="{{ route('password.setup.submit') }}">
@@ -185,7 +179,7 @@
             if (/\d/.test(password)) strength++;
             
             // Check for special characters
-            if (/[@$!%*?&]/.test(password)) strength++;
+            if (/[\W_]/.test(password)) strength++;
 
             // Update bar
             strengthBar.className = 'password-strength-bar';

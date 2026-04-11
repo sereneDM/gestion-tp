@@ -66,9 +66,9 @@
 
         <form method="GET" action="{{ route('teacher.attendance.show') }}">
             <div class="form-group">
-                <label for="class_id">Sélectionner une classe *</label>
+                <label for="class_id">Sélectionner un cours *</label>
                 <select id="class_id" name="class_id" required>
-                    <option value="">-- Choisir une classe --</option>
+                    <option value="">-- Choisir un cours --</option>
                     @foreach($classes as $class)
                         <option value="{{ $class->id }}">
                             {{ $class->name }} ({{ $class->students->count() }} étudiants)

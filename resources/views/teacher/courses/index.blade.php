@@ -129,7 +129,9 @@
     @if($courses->count() > 0)
         <div class="courses-grid">
             @foreach($courses as $course)
-                <div class="course-card {{ $course->status === 'archived' ? 'archived' : '' }}">
+                <div class="course-card {{ $course->status === 'archived' ? 'archived' : '' }}"
+                     onclick="window.location.href='{{ route('teacher.courses.show', $course->id) }}'"
+                     style="cursor: pointer;">
                     <div class="course-header">
                         <div class="course-name">{{ $course->name }}</div>
                         <div class="course-code">{{ $course->join_code }}</div>
@@ -150,7 +152,8 @@
 
                     <div class="action-buttons">
                         <a href="{{ route('teacher.courses.show', $course->id) }}"
-                           class="btn btn-info btn-small">
+                           class="btn btn-info btn-small"
+                           onclick="event.stopPropagation();">
                             👁️ Voir détails
                         </a>
                     </div>

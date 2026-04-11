@@ -160,7 +160,7 @@
                 <div class="enonce-box">
                     <textarea id="description"
                               name="description"
-                              required>{{ old('description', $tp->description) }}</textarea>
+                              >{{ old('description', $tp->description) }}</textarea>
 
                     <div class="pdf-section">
                         <span class="pdf-section-label">📎 Fichier PDF joint à l'énoncé (optionnel)</span>
@@ -191,14 +191,17 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="due_date">Date d'échéance</label>
-                <input type="date"
-                       id="due_date"
-                       name="due_date"
-                       value="{{ old('due_date', $tp->due_date ? $tp->due_date->format('Y-m-d') : '') }}">
-                @error('due_date') <div class="error">{{ $message }}</div> @enderror
-            </div>
+         <div class="form-group">
+    <label for="due_date">Date d'échéance</label>
+    <input type="datetime-local"
+           id="due_date"
+           name="due_date"
+           value="{{ old('due_date', $tp->due_date ? $tp->due_date->format('Y-m-d\TH:i') : '') }}">
+    <div style="font-size:0.8rem; color:#999; margin-top:0.25rem;">
+        Par défaut: minuit (00:00) si l'heure n'est pas modifiée
+    </div>
+    @error('due_date') <div class="error">{{ $message }}</div> @enderror
+</div>
 
             <div class="form-group">
                 <label for="status">Statut *</label>
@@ -218,7 +221,7 @@
 
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">✓ Enregistrer les modifications</button>
-                <a href="{{ route('teacher.courses.show', $tp->class_id) }}" class="btn btn-secondary">✗ Annuler</a>
+                <a href="{{ route('teacher.courses.show', $tp->class_id) }}#tps" class="btn btn-secondary">✗ Annuler</a>
             </div>
         </form>
     </div>
@@ -234,4 +237,15 @@
             }
         }
     </script>
+   <script>
+    const dueDateInput = document.getElementById('due_date');
+    const currentValue = dueDateInput.value;
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    const nowStr = now.toISOString().slice(0, 16);
+    // Only enforce min if no existing past date is set
+    if (!currentValue || currentValue >= nowStr) {
+        dueDateInput.min = nowStr;
+    }
+</script>
 @endsection

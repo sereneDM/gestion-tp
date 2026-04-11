@@ -133,34 +133,43 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Adresse email mise à jour avec succès!');
     }
+public function updatePassword(Request $request)
+{
+    $user = Auth::user();
 
-    public function updatePassword(Request $request)
-    {
-        $user = Auth::user();
-
-        $request->validate([
-            'current_password' => 'required',
-            'new_password'     => [
-                'required',
-                'confirmed',
-                'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/',
-            ],
-        ], [
-            'new_password.min'   => 'Le mot de passe doit contenir au moins 8 caractères.',
-            'new_password.regex' => 'Le mot de passe doit contenir au moins: 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial (@$!%*?&).',
-        ]);
-
-        if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
-        }
-
-        $user->password = Hash::make($request->new_password);
-        $user->save();
-
-        return redirect()->route('profile.edit')
-                         ->with('success', 'Mot de passe changé avec succès!');
+    // Step 1: check current password FIRST, stop if wrong
+    if (!Hash::check($request->current_password, $user->password)) {
+        return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
     }
+
+    // Step 2: validate the new password
+    $request->validate([
+        'new_password' => [
+            'required',
+            'confirmed',
+            'min:8',
+            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+        ],
+    ], [
+        'new_password.confirmed' => 'Les nouveaux mots de passe ne correspondent pas.',
+        'new_password.min'       => 'Le mot de passe doit contenir au moins 8 caractères.',
+        'new_password.regex'     => 'Le mot de passe doit contenir au moins: 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial .',
+    ]);
+
+    // Step 3: check not same as old
+    if (Hash::check($request->new_password, $user->password)) {
+        return back()->withErrors(['new_password' => 'Le nouveau mot de passe doit être différent de l\'ancien.']);
+    }
+
+    $user->password = Hash::make($request->new_password);
+    $user->save();
+    activity()
+    ->causedBy(Auth::user())
+    ->log('Mot de passe modifié');
+
+    return redirect()->route('profile.edit')
+                     ->with('success', 'Mot de passe changé avec succès!');
+}
 
     public function deletePicture()
     {

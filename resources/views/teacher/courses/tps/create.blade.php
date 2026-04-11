@@ -152,11 +152,11 @@
                 <div class="enonce-box">
                     <textarea id="description"
                               name="description"
-                              required
+    
                               placeholder="Décrivez le TP et les objectifs d'apprentissage...">{{ old('description') }}</textarea>
 
                     <div class="pdf-section">
-                        <span class="pdf-section-label">📎 Fichier PDF joint à l'énoncé (optionnel)</span>
+                        <span class="pdf-section-label">📎 Fichier PDF joint à l'énoncé</span>
                         <div class="file-upload" onclick="document.getElementById('attachment').click()">
                             <input type="file"
                                    id="attachment"
@@ -174,14 +174,17 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="due_date">Date d'échéance</label>
-                <input type="date"
-                       id="due_date"
-                       name="due_date"
-                       value="{{ old('due_date') }}">
-                @error('due_date') <div class="error">{{ $message }}</div> @enderror
-            </div>
+           <div class="form-group">
+    <label for="due_date">Date d'échéance</label>
+    <input type="datetime-local"
+       id="due_date"
+       name="due_date"
+       value="{{ old('due_date', '') }}">
+    <div style="font-size:0.8rem; color:#999; margin-top:0.25rem;">
+        Par défaut: minuit (00:00) si l'heure n'est pas modifiée
+    </div>
+    @error('due_date') <div class="error">{{ $message }}</div> @enderror
+</div>
 
             <div class="form-group">
                 <label for="status">Statut *</label>
@@ -235,5 +238,16 @@
     });
     // Run on load in case of old() value
     document.getElementById('status').dispatchEvent(new Event('change'));
+</script>
+<script>
+    const dueDateInput = document.getElementById('due_date');
+    const currentValue = dueDateInput.value;
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    const nowStr = now.toISOString().slice(0, 16);
+    // Only enforce min if no existing past date is set
+    if (!currentValue || currentValue >= nowStr) {
+        dueDateInput.min = nowStr;
+    }
 </script>
 @endsection

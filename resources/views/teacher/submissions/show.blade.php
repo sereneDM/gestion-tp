@@ -3,6 +3,10 @@
 @section('title', 'Noter la soumission')
 @section('page-title', 'Noter la soumission')
 
+@section('breadcrumbs')
+    {{ Breadcrumbs::render('teacher.submissions.show', $submission) }}
+@endsection
+
 @section('extra-styles')
 <style>
     .btn {
@@ -61,6 +65,9 @@
         border-radius: 4px;
         margin-top: 1rem;
         white-space: pre-wrap;
+        min-height: 60px;
+        color: #555;
+        font-style: italic;
     }
     .form-container {
         background: white;
@@ -107,8 +114,6 @@
 @endsection
 
 @section('content')
-    {{ Breadcrumbs::render('teacher.submissions.show', $submission) }}
-
     <div class="info-card">
         <h2>Informations</h2>
 
@@ -150,7 +155,9 @@
         @endif
 
         <h3 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Contenu de la soumission:</h3>
-        <div class="submission-content">{{ $submission->content }}</div>
+        <div class="submission-content">
+            {{ $submission->content ?? '(Aucun commentaire)' }}
+        </div>
     </div>
 
     <div class="form-container">

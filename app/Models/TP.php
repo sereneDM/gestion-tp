@@ -20,7 +20,7 @@ class TP extends Model
 
     protected $casts = [
         'attachments' => 'array',
-        'due_date' => 'date',
+        'due_date' => 'datetime',
     ];
 
     public function teacher()
