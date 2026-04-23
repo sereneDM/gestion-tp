@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends('layouts.app')
 
 @section('title', 'Mes Soumissions')
 @section('page-title', 'Mes Soumissions')
@@ -8,22 +8,24 @@
     .submissions-table {
         width: 100%;
         border-collapse: collapse;
-        background: white;
+        background: #1e293b;
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
     }
     thead {
-        background: #007bff;
+        background: #4f46e5;
         color: white;
     }
     th, td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #334155;
+        color: #e2e8f0;
     }
     tbody tr:hover {
-        background: #f8f9fa;
+        background: #334155;
     }
     .status-badge {
         padding: 0.3rem 0.8rem;
@@ -64,7 +66,7 @@
         color: #721c24;
     }
     .btn-view {
-        background: #17a2b8;
+        background: #6366f1;
         color: white;
         padding: 0.4rem 0.8rem;
         border-radius: 4px;
@@ -72,14 +74,15 @@
         font-size: 0.85rem;
     }
     .btn-view:hover {
-        background: #138496;
+        background: #4f46e5;
     }
     .empty-state {
         text-align: center;
         padding: 3rem;
-        background: white;
+        background: #0f172a;
         border-radius: 8px;
-        color: #999;
+        color: #cbd5e1;
+        border: 1px solid #334155;
     }
 </style>
 @endsection
@@ -103,7 +106,7 @@
                         <td>
                             <strong>{{ $submission->tp->class->name }}</strong>
                             <br>
-                            <small style="color: #666;">{{ $submission->tp->teacher->name }}</small>
+                            <small style="color: #cbd5e1;">{{ $submission->tp->teacher->name }}</small>
                         </td>
                         <td><strong>{{ $submission->tp->title }}</strong></td>
                         <td>{{ $submission->submitted_at->format('d/m/Y à H:i') }}</td>
@@ -143,7 +146,7 @@
             <div style="font-size: 4rem; margin-bottom: 1rem;">📄</div>
             <h2>Aucune soumission</h2>
             <p>Vous n'avez pas encore soumis de travaux.</p>
-            <a href="{{ route('student.my-courses') }}" style="color: #007bff; margin-top: 1rem; display: inline-block;">
+            <a href="{{ route('student.my-courses') }}" style="color: #6366f1; margin-top: 1rem; display: inline-block;">
                 📚 Voir mes cours
             </a>
         </div>

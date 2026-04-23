@@ -3,16 +3,6 @@
 @section('title', 'Mon Profil')
 @section('page-title', 'Paramètres de Mon Profil')
 
-@section('sidebar-menu')
-    @if(Auth::user()->isStudent())
-        @include('layouts.partials.student-menu')
-    @elseif(Auth::user()->isTeacher())
-        @include('layouts.partials.teacher-menu')
-    @else
-        @include('layouts.partials.admin-menu')
-    @endif
-@endsection
-
 @section('extra-styles')
 <style>
 .profile-grid {
@@ -22,15 +12,14 @@
     margin-top: 2rem;
 }
 .profile-card {
-    background: #fff;
+    background: #0f172a;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,.1);
 }
 .profile-card h2 {
-    color: #007bff;
+    color: #3b82f6;
     margin-bottom: 1.5rem;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 2px solid #475569;
     padding-bottom: .5rem;
     margin-top: 0;
 }
@@ -39,7 +28,7 @@ label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
-    color: #333;
+    color: #e2e8f0;
 }
 input[type="text"],
 input[type="email"],
@@ -48,12 +37,14 @@ input[type="file"],
 input[type="number"] {
     width: 100%;
     padding: .75rem;
-    border: 1px solid #ddd;
+    border: 1px solid #475569;
     border-radius: 4px;
     font-size: 1rem;
     box-sizing: border-box;
+    background: #1e293b;
+    color: #e2e8f0;
 }
-input:focus { outline: none; border-color: #007bff; }
+input:focus { outline: none; border-color: #3b82f6; }
 .error { color:#dc3545; font-size:.875rem; margin-top: 0.25rem; }
 .btn {
     padding:.75rem 1.5rem;
@@ -65,21 +56,21 @@ input:focus { outline: none; border-color: #007bff; }
     text-decoration: none;
     display: inline-block;
 }
-.btn-primary { background:#007bff; color:#fff; }
-.btn-success { background:#28a745; color:#fff; }
+.btn-primary { background:#3b82f6; color:#fff; }
+.btn-success { background:#10b981; color:#fff; }
 .btn-danger  { background:#dc3545; color:#fff; }
-.btn-warning { background:#ffc107; color:#333; }
+.btn-warning { background:#f59e0b; color:#1f2937; }
 .info-box {
-    background:#e7f3ff;
-    border-left:4px solid #007bff;
+    background:#0f172a;
+    border-left:4px solid #3b82f6;
     padding:1rem;
     margin-bottom:1rem;
     border-radius: 4px;
     font-size: 0.9rem;
 }
 .success-box {
-    background:#d4edda;
-    border-left:4px solid #28a745;
+    background:#0f172a;
+    border-left:4px solid #10b981;
     padding:1rem;
     margin-bottom:1rem;
     border-radius: 4px;
@@ -95,11 +86,11 @@ input:focus { outline: none; border-color: #007bff; }
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #007bff;
+    border: 3px solid #3b82f6;
 }
 .password-requirements {
-    background: #f8f9fa;
-    border: 1px solid #ddd;
+    background: #334155;
+    border: 1px solid #475569;
     border-radius: 4px;
     padding: 0.75rem 1rem;
     margin-top: 0.5rem;
@@ -110,11 +101,11 @@ input:focus { outline: none; border-color: #007bff; }
     padding: 0;
     line-height: 1.8;
 }
-.req { color: #999; }
+.req { color: #64748b; }
 .req.met { color: #28a745; font-weight: bold; }
 .strength-bar-wrap {
     height: 5px;
-    background: #ddd;
+    background: #475569;
     border-radius: 3px;
     margin-top: 0.5rem;
     overflow: hidden;
@@ -197,7 +188,7 @@ input:focus { outline: none; border-color: #007bff; }
             </div>
 
             <div class="form-group">
-                <label>Nom complet <span style="color:#999;font-weight:normal;">(2–20 caractères)</span></label>
+                <label>Nom complet <span style="color:#64748b;font-weight:normal;">(2–20 caractères)</span></label>
                 <input type="text" name="name" value="{{ old('name', $user->name) }}"
                        minlength="2" maxlength="20" required>
                 @error('name') <div class="error">{{ $message }}</div> @enderror
@@ -220,7 +211,7 @@ input:focus { outline: none; border-color: #007bff; }
                 <input type="password" name="current_password" required>
                 @error('current_password') <div class="error">{{ $message }}</div> @enderror
                 <div style="text-align: right; margin-top: 0.5rem;">
-                    <a href="{{ route('password.forgot') }}" style="color: #007bff; font-size: 0.85rem; text-decoration: none;">
+                    <a href="{{ route('password.forgot') }}" style="color: #3b82f6; font-size: 0.85rem; text-decoration: none;">
                         Mot de passe oublié ?
                     </a>
                 </div>
@@ -234,7 +225,7 @@ input:focus { outline: none; border-color: #007bff; }
                     <div class="strength-bar" id="strengthBar"></div>
                 </div>
                 <div class="password-requirements">
-                    <span style="font-size:0.8rem;color:#666;">Votre mot de passe doit contenir:</span>
+                    <span style="font-size:0.8rem;color:#94a3b8;">Votre mot de passe doit contenir:</span>
                     <ul>
                         <li class="req" id="req-length">Au moins 8 caractères</li>
                         <li class="req" id="req-upper">Au moins 1 majuscule (A-Z)</li>
@@ -290,9 +281,9 @@ input:focus { outline: none; border-color: #007bff; }
         <form method="POST" action="{{ route('profile.confirm-email-change') }}" style="max-width: 500px;">
             @csrf
             <div class="form-group">
-                <label>Code de confirmation <span style="color:#999;font-weight:normal;">(6 chiffres)</span></label>
+                <label>Code de confirmation <span style="color:#64748b;font-weight:normal;">(6 chiffres)</span></label>
                 <div class="email-code-box">
-                    <div style="font-size:0.9rem;color:#666;margin-bottom:0.5rem;">
+                    <div style="font-size:0.9rem;color:#94a3b8;margin-bottom:0.5rem;">
                         Entrez le code envoyé à <strong>{{ $user->pending_email }}</strong>
                     </div>
                     <input type="text" name="email_code" maxlength="6"

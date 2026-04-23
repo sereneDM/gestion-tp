@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', $course->name)
 @section('page-title', $course->name)
@@ -9,7 +9,7 @@
         display: flex;
         gap: 0.5rem;
         margin-bottom: 2rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid #334155;
     }
     .tab {
         padding: 1rem 2rem;
@@ -17,31 +17,27 @@
         border: none;
         cursor: pointer;
         font-size: 1rem;
-        color: #666;
+        color: #94a3b8;
         border-bottom: 3px solid transparent;
         transition: all 0.3s;
     }
-    .tab:hover {
-        color: #007bff;
-    }
+    .tab:hover { color: #a5b4fc; }
     .tab.active {
-        color: #007bff;
-        border-bottom-color: #007bff;
+        color: #c7d2fe;
+        border-bottom-color: #8b5cf6;
         font-weight: bold;
     }
-    .tab-content {
-        display: none;
-    }
-    .tab-content.active {
-        display: block;
-    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     .join-code-box {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: #0f172a;
+        color: #e2e8f0;
         padding: 2rem;
-        border-radius: 8px;
+        border-radius: 1rem;
         text-align: center;
         margin-bottom: 2rem;
+        border: 1px solid #334155;
     }
     .join-code {
         font-size: 2.5rem;
@@ -49,6 +45,7 @@
         font-family: monospace;
         letter-spacing: 0.1em;
         margin: 1rem 0;
+        color: #a5b4fc;
     }
     .info-grid {
         display: grid;
@@ -57,21 +54,24 @@
         margin-bottom: 2rem;
     }
     .info-card {
-        background: #f8f9fa;
+        background: #0f172a;
         padding: 1.5rem;
-        border-radius: 8px;
+        border-radius: 1rem;
         text-align: center;
+        border: 1px solid #334155;
     }
     .info-number {
         font-size: 2rem;
         font-weight: bold;
-        color: #007bff;
+        color: #818cf8;
     }
     .info-label {
-        color: #666;
+        color: #94a3b8;
         margin-top: 0.5rem;
         font-size: 0.9rem;
     }
+
+    /* ── TP cards ── */
     .tps-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -79,149 +79,201 @@
         margin-top: 1.5rem;
     }
     .tp-card {
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 8px;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 1rem;
         padding: 1.5rem;
-        transition: transform 0.2s;
+        cursor: pointer;
+        transition: transform 0.2s, border-color 0.2s;
+        display: flex;
+        flex-direction: column;
+        min-height: 220px;
+        position: relative;
     }
     .tp-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-color: #475569;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
     }
     .tp-header {
         display: flex;
         justify-content: space-between;
-        align-items: start;
-        margin-bottom: 1rem;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+        gap: 0.75rem;
     }
     .tp-title {
         font-size: 1.2rem;
         font-weight: bold;
-        color: #333;
+        color: #c7d2fe;
+        flex: 1;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        min-width: 0;
     }
     .status-badge {
+        display: inline-block;
         padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
+        border-radius: 9999px;
+        font-size: 0.85rem;
         font-weight: bold;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
-    .status-published {
-        background: #d4edda;
-        color: #155724;
-    }
-    .status-draft {
-        background: #fff3cd;
-        color: #856404;
-    }
-    .status-closed {
-        background: #f8d7da;
-        color: #721c24;
+    .status-published { background: rgba(34,197,94,0.15);  color: #86efac; }
+    .status-draft     { background: rgba(251,191,36,0.15); color: #facc15; }
+    .status-closed    { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+
+    .tp-description {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-height: 2.88rem;
+        max-height: 2.88rem;
     }
     .tp-meta {
-        color: #666;
-        font-size: 0.9rem;
-        margin: 0.5rem 0;
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 0.4rem;
     }
-    .tp-actions {
+    .tp-spacer { flex: 1; }
+    .tp-footer {
         display: flex;
-        gap: 0.5rem;
+        justify-content: flex-end;
         margin-top: 1rem;
+        position: relative;
     }
+
+    /* ── TP dropdown menu ── */
+    .tp-menu-btn {
+        background: #1e293b;
+        border: 1px solid #334155;
+        color: #e2e8f0;
+        padding: 0.4rem 0.65rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 1.1rem;
+        line-height: 1;
+        z-index: 1;
+    }
+    .tp-menu-dropdown {
+        display: none;
+        position: absolute;
+        bottom: 2.5rem;
+        right: 0;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        min-width: 160px;
+        z-index: 200;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .tp-menu-dropdown a,
+    .tp-menu-dropdown button {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 0.75rem 1rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+    .tp-menu-dropdown a         { color: #e2e8f0; border-radius: 0.75rem 0.75rem 0 0; }
+    .tp-menu-dropdown button    { color: #fca5a5; border-radius: 0 0 0.75rem 0.75rem; }
+    .tp-menu-dropdown a:hover,
+    .tp-menu-dropdown button:hover { background: #334155; }
+
+    /* ── buttons ── */
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
         text-align: center;
+        color: #e2e8f0;
     }
-    .btn-primary {
-        background: #007bff;
-        color: white;
-    }
-    .btn-warning {
-        background: #ffc107;
-        color: #333;
-    }
-    .btn-danger {
-        background: #dc3545;
-        color: white;
-    }
-    .btn-success {
-        background: #28a745;
-        color: white;
-    }
-    .btn-small {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-    }
+    .btn-secondary { background: #475569; color: white; }
+    .btn-primary   { background: #4f46e5; color: white; }
+    .btn-warning   { background: #f59e0b; color: #1f2937; }
+    .btn-danger    { background: #dc3545; color: white; }
+    .btn-success   { background: #10b981; color: white; }
+    .btn-small     { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+
+    /* ── students table ── */
     .students-table {
         width: 100%;
         border-collapse: collapse;
-        background: white;
+        background: #0f172a;
     }
     .students-table thead {
-        background: #007bff;
-        color: white;
+        background: #334155;
+        color: #e2e8f0;
     }
     .students-table th,
     .students-table td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #475569;
+        color: #cbd5e1;
     }
-    .students-table tbody tr:hover {
-        background: #f8f9fa;
-    }
+    .students-table tbody tr:hover { background: #1e293b; }
+
     .empty-state {
         text-align: center;
         padding: 3rem;
-        color: #999;
+        color: #94a3b8;
     }
-    .course-actions {
-        display: flex;
-        gap: 0.75rem;
-        margin-bottom: 2rem;
-        justify-content: flex-end;
-    }
-    .danger-zone {
-        background: #fff5f5;
-        border: 1px solid #f8d7da;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin-top: 2rem;
-    }
-    .danger-zone h3 {
-        color: #dc3545;
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-    }
-    .danger-zone p {
-        color: #666;
-        margin-bottom: 1rem;
-        font-size: 0.9rem;
+
+    /* ── course-level menu ── */
+    #course-menu a:hover,
+    #course-menu button:hover {
+        background: #334155;
     }
 </style>
 @endsection
 
 @section('content')
 
-    
-
     <!-- Course Actions -->
-    <div class="course-actions">
-        <a href="{{ route('teacher.courses.edit', $course->id) }}" class="btn btn-warning">
-            ✏️ Modifier le cours
-        </a>
-        <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}" style="display: inline;">
-            @csrf
-            <button type="submit" class="btn btn-primary" onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')">
-                🔄 Nouveau code
-            </button>
-        </form>
+    <div style="display:flex; justify-content:flex-end; margin-bottom:2rem; position:relative;">
+        <button onclick="toggleMenu('course-menu')" style="background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:0.5rem 0.75rem; border-radius:0.5rem; cursor:pointer; font-size:1.2rem;">⋮</button>
+        <div id="course-menu" style="display:none; position:absolute; top:2.5rem; right:0; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; min-width:180px; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+            <a href="{{ route('teacher.courses.edit', $course->id) }}"
+               style="display:block; padding:0.75rem 1rem; color:#e2e8f0; text-decoration:none; border-radius:0.75rem 0.75rem 0 0;">
+                ✏️ Modifier le cours
+            </a>
+            <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
+                @csrf
+                <button type="submit"
+                        onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')"
+                        style="width:100%; text-align:left; padding:0.75rem 1rem; background:none; border:none; color:#e2e8f0; cursor:pointer;">
+                    🔄 Nouveau code
+                </button>
+            </form>
+            <form method="POST" action="{{ route('teacher.courses.destroy', $course->id) }}">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                        onclick="return confirm('Supprimer ce cours? Action irréversible.')"
+                        style="width:100%; text-align:left; padding:0.75rem 1rem; background:none; border:none; color:#fca5a5; cursor:pointer; border-radius:0 0 0.75rem 0.75rem;">
+                    🗑️ Supprimer le cours
+                </button>
+            </form>
+        </div>
     </div>
 
     <!-- Tabs -->
@@ -236,7 +288,7 @@
         <div class="join-code-box">
             <div style="font-size: 0.9rem; opacity: 0.9;">Code d'accès au cours</div>
             <div class="join-code" id="joinCode">{{ $course->join_code }}</div>
-            <button class="btn" style="background: white; color: #667eea; margin-top: 1rem;" onclick="copyJoinCode()">
+            <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="copyJoinCode()">
                 📋 Copier le code
             </button>
         </div>
@@ -257,32 +309,19 @@
         </div>
 
         @if($course->description)
-            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
-                <h3 style="margin-top: 0;">Description du cours</h3>
-                <p style="margin: 0;">{{ $course->description }}</p>
+            <div style="background:#0f172a; border:1px solid #334155; border-radius:1rem; padding:1.5rem; margin-top:1.5rem;">
+                <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.5rem;">Description</div>
+                <p style="margin:0; color:#cbd5e1; font-size:0.95rem; line-height:1.6;">{{ $course->description }}</p>
             </div>
         @endif
-
-        <!-- Danger Zone -->
-        <div class="danger-zone">
-            <h3>🗑️ Zone de danger</h3>
-            <p>La suppression du cours est irréversible. Tous les TPs et soumissions associés seront également supprimés.</p>
-            <form method="POST" action="{{ route('teacher.courses.destroy', $course->id) }}">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn-danger"
-                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce cours? Cette action est irréversible.')">
-                    🗑️ Supprimer le cours
-                </button>
-            </form>
-        </div>
     </div>
 
     <!-- Tab: TPs -->
     <div class="tab-content" id="tab-tps">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <h2 style="margin: 0;">Travaux Pratiques</h2>
-            <a href="{{ route('teacher.courses.tps.create', $course->id) }}" class="btn btn-success">
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">📝 Travaux Pratiques ({{ $course->tps->count() }})</h3>
+            <a href="{{ route('teacher.courses.tps.create', $course->id) }}" class="btn btn-success" style="display:inline-block; width:auto;">
                 ➕ Créer un TP
             </a>
         </div>
@@ -291,8 +330,8 @@
             <div class="tps-grid">
                 @foreach($course->tps->sortBy('created_at') as $tp)
                     <div class="tp-card"
-                         onclick="window.location.href='{{ route('teacher.tps.show', $tp->id) }}'"
-                         style="cursor: pointer;">
+                         onclick="window.location.href='{{ route('teacher.tps.show', $tp->id) }}'">
+
                         <div class="tp-header">
                             <div class="tp-title">{{ $tp->title }}</div>
                             <span class="status-badge status-{{ $tp->status }}">
@@ -300,34 +339,39 @@
                             </span>
                         </div>
 
-                        <div class="tp-meta">
-                            @if($tp->due_date)
-                                📅 Échéance: {{ $tp->due_date->format('d/m/Y') }}
+                        <div class="tp-description">
+                            @if(filled($tp->description))
+                                {{ $tp->description }}
                             @else
-                                📅 Pas d'échéance
+                                <span style="font-style:italic;">Aucune description</span>
                             @endif
                         </div>
 
-                        <div class="tp-meta">
-                            📊 {{ $tp->submissions->count() }} soumission(s)
+                        <div class="tp-meta">📅 {{ $tp->due_date ? 'Échéance: ' . $tp->due_date->format('d/m/Y à H:i') : 'Pas d\'échéance' }}</div>
+                        <div class="tp-meta">📊 {{ $tp->submissions->count() }} soumission(s)</div>
+
+                        <div class="tp-spacer"></div>
+
+                        <div class="tp-footer">
+                            <button class="tp-menu-btn"
+                                    onclick="event.stopPropagation(); toggleTpMenu('tp-menu-{{ $tp->id }}')">⋮</button>
+                            <div id="tp-menu-{{ $tp->id }}" class="tp-menu-dropdown">
+                                <a href="{{ route('teacher.tps.edit', $tp->id) }}"
+                                   onclick="event.stopPropagation();">
+                                    ✏️ Modifier
+                                </a>
+                                <form method="POST" action="{{ route('teacher.tps.destroy', $tp->id) }}"
+                                      onclick="event.stopPropagation();">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            onclick="event.stopPropagation(); return confirm('Supprimer ce TP?')">
+                                        🗑️ Supprimer
+                                    </button>
+                                </form>
+                            </div>
                         </div>
 
-                        <div class="tp-actions">
-                            <a href="{{ route('teacher.tps.show', $tp->id) }}" class="btn btn-primary btn-small" onclick="event.stopPropagation();">
-                                👁️ Voir
-                            </a>
-                            <a href="{{ route('teacher.tps.edit', $tp->id) }}" class="btn btn-warning btn-small" onclick="event.stopPropagation();">
-                                ✏️ Modifier
-                            </a>
-                            <form method="POST" action="{{ route('teacher.tps.destroy', $tp->id) }}" style="display: inline;" onclick="event.stopPropagation();">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-small"
-                                        onclick="return confirm('Supprimer ce TP?')">
-                                    🗑️ Supprimer
-                                </button>
-                            </form>
-                        </div>
                     </div>
                 @endforeach
             </div>
@@ -336,9 +380,6 @@
                 <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
                 <h3>Aucun TP créé</h3>
                 <p>Créez votre premier TP pour ce cours</p>
-                <a href="{{ route('teacher.courses.tps.create', $course->id) }}" class="btn btn-success" style="margin-top: 1rem;">
-                    ➕ Créer un TP
-                </a>
             </div>
         @endif
     </div>
@@ -385,39 +426,60 @@
             </div>
         @endif
     </div>
+
 @endsection
+
 @section('extra-scripts')
 <script>
+    /* ── Course-level menu ── */
+    function toggleMenu(id) {
+        event.stopPropagation();
+        const menu = document.getElementById(id);
+        const isOpen = menu.style.display === 'block';
+        closeAllMenus();
+        menu.style.display = isOpen ? 'none' : 'block';
+    }
+
+    /* ── TP-level menus (only closes other tp menus) ── */
+    function toggleTpMenu(id) {
+        const menu = document.getElementById(id);
+        const isOpen = menu.style.display === 'block';
+        // close all tp menus
+        document.querySelectorAll('[id^="tp-menu-"]').forEach(m => m.style.display = 'none');
+        menu.style.display = isOpen ? 'none' : 'block';
+    }
+
+    function closeAllMenus() {
+        document.querySelectorAll('[id$="-menu"], [id^="tp-menu-"]').forEach(m => m.style.display = 'none');
+    }
+
+    /* Close everything when clicking outside */
+    document.addEventListener('click', closeAllMenus);
+
     function switchTab(tabName, event) {
         document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
         event.target.classList.add('active');
         document.getElementById('tab-' + tabName).classList.add('active');
-
-        // update URL fragment without reloading
         history.replaceState(null, null, '#' + tabName);
     }
 
     function copyJoinCode() {
-        const code = document.getElementById('joinCode').textContent;
+        const code = document.getElementById('joinCode').textContent.trim();
         navigator.clipboard.writeText(code).then(() => {
             alert('Code copié: ' + code);
         });
     }
 
-    // on page load, activate tab from URL fragment
     document.addEventListener('DOMContentLoaded', function () {
         const fragment = window.location.hash.replace('#', '');
         const validTabs = ['info', 'tps', 'students'];
         if (fragment && validTabs.includes(fragment)) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-
             document.getElementById('tab-' + fragment).classList.add('active');
-            // activate the matching tab button
             document.querySelectorAll('.tab').forEach(tab => {
-                if (tab.getAttribute('onclick').includes("'" + fragment + "'")) {
+                if (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes("'" + fragment + "'")) {
                     tab.classList.add('active');
                 }
             });

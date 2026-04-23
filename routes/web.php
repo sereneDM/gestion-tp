@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\NotificationController;
 
+
 Route::put('/tps/{id}/submit', [StudentController::class, 'updateSubmission'])->name('student.tps.update-submission');
 
 Route::delete('/profile/picture', [ProfileController::class, 'deletePicture'])

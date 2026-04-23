@@ -6,6 +6,7 @@ use App\Models\ClassModel;
 use App\Models\TP;
 use App\Models\Submission;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 // ─── ADMIN ───────────────────────────────────────────────
 Breadcrumbs::for('admin.users.index', fn (Trail $t) =>
@@ -50,7 +51,7 @@ Breadcrumbs::for('teacher.courses.show', function (Trail $t, $course) {
 Breadcrumbs::for('teacher.tps.show', function (Trail $t, $tp) {
     $tp = is_object($tp) ? $tp : TP::find($tp);
     $t->parent('teacher.courses.show', $tp->class_id)
-      ->push($tp->title, route('teacher.tps.show', $tp->id));
+      ->push(Str::limit($tp->title, 40), route('teacher.tps.show', $tp->id));
 });
 Breadcrumbs::for('teacher.submissions.show', function (Trail $t, $submission) {
     $submission = is_object($submission) ? $submission : Submission::with(['tp', 'student'])->find($submission);
@@ -87,7 +88,7 @@ Breadcrumbs::for('student.courses.show', function (Trail $t, $course) {
 Breadcrumbs::for('student.tps.show', function (Trail $t, $tp) {
     $tp = is_object($tp) ? $tp : TP::find($tp);
     $t->parent('student.courses.show', $tp->class_id)
-      ->push($tp->title);
+      ->push(Str::limit($tp->title, 40));
 });
 Breadcrumbs::for('student.submissions.index', fn (Trail $t) =>
     $t->push('Mes soumissions')

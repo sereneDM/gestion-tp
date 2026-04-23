@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Paramètres Système')
 @section('page-title', 'Paramètres Système')

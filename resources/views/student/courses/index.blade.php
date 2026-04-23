@@ -1,29 +1,26 @@
-@extends('layouts.student')
+@extends('layouts.app')
 
 @section('title', 'Mes Cours')
 @section('page-title', 'Mes Cours')
 
 @section('extra-styles')
 <style>
-    .header-actions {
-        text-align: right;
-        margin-bottom: 1.5rem;
-    }
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        color: #e2e8f0;
     }
-    .btn-primary {
-        background: #007bff;
-        color: white;
-    }
-    .btn-primary:hover {
-        background: #0056b3;
+    .btn-primary { background-color: #4f46e5; color: white; }
+    .btn-primary:hover { background: #4338ca; }
+    .header-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 1.5rem;
     }
     .courses-grid {
         display: grid;
@@ -31,88 +28,51 @@
         gap: 1.5rem;
     }
     .course-card {
-        background: white;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
+        background: #0f172a;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
+        transition: transform 0.2s, border-color 0.2s;
+        border: 1px solid #334155;
     }
     .course-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateY(-4px);
+        border-color: #475569;
     }
     .course-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 1.5rem;
-    }
-    .course-name {
-        font-size: 1.3rem;
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-    }
-    .course-teacher {
-        font-size: 0.9rem;
-        opacity: 0.9;
-    }
-    .course-body {
-        padding: 1.5rem;
-    }
-    .course-stats {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
         margin-bottom: 1rem;
     }
-    .stat-item {
-        text-align: center;
-        padding: 0.75rem;
-        background: #f8f9fa;
-        border-radius: 4px;
-    }
-    .stat-number {
-        font-size: 1.5rem;
+    .course-name {
+        font-size: 1.2rem;
         font-weight: bold;
-        color: #007bff;
+        color: #f8fafc;
     }
-    .stat-label {
-        font-size: 0.85rem;
-        color: #666;
+    .course-teacher {
+        font-size: 0.8rem;
+        color: #94a3b8;
         margin-top: 0.25rem;
     }
-    .course-actions {
+    .course-description {
+        font-size: 0.9rem;
+        min-height: 2.5rem;
+        margin-bottom: 1rem;
+    }
+    .course-meta {
         display: flex;
-        gap: 0.5rem;
-    }
-    .btn-view {
-        flex: 1;
-        background: #007bff;
-        color: white;
-        text-align: center;
-        padding: 0.75rem;
-        border-radius: 4px;
-        text-decoration: none;
-        font-weight: bold;
-    }
-    .btn-view:hover {
-        background: #0056b3;
-    }
-    .btn-leave {
-        background: #dc3545;
-        color: white;
-        border: none;
-        padding: 0.75rem 1rem;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-    .btn-leave:hover {
-        background: #c82333;
+        gap: 1rem;
+        font-size: 0.85rem;
+        color: #94a3b8;
     }
     .empty-state {
         text-align: center;
-        padding: 4rem;
-        background: white;
-        border-radius: 8px;
+        padding: 3rem;
+        background: #0f172a;
+        border-radius: 1rem;
+        border: 1px solid #334155;
+        color: #cbd5e1;
     }
 </style>
 @endsection
@@ -131,38 +91,22 @@
                      onclick="window.location.href='{{ route('student.courses.show', $course->id) }}'"
                      style="cursor: pointer;">
                     <div class="course-header">
-                        <div class="course-name">{{ $course->name }}</div>
-                        <div class="course-teacher">👨‍🏫 {{ $course->teacher->name }}</div>
+                        <div>
+                            <div class="course-name">{{ $course->name }}</div>
+                            <div class="course-teacher">👨‍🏫 {{ $course->teacher->name }}</div>
+                        </div>
                     </div>
-                    
-                    <div class="course-body">
+
+                    <div class="course-description">
                         @if($course->description)
-                            <p style="color: #666; margin-bottom: 1rem;">{{ Str::limit($course->description, 100) }}</p>
+                            <span style="color:#cbd5e1;">{{ Str::limit($course->description, 100) }}</span>
+                        @else
+                            <span style="color:#475569; font-style:italic;">Aucune description</span>
                         @endif
-                        
-                        <div class="course-stats">
-                            <div class="stat-item">
-                                <div class="stat-number">{{ $course->tps_count }}</div>
-                                <div class="stat-label">Travaux pratiques</div>
-                            </div>
-                            <div class="stat-item">
-                                <div class="stat-number">{{ $course->students->count() }}</div>
-                                <div class="stat-label">Étudiants</div>
-                            </div>
-                        </div>
-                        
-                        <div class="course-actions">
-                            <a href="{{ route('student.courses.show', $course->id) }}" class="btn-view" onclick="event.stopPropagation();">
-                                📚 Voir le cours
-                            </a>
-                            <form method="POST" action="{{ route('student.leave-course', $course->id) }}" style="display: inline;" onclick="event.stopPropagation();">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-leave" onclick="return confirm('Quitter ce cours?')">
-                                    ✗
-                                </button>
-                            </form>
-                        </div>
+                    </div>
+
+                    <div class="course-meta">
+                        <span>📝 {{ $course->tps_count }} TP(s)</span>
                     </div>
                 </div>
             @endforeach
@@ -171,7 +115,7 @@
         <div class="empty-state">
             <div style="font-size: 5rem; margin-bottom: 1rem;">📚</div>
             <h2>Aucun cours</h2>
-            <p style="margin-top: 1rem; color: #666;">Vous n'êtes inscrit à aucun cours pour le moment.</p>
+            <p style="margin-top: 1rem;">Vous n'êtes inscrit à aucun cours pour le moment.</p>
             <a href="{{ route('student.join-course.form') }}" class="btn btn-primary" style="margin-top: 1.5rem;">
                 ➕ Rejoindre un cours
             </a>

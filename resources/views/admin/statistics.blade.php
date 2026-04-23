@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Statistiques Globales')
 @section('page-title', 'Statistiques Globales du Système')

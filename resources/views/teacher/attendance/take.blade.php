@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', 'Prendre les Présences')
 @section('page-title', 'Présence - ' . $class->name)
@@ -8,41 +8,43 @@
     .btn {
         padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 1rem;
         display: inline-block;
+        color: #e2e8f0;
     }
     .btn-primary {
-        background-color: #28a745;
+        background-color: #4f46e5;
         color: white;
         width: 100%;
     }
+    .btn:hover { opacity: 0.95; }
     .date-info {
-        color: #666;
+        color: #cbd5e1;
         margin-bottom: 1.5rem;
     }
     .form-container {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        border: 1px solid #334155;
     }
     .student-row {
         display: grid;
         grid-template-columns: 2fr 1fr 2fr;
         gap: 1rem;
         padding: 1rem;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #334155;
         align-items: center;
     }
     .student-row:hover {
-        background-color: #f8f9fa;
+        background-color: #1e293b;
     }
     .student-name {
         font-weight: bold;
-        color: #333;
+        color: #e2e8f0;
     }
     .status-buttons {
         display: flex;
@@ -50,42 +52,46 @@
     }
     .status-btn {
         padding: 0.5rem 1rem;
-        border: 2px solid #ddd;
-        border-radius: 4px;
-        background: white;
+        border: 2px solid #475569;
+        border-radius: 0.75rem;
+        background: #1e293b;
         cursor: pointer;
         font-size: 0.9rem;
         transition: all 0.2s;
+        color: #cbd5e1;
     }
     .status-btn.active {
         font-weight: bold;
     }
     .status-btn[data-status="present"].active {
-        background-color: #28a745;
-        color: white;
-        border-color: #28a745;
+        background-color: rgba(34,197,94,0.15);
+        color: #86efac;
+        border-color: #22c55e;
     }
     .status-btn[data-status="absent"].active {
-        background-color: #dc3545;
-        color: white;
+        background-color: rgba(239,68,68,0.15);
+        color: #fca5a5;
         border-color: #dc3545;
     }
     .status-btn[data-status="late"].active {
-        background-color: #ffc107;
-        color: #333;
-        border-color: #ffc107;
+        background-color: rgba(251,191,36,0.15);
+        color: #facc15;
+        border-color: #f59e0b;
     }
     .status-btn[data-status="excused"].active {
-        background-color: #17a2b8;
-        color: white;
+        background-color: rgba(23,162,184,0.15);
+        color: #5eead4;
         border-color: #17a2b8;
     }
     input[type="text"] {
         width: 100%;
         padding: 0.5rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
+        background: #1e293b;
+        color: #e2e8f0;
     }
+    input[type="text"]::placeholder { color: #64748b; }
     input[type="radio"] {
         display: none;
     }

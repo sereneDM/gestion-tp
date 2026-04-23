@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', 'Gestion de la Présence')
 @section('page-title', 'Gestion de la Présence')
@@ -8,18 +8,19 @@
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        color: #e2e8f0;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
     }
     .btn-primary {
-        background-color: #007bff;
+        background-color: #4f46e5;
         color: white;
         font-size: 1rem;
         width: 100%;
@@ -29,11 +30,12 @@
         text-align: right;
     }
     .form-container {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
         max-width: 800px;
+        border: 1px solid #334155;
     }
     .form-group {
         margin-bottom: 1.5rem;
@@ -41,19 +43,21 @@
     label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: #cbd5e1;
         font-weight: bold;
     }
     select, input {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
         font-size: 1rem;
+        background: #1e293b;
+        color: #e2e8f0;
     }
     select:focus, input:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: #6366f1;
     }
 </style>
 @endsection

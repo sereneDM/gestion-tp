@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', 'Mes Cours')
 @section('page-title', 'Mes Cours')
@@ -8,27 +8,31 @@
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        color: #e2e8f0;
     }
     .btn-primary {
-        background-color: #007bff;
+        background-color: #4f46e5;
         color: white;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
     }
     .btn-info {
-        background-color: #17a2b8;
+        background-color: #2563eb;
         color: white;
     }
     .btn-small {
         padding: 0.4rem 0.8rem;
         font-size: 0.85rem;
+    }
+    .btn:hover {
+        opacity: 0.95;
     }
     .header-actions {
         display: flex;
@@ -42,20 +46,21 @@
         gap: 1.5rem;
     }
     .course-card {
-        background: white;
-        border-radius: 8px;
+        background: #0f172a;
+        border-radius: 1rem;
         padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
-        border-left: 4px solid #007bff;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
+        transition: transform 0.2s, border-color 0.2s;
+        border-left: 4px solid #6366f1;
+        border: 1px solid #334155;
     }
     .course-card.archived {
-        opacity: 0.6;
-        border-left-color: #6c757d;
+        opacity: 0.8;
+        border-left-color: #475569;
     }
     .course-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateY(-4px);
+        border-color: #475569;
     }
     .course-header {
         display: flex;
@@ -66,53 +71,56 @@
     .course-name {
         font-size: 1.2rem;
         font-weight: bold;
-        color: #333;
+        color: #f8fafc;
     }
     .course-code {
-        background: #007bff;
+        background: #4338ca;
         color: white;
         padding: 0.3rem 0.8rem;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         font-family: monospace;
         font-size: 0.9rem;
         font-weight: bold;
     }
     .course-description {
-        color: #666;
-        margin-bottom: 1rem;
+        color: #cbd5e1;
         font-size: 0.9rem;
+        min-height: 2.5rem; /* keeps spacing even when content is short/absent */
+        margin-bottom: 1rem;
+    margin-bottom: 1rem;
     }
     .course-meta {
         display: flex;
         gap: 1rem;
         margin-bottom: 1rem;
         font-size: 0.85rem;
-        color: #999;
+        color: #94a3b8;
     }
     .status-badge {
         display: inline-block;
         padding: 0.3rem 0.8rem;
-        border-radius: 20px;
+        border-radius: 9999px;
         font-size: 0.8rem;
         font-weight: bold;
     }
     .status-active {
-        background-color: #d4edda;
-        color: #155724;
+        background-color: rgba(34,197,94,0.15);
+        color: #86efac;
     }
     .status-archived {
-        background-color: #f8d7da;
-        color: #721c24;
-    }
-    .action-buttons {
-        display: flex;
-        gap: 0.5rem;
+        background-color: rgba(248,113,113,0.15);
+        color: #fca5a5;
     }
     .empty-state {
         text-align: center;
         padding: 3rem;
-        background: white;
-        border-radius: 8px;
+        background: #0f172a;
+        border-radius: 1rem;
+        border: 1px solid #334155;
+        color: #cbd5e1;
+    }
+    .empty-state a.btn-primary {
+        background-color: #4f46e5;
     }
 </style>
 @endsection
@@ -137,9 +145,13 @@
                         <div class="course-code">{{ $course->join_code }}</div>
                     </div>
 
-                    @if($course->description)
-                        <div class="course-description">{{ $course->description }}</div>
-                    @endif
+                    <div class="course-description">
+                        @if($course->description)
+                            {{ $course->description }}
+                        @else
+                            <span style="color: #475569; font-style: italic;">Aucune description</span>
+                        @endif
+                    </div>
 
                     <div class="course-meta">
                         <span>👥 {{ $course->students_count }} étudiant(s)</span>
@@ -148,14 +160,6 @@
                                 {{ $course->status === 'active' ? 'Actif' : 'Archivé' }}
                             </span>
                         </span>
-                    </div>
-
-                    <div class="action-buttons">
-                        <a href="{{ route('teacher.courses.show', $course->id) }}"
-                           class="btn btn-info btn-small"
-                           onclick="event.stopPropagation();">
-                            👁️ Voir détails
-                        </a>
                     </div>
                 </div>
             @endforeach

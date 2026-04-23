@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends('layouts.app')
 
 @section('title', 'Ma Progression')
 @section('page-title', 'Ma Progression Académique')
@@ -15,7 +15,7 @@
         display: inline-block;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
     }
     .header-actions {
@@ -29,46 +29,50 @@
         margin-bottom: 2rem;
     }
     .stat-card {
-        background: white;
+        background: #0f172a;
         padding: 1.5rem;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         text-align: center;
+        border: 1px solid #334155;
     }
     .stat-number {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #007bff;
+        color: #6366f1;
     }
     .stat-label {
-        color: #666;
+        color: #cbd5e1;
         margin-top: 0.5rem;
     }
     .section {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
         border-radius: 8px;
         margin-bottom: 2rem;
         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
     }
     .section h2 {
-        color: #007bff;
+        color: #6366f1;
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid #334155;
     }
     .chart-container {
-        background: #f8f9fa;
+        background: #1e293b;
         padding: 1.5rem;
         border-radius: 8px;
         margin-top: 1rem;
+        border: 1px solid #334155;
     }
     .grade-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 1rem;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #334155;
+        color: #e2e8f0;
     }
     .grade-item:last-child {
         border-bottom: none;
@@ -76,7 +80,7 @@
     .grade-value {
         font-size: 1.5rem;
         font-weight: bold;
-        color: #007bff;
+        color: #6366f1;
     }
     table {
         width: 100%;
@@ -85,15 +89,16 @@
     th, td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #334155;
+        color: #e2e8f0;
     }
     th {
-        background-color: #f8f9fa;
+        background-color: #1e293b;
         font-weight: bold;
-        color: #555;
+        color: #cbd5e1;
     }
     tr:hover {
-        background-color: #f8f9fa;
+        background-color: #334155;
     }
     .status-badge {
         padding: 0.3rem 0.8rem;
@@ -103,20 +108,20 @@
         display: inline-block;
     }
     .status-present {
-        background-color: #28a745;
-        color: white;
+        background-color: #86efac;
+        color: #065f46;
     }
     .status-absent {
-        background-color: #dc3545;
-        color: white;
+        background-color: #fca5a5;
+        color: #7f1d1d;
     }
     .status-late {
-        background-color: #ffc107;
-        color: #333;
+        background-color: #fbbf24;
+        color: #78350f;
     }
     .status-excused {
-        background-color: #17a2b8;
-        color: white;
+        background-color: #a5b4fc;
+        color: #312e81;
     }
 </style>
 @endsection
@@ -160,7 +165,7 @@
                     <div class="grade-item">
                         <div>
                             <strong>{{ $item['tp']->title }}</strong>
-                            <div style="color: #666; font-size: 0.9rem; margin-top: 0.25rem;">
+                            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.25rem;">
                                 Enseignant: {{ $item['tp']->teacher->name }}
                             </div>
                             <div style="color: #999; font-size: 0.85rem; margin-top: 0.25rem;">

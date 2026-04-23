@@ -1,32 +1,33 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', 'Statistiques Pédagogiques')
 @section('page-title', 'Statistiques Pédagogiques')
 
 @section('extra-styles')
 <style>
-    .btn { padding: 0.6rem 1.2rem; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9rem; display: inline-block; }
-    .btn-primary { background-color: #007bff; color: white; }
+    .btn { padding: 0.6rem 1.2rem; border: none; border-radius: 0.75rem; cursor: pointer; text-decoration: none; font-size: 0.9rem; display: inline-block; color: #e2e8f0; }
+    .btn-primary { background-color: #4f46e5; color: white; }
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-    .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }
-    .stat-number { font-size: 2.5rem; font-weight: bold; color: #007bff; }
-    .stat-label { color: #666; margin-top: 0.5rem; font-size: 0.9rem; }
-    .section { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .section h2 { color: #007bff; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0; }
+    .stat-card { background: #0f172a; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 12px 24px rgba(15,23,42,0.25); text-align: center; border: 1px solid #334155; }
+    .stat-number { font-size: 2.5rem; font-weight: bold; color: #818cf8; }
+    .stat-label { color: #94a3b8; margin-top: 0.5rem; font-size: 0.9rem; }
+    .section { background: #0f172a; padding: 2rem; border-radius: 1rem; margin-bottom: 2rem; box-shadow: 0 12px 24px rgba(15,23,42,0.25); border: 1px solid #334155; }
+    .section h2 { color: #c7d2fe; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #334155; }
     .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-    .chart-container { background: #f8f9fa; padding: 1.5rem; border-radius: 8px; }
+    .chart-container { background: #0f172a; padding: 1.5rem; border-radius: 1rem; border: 1px solid #334155; }
     .chart-bar { display: flex; align-items: center; margin-bottom: 1rem; }
-    .chart-label { min-width: 100px; font-weight: bold; color: #555; }
-    .chart-bar-fill { flex: 1; height: 30px; background: #007bff; border-radius: 4px; display: flex; align-items: center; padding: 0 1rem; color: white; font-weight: bold; min-width: 2rem; }
+    .chart-label { min-width: 100px; font-weight: bold; color: #cbd5e1; }
+    .chart-bar-fill { flex: 1; height: 30px; background: #4f46e5; border-radius: 9999px; display: flex; align-items: center; padding: 0 1rem; color: white; font-weight: bold; min-width: 2rem; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #ddd; }
-    th { background-color: #f8f9fa; font-weight: bold; color: #555; }
-    tr:hover { background-color: #f8f9fa; }
-    .status-badge { padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold; display: inline-block; }
-    .status-graded { background-color: #28a745; color: white; }
-    .status-submitted { background-color: #ffc107; color: #333; }
+    th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #334155; color: #cbd5e1; }
+    th { background-color: #334155; font-weight: bold; color: #e2e8f0; }
+    tr:hover { background-color: #1e293b; }
+    .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.85rem; font-weight: bold; display: inline-block; }
+    .status-graded { background-color: rgba(34,197,94,0.15); color: #86efac; }
+    .status-submitted { background-color: rgba(251,191,36,0.15); color: #facc15; }
     .course-filter { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
-    .course-filter select { padding: 0.5rem 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 0.9rem; color: #333; }
+    .course-filter select { padding: 0.5rem 0.75rem; border: 1px solid #334155; border-radius: 0.75rem; font-size: 0.9rem; color: #e2e8f0; background: #0f172a; }
+    .course-filter label { color: #cbd5e1; }
 </style>
 @endsection
 
@@ -99,7 +100,10 @@
                     @endforeach
                 </select>
                 @if($selectedClassId)
-                    <a href="{{ route('teacher.statistics') }}" class="btn btn-primary" style="font-size:0.8rem; padding: 0.4rem 0.8rem;">
+                    <a href="{{ route('teacher.statistics') }}" 
+                       class="btn btn-primary" 
+                       style="font-size:0.8rem; padding: 0.4rem 0.8rem;"
+                       onclick="sessionStorage.setItem('stats_scroll_pos', window.scrollY)">
                         ✕ Réinitialiser
                     </a>
                 @endif
@@ -216,5 +220,24 @@
             </div>
         </div>
     </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Restore scroll position after filter change
+    const scrollKey = 'stats_scroll_pos';
+    const savedPos = sessionStorage.getItem(scrollKey);
+    if (savedPos) {
+        window.scrollTo(0, parseInt(savedPos));
+        sessionStorage.removeItem(scrollKey);
+    }
 
+    // Save scroll position before form submits
+    const filterSelect = document.querySelector('select[name="class_id"]');
+    if (filterSelect) {
+        filterSelect.addEventListener('change', function () {
+            sessionStorage.setItem(scrollKey, window.scrollY);
+            this.closest('form').submit();
+        });
+    }
+});
+</script>
 @endsection

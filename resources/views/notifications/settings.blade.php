@@ -3,14 +3,6 @@
 @section('title', 'Paramètres de Notification')
 @section('page-title', 'Paramètres de Notification')
 
-@section('sidebar-menu')
-    @if(Auth::user()->isStudent())
-        @include('layouts.partials.student-menu')
-    @elseif(Auth::user()->isTeacher())
-        @include('layouts.partials.teacher-menu')
-    @else
-        @include('layouts.partials.admin-menu')
-    @endif
 @endsection
 
 @section('extra-styles')

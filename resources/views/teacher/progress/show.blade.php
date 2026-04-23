@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', 'Progression de ' . $student->name)
 @section('page-title', 'Progression de ' . $student->name)
@@ -8,15 +8,19 @@
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        color: #e2e8f0;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
+    }
+    .btn:hover {
+        opacity: 0.95;
     }
     .header-actions {
         margin-bottom: 1.5rem;
@@ -29,34 +33,35 @@
         margin-bottom: 2rem;
     }
     .stat-card {
-        background: white;
+        background: #0f172a;
         padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
         text-align: center;
+        border: 1px solid #334155;
     }
     .stat-number {
         font-size: 2rem;
         font-weight: bold;
-        color: #007bff;
+        color: #818cf8;
     }
     .stat-label {
-        color: #666;
+        color: #94a3b8;
         margin-top: 0.5rem;
         font-size: 0.9rem;
     }
     .section {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
+        border-radius: 1rem;
         margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
     }
     .section h2 {
-        color: #007bff;
+        color: #c7d2fe;
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid #334155;
     }
     table {
         width: 100%;
@@ -65,42 +70,43 @@
     th, td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #334155;
+        color: #cbd5e1;
     }
     th {
-        background-color: #f8f9fa;
+        background-color: #334155;
         font-weight: bold;
-        color: #555;
+        color: #e2e8f0;
     }
     tr:hover {
-        background-color: #f8f9fa;
+        background-color: #1e293b;
     }
     .status-badge {
         padding: 0.3rem 0.8rem;
-        border-radius: 20px;
+        border-radius: 9999px;
         font-size: 0.85rem;
         font-weight: bold;
         display: inline-block;
     }
     .status-graded {
-        background-color: #28a745;
-        color: white;
+        background-color: rgba(34,197,94,0.15);
+        color: #86efac;
     }
     .status-submitted {
-        background-color: #ffc107;
-        color: #333;
+        background-color: rgba(251,191,36,0.15);
+        color: #facc15;
     }
     .status-present {
-        background-color: #28a745;
-        color: white;
+        background-color: rgba(34,197,94,0.15);
+        color: #86efac;
     }
     .status-absent {
-        background-color: #dc3545;
-        color: white;
+        background-color: rgba(239,68,68,0.15);
+        color: #fca5a5;
     }
     .status-late {
-        background-color: #ffc107;
-        color: #333;
+        background-color: rgba(251,191,36,0.15);
+        color: #facc15;
     }
 </style>
 @endsection

@@ -71,35 +71,50 @@ class StudentController extends Controller
     }
 
     public function myCourses()
-    {
-        $student = Auth::user();
-        $courses = $student->enrolledClasses()
-                          ->with('teacher')
-                          ->withCount('tps')
-                          ->get();
+{
+    $student = Auth::user();
 
-        return view('student.courses.index', compact('courses'));
-    }
+    $courses = $student->enrolledClasses()
+        ->with([
+            'teacher',
+            'tps' => function ($query) {
+                $query->where('status', 'published')
+                      ->distinct()
+                      ->orderBy('created_at', 'desc');
+            }
+        ])
+        ->withCount('tps')
+        ->get();
+
+    return view('student.courses.index', compact('courses'));
+}
 
     public function showCourse($courseId)
-    {
-        $student = Auth::user();
-        $course = ClassModel::whereHas('students', function($query) use ($student) {
-                            $query->where('users.id', $student->id);
-                        })
-                        ->with(['teacher', 'tps' => function($query) {
-                            $query->where('status', 'published')
-                                  ->orderBy('created_at', 'desc');
-                        }])
-                        ->findOrFail($courseId);
+{
+    $student = Auth::user();
 
-        $submissions = Submission::where('student_id', $student->id)
-                                 ->whereIn('tp_id', $course->tps->pluck('id'))
-                                 ->get()
-                                 ->keyBy('tp_id');
+    $course = ClassModel::whereHas('students', function ($query) use ($student) {
+            $query->where('users.id', $student->id);
+        })
+        ->with([
+            'teacher',
+            'tps' => function ($query) {
+                $query->where('status', 'published')
+                      ->distinct()
+                      ->orderBy('created_at', 'desc');
+            }
+        ])
+        ->findOrFail($courseId);
 
-        return view('student.courses.show', compact('course', 'submissions'));
-    }
+    $tpIds = $course->tps->pluck('id')->unique();
+
+    $submissions = Submission::where('student_id', $student->id)
+        ->whereIn('tp_id', $tpIds)
+        ->get()
+        ->keyBy('tp_id');
+
+    return view('student.courses.show', compact('course', 'submissions'));
+}
 
     public function leaveCourse($courseId)
     {
@@ -112,20 +127,22 @@ class StudentController extends Controller
     }
 
     public function showTP($id)
-    {
-        $student = Auth::user();
-        $tp = TP::with(['class', 'teacher'])
-                ->whereHas('class.students', function($query) use ($student) {
-                    $query->where('users.id', $student->id);
-                })
-                ->findOrFail($id);
+{
+    $student = Auth::user();
 
-        $submission = Submission::where('tp_id', $tp->id)
-                                ->where('student_id', $student->id)
-                                ->first();
+    $tp = TP::with(['class', 'teacher'])
+        ->whereHas('class.students', function ($query) use ($student) {
+            $query->where('users.id', $student->id);
+        })
+        ->where('id', $id)
+        ->firstOrFail();
 
-        return view('student.tps.show', compact('tp', 'submission'));
-    }
+    $submission = Submission::where('tp_id', $tp->id)
+        ->where('student_id', $student->id)
+        ->first();
+
+    return view('student.tps.show', compact('tp', 'submission'));
+}
 
     public function submitTP(Request $request, $id)
 {
@@ -244,41 +261,43 @@ class StudentController extends Controller
     }
 
     public function myProgress()
-    {
-        $student = Auth::user();
-        $courses = $student->enrolledClasses()
-                          ->with(['teacher', 'tps' => function($query) {
-                              $query->where('status', 'published');
-                          }])
-                          ->get();
+{
+    $student = Auth::user();
 
-        $totalTPs    = 0;
-        $submittedTPs = 0;
-        $gradedTPs   = 0;
-        $totalGrade  = 0;
+    $courses = $student->enrolledClasses()
+        ->with(['tps' => function ($query) {
+            $query->where('status', 'published')->distinct();
+        }])
+        ->get();
 
-        foreach ($courses as $course) {
-            $totalTPs += $course->tps->count();
-            foreach ($course->tps as $tp) {
-                $submission = Submission::where('tp_id', $tp->id)
-                                       ->where('student_id', $student->id)
-                                       ->first();
-                if ($submission) {
-                    $submittedTPs++;
-                    if ($submission->grade) {
-                        $gradedTPs++;
-                        $totalGrade += $submission->grade;
-                    }
-                }
-            }
-        }
+    $tpIds = collect();
 
-        $averageGrade   = $gradedTPs > 0 ? round($totalGrade / $gradedTPs, 2) : 0;
-        $completionRate = $totalTPs > 0 ? round(($submittedTPs / $totalTPs) * 100, 2) : 0;
-
-        return view('student.progress.index', compact(
-            'courses', 'totalTPs', 'submittedTPs', 'gradedTPs',
-            'averageGrade', 'completionRate'
-        ));
+    foreach ($courses as $course) {
+        $tpIds = $tpIds->merge($course->tps->pluck('id'));
     }
+
+    $tpIds = $tpIds->unique();
+
+    $submissions = Submission::where('student_id', $student->id)
+        ->whereIn('tp_id', $tpIds)
+        ->get()
+        ->keyBy('tp_id');
+
+    $totalTPs = $tpIds->count();
+    $submittedTPs = $submissions->count();
+    $gradedTPs = $submissions->whereNotNull('grade')->count();
+    $totalGrade = $submissions->sum('grade');
+
+    $averageGrade = $gradedTPs > 0 ? round($totalGrade / $gradedTPs, 2) : 0;
+    $completionRate = $totalTPs > 0 ? round(($submittedTPs / $totalTPs) * 100, 2) : 0;
+
+    return view('student.progress.index', compact(
+        'courses',
+        'totalTPs',
+        'submittedTPs',
+        'gradedTPs',
+        'averageGrade',
+        'completionRate'
+    ));
+}
 }

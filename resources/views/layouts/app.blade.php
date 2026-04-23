@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>@yield('title','Plateforme TP')</title>
 @vite(['resources/css/app.css', 'resources/js/app.js'])
+<link rel="stylesheet" href="{{ asset('css/posts.css') }}">
 @yield('extra-styles')
 </head>
 
@@ -120,8 +121,10 @@
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="flex items-center gap-2 cursor-pointer p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
                 <img src="{{ Auth::user()->profile_picture_url }}"
-                     alt="Avatar"
-                     class="w-7 h-7 rounded-full object-cover flex-shrink-0">
+                     alt="{{ Auth::user()->name }}"
+                     class="w-7 h-7 rounded-full object-cover flex-shrink-0"
+                     style="background: transparent;"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPj88L3RleHQ+PC9zdmc+'">
                 <div class="hidden md:block text-left">
                     <div class="text-xs font-medium text-white leading-tight">{{ Auth::user()->name }}</div>
                     <div class="text-[10px] text-slate-200 leading-tight">
@@ -140,19 +143,12 @@
                         👤 Mon profil
                     </a>
                 </li>
-                <li>
-                    <a href="{{ route('notifications.index') }}" class="flex items-center gap-2 text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg px-3 py-2 text-sm">
-                        🔔 Notifications
-                        @if($unreadNotifs > 0)
-                            <span class="ml-auto bg-violet-600 text-white text-[9px] px-1.5 py-0.5 rounded-full">{{ $unreadNotifs }}</span>
-                        @endif
-                    </a>
-                </li>
+                
                 <div class="border-t border-slate-700 my-1"></div>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="flex items-center gap-2 text-red-400 hover:text-red-300 hover:bg-slate-700 rounded-lg px-3 py-2 text-sm w-full text-left">
+                        <button type="submit" class="flex items-center gap-2 text-red-400 hover:text-red-300 hover:bg-slate-700 rounded-lg px-3 py-2 text-sm w-full text-left cursor-pointer">
                             🚪 Déconnexion
                         </button>
                     </form>
@@ -229,6 +225,11 @@
 .nav-link:hover { background: #1e293b; color: #e2e8f0; }
 .nav-link-active { background: rgba(139,92,246,0.15); color: #a78bfa; }
 
+.dropdown-content li form {
+    display: block;
+    width: 100%;
+}
+
 .alert-success-bar {
     background: rgba(34,197,94,0.1);
     border: 1px solid rgba(34,197,94,0.3);
@@ -236,6 +237,7 @@
     padding: 0.75rem 1rem;
     border-radius: 10px;
     font-size: 0.875rem;
+    transition: opacity 0.5s ease;
 }
 .alert-error-bar {
     background: rgba(239,68,68,0.1);
@@ -244,10 +246,47 @@
     padding: 0.75rem 1rem;
     border-radius: 10px;
     font-size: 0.875rem;
+    transition: opacity 0.5s ease;
 }
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Shared file upload styles */
+.file-upload {
+    border: 2px dashed #475569;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 0.75rem;
+    background: #1e293b;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    display: block;
+}
+.file-upload:hover {
+    background: #273548;
+    border-color: #6366f1;
+    color: #a5b4fc;
+}
+.file-hint {
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    color: #64748b;
+}
+.selected-file {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    background: rgba(34,197,94,0.1);
+    border-left: 3px solid #22c55e;
+    border-radius: 0.75rem;
+    font-size: 0.85rem;
+    color: #a7f3d0;
+}
+input[type="file"] {
+    display: none;
+}
 </style>
 
 <script>
@@ -348,7 +387,28 @@ document.addEventListener('DOMContentLoaded', function(){
         input.addEventListener('input', validate);
         input.addEventListener('blur', validate);
     });
+
+    // Auto-dismiss alerts after 3 seconds
+    const alerts = document.querySelectorAll('.alert-success-bar, .alert-error-bar');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => {
+                alert.remove();
+            }, 500);
+        }, 3000);
+    });
 });
+
+function showFileName(input, id) {
+    const preview = document.getElementById(id + '-preview');
+    if (input.files.length > 0) {
+        preview.style.display = 'block';
+        preview.innerHTML = '✓ Fichier sélectionné: ' + input.files[0].name;
+    } else {
+        preview.style.display = 'none';
+    }
+}
 </script>
 
 @yield('extra-scripts')

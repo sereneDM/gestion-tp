@@ -1,7 +1,7 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
-@section('title', $tp->title)
-@section('page-title', $tp->title)
+@section('title', Str::limit($tp->title, 50))
+@section('page-title', Str::limit($tp->title, 50))
 
 @section('extra-styles')
 <style>
@@ -11,26 +11,27 @@
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        color: #e2e8f0;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
     }
     .btn-secondary:hover {
-        background-color: #545b62;
+        background-color: #334155;
     }
     .btn-primary {
-        background-color: #007bff;
+        background-color: #4f46e5;
         color: white;
     }
     .btn-warning {
-        background-color: #ffc107;
-        color: #333;
+        background-color: #f59e0b;
+        color: #1f2937;
     }
     .btn-danger {
         background-color: #dc3545;
@@ -41,15 +42,16 @@
         font-size: 0.85rem;
     }
     .info-card {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
+        border-radius: 1rem;
         margin-bottom: 2rem;
+        border: 1px solid #334155;
     }
     .info-card h2 {
         margin-top: 0;
-        color: #007bff;
-        border-bottom: 2px solid #f0f0f0;
+        color: #c7d2fe;
+        border-bottom: 2px solid #334155;
         padding-bottom: 0.5rem;
         margin-bottom: 1.5rem;
     }
@@ -57,82 +59,96 @@
         display: grid;
         grid-template-columns: 200px 1fr;
         padding: 1rem 0;
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom: 1px solid #334155;
+        min-width: 0;
     }
     .info-label {
         font-weight: bold;
-        color: #666;
+        color: #94a3b8;
     }
     .info-value {
-        color: #333;
+        color: #e2e8f0;
+        min-width: 0;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+    .info-value.title-value {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .info-value.desc-value {
+        white-space: pre-wrap;
+        max-height: 6rem;
+        overflow-y: auto;
+        line-height: 1.5;
     }
     .status-badge {
         padding: 0.3rem 0.8rem;
-        border-radius: 20px;
+        border-radius: 9999px;
         font-size: 0.85rem;
         font-weight: bold;
         display: inline-block;
     }
     .status-published {
-        background: #d4edda;
-        color: #155724;
+        background: rgba(34,197,94,0.15);
+        color: #86efac;
     }
     .status-draft {
-        background: #fff3cd;
-        color: #856404;
+        background: rgba(251,191,36,0.15);
+        color: #facc15;
     }
     .status-closed {
-        background: #f8d7da;
-        color: #721c24;
+        background: rgba(239,68,68,0.15);
+        color: #fca5a5;
     }
     .submissions-table {
         width: 100%;
         border-collapse: collapse;
-        background: white;
+        background: #0f172a;
     }
     .submissions-table thead {
-        background: #007bff;
-        color: white;
+        background: #334155;
+        color: #e2e8f0;
     }
     .submissions-table th,
     .submissions-table td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #475569;
+        color: #cbd5e1;
     }
     .submissions-table tbody tr:hover {
-        background: #f8f9fa;
+        background: #1e293b;
     }
     .grade-badge {
         padding: 0.3rem 0.8rem;
-        border-radius: 20px;
+        border-radius: 9999px;
         font-size: 0.9rem;
         font-weight: bold;
         display: inline-block;
     }
     .grade-good {
-        background: #d4edda;
-        color: #155724;
+        background: rgba(34,197,94,0.15);
+        color: #86efac;
     }
     .grade-average {
-        background: #fff3cd;
-        color: #856404;
+        background: rgba(251,191,36,0.15);
+        color: #facc15;
     }
     .grade-poor {
-        background: #f8d7da;
-        color: #721c24;
+        background: rgba(239,68,68,0.15);
+        color: #fca5a5;
     }
     .empty-state {
         text-align: center;
         padding: 3rem;
-        color: #999;
+        color: #94a3b8;
     }
 </style>
 @endsection
 
 @section('content')
-  
-    
 
     <!-- TP Information -->
     <div class="info-card">
@@ -145,12 +161,14 @@
 
         <div class="info-row">
             <div class="info-label">Titre:</div>
-            <div class="info-value">{{ $tp->title }}</div>
+            <div class="info-value title-value" title="{{ $tp->title }}">
+                {{ Str::limit($tp->title, 80) }}
+            </div>
         </div>
 
         <div class="info-row">
             <div class="info-label">Description:</div>
-            <div class="info-value">{{ $tp->description }}</div>
+            <div class="info-value desc-value">{{ $tp->description }}</div>
         </div>
 
         <div class="info-row">
@@ -177,7 +195,7 @@
             <div class="info-row">
                 <div class="info-label">Fichier attaché:</div>
                 <div class="info-value">
-                    <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank" style="color: #007bff;">
+                    <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank" style="color: #3b82f6;">
                         📎 Télécharger le PDF
                     </a>
                 </div>

@@ -1,38 +1,37 @@
-@extends('layouts.student')
+@extends('layouts.app')
 
-@section('title', $tp->title)
-@section('page-title', $tp->title)
+@section('title', Str::limit($tp->title, 50))
+@section('page-title', Str::limit($tp->title, 50))
 
 @section('extra-styles')
 <style>
     .btn { padding: 0.6rem 1.2rem; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9rem; display: inline-block; }
-    .btn-secondary { background: #6c757d; color: white; }
-    .btn-secondary:hover { background: #545b62; }
-    .tp-info-card { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .tp-info-card h2 { color: #007bff; margin-top: 0; padding-bottom: 0.5rem; border-bottom: 2px solid #f0f0f0; margin-bottom: 1.5rem; }
-    .info-row { display: grid; grid-template-columns: 200px 1fr; padding: 1rem 0; border-bottom: 1px solid #f0f0f0; }
-    .info-label { font-weight: bold; color: #666; }
-    .info-value { color: #333; }
-    .submission-card { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .submission-card h2 { margin-top: 0; color: #28a745; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
-    .grade-display { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 8px; text-align: center; margin-bottom: 1.5rem; }
+    .btn-secondary { background: #475569; color: white; }
+    .btn-secondary:hover { background: #334155; }
+    .tp-info-card { background: #1e293b; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+    .tp-info-card h2 { color: #3b82f6; margin-top: 0; padding-bottom: 0.5rem; border-bottom: 2px solid #475569; margin-bottom: 1.5rem; }
+    .info-row { display: grid; grid-template-columns: 200px 1fr; padding: 1rem 0; border-bottom: 1px solid #475569; }
+    .info-label { font-weight: bold; color: #94a3b8; }
+    .info-value { color: #e2e8f0; word-break: break-word; overflow-wrap: break-word; }
+    .submission-card { background: #1e293b; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; }
+    .submission-card h2 { margin-top: 0; color: #10b981; border-bottom: 2px solid #475569; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+    .grade-display { background: #4f46e5; color: white; padding: 2rem; border-radius: 8px; text-align: center; margin-bottom: 1.5rem; }
     .grade-number { font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem; }
-    .comment-box { background: #f8f9fa; padding: 1.5rem; border-left: 4px solid #007bff; border-radius: 4px; margin-top: 1rem; }
-    .submit-form { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .submit-form h2 { margin-top: 0; color: #007bff; border-bottom: 2px solid #f0f0f0; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
+    .comment-box { background: #334155; padding: 1.5rem; border-left: 4px solid #3b82f6; border-radius: 4px; margin-top: 1rem; }
+    .submit-form { background: #1e293b; padding: 2rem; border-radius: 8px; }
+    .submit-form h2 { margin-top: 0; color: #3b82f6; border-bottom: 2px solid #475569; padding-bottom: 0.5rem; margin-bottom: 1.5rem; }
     .form-group { margin-bottom: 1.5rem; }
-    label { display: block; margin-bottom: 0.5rem; color: #333; font-weight: bold; }
-    .btn-submit { width: 100%; padding: 1rem; background: #28a745; color: white; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 1rem; }
-    .btn-submit:hover { background: #218838; }
+    label { display: block; margin-bottom: 0.5rem; color: #e2e8f0; font-weight: bold; }
+    .btn-submit { width: 100%; padding: 1rem; background: #10b981; color: white; border: none; border-radius: 4px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 1rem; }
+    .btn-submit:hover { background: #059669; }
     .warning-box { background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px; }
     .success-box { background: #d4edda; border-left: 4px solid #28a745; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px; color: #155724; }
     .error { color: #dc3545; font-size: 0.875rem; margin-top: 0.5rem; }
 
-    /* Enonce box styles */
-    .enonce-box { border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+    .enonce-box { border: 1px solid #475569; border-radius: 4px; overflow: hidden; }
     .enonce-box textarea {
         border: none;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #475569;
         border-radius: 0;
         margin: 0;
         width: 100%;
@@ -41,31 +40,13 @@
         resize: vertical;
         font-size: 1rem;
         font-family: inherit;
+        background: #1e293b;
+        color: #e2e8f0;
     }
     .enonce-box textarea:focus { outline: none; box-shadow: none; }
-    .pdf-section { padding: 1rem; background: #fafafa; }
-    .pdf-section-label { font-size: 0.85rem; font-weight: bold; color: #555; margin-bottom: 0.75rem; display: block; }
-    .file-upload {
-        border: 2px dashed #ccc;
-        padding: 1rem;
-        text-align: center;
-        border-radius: 4px;
-        background: #f8f9fa;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 0.9rem;
-        color: #666;
-    }
-    .file-upload:hover { background: #e7f3ff; border-color: #007bff; color: #007bff; }
+    .pdf-section { padding: 1rem; background: #334155; }
+    .pdf-section-label { font-size: 0.85rem; font-weight: bold; color: #94a3b8; margin-bottom: 0.75rem; display: block; }
     .file-upload input[type="file"] { display: none; }
-    .selected-file {
-        margin-top: 0.5rem;
-        padding: 0.4rem 0.75rem;
-        background: #d4edda;
-        border-left: 3px solid #28a745;
-        border-radius: 4px;
-        font-size: 0.85rem;
-    }
 </style>
 @endsection
 
@@ -104,7 +85,7 @@
                         <span style="color: #dc3545; font-weight: bold;">(Échéance dépassée)</span>
                     @endif
                 @else
-                    Pas de date limite
+                    Pas d'échéance définie
                 @endif
             </div>
         </div>
@@ -112,7 +93,7 @@
             <div class="info-row">
                 <div class="info-label">Énoncé PDF:</div>
                 <div class="info-value">
-                    <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank" style="color: #007bff;">
+                    <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank" style="color: #3b82f6;">
                         📎 Télécharger l'énoncé
                     </a>
                 </div>
@@ -241,116 +222,122 @@
     </script>
     @endif
 
-   @if($submission)
-    <div class="submission-card">
-        <h2>✅ Votre Soumission</h2>
+    {{-- Submission form for students who haven't submitted yet --}}
+    @if(!$submission && (!$tp->due_date || now()->lt($tp->due_date)))
+        <div class="submit-form">
+            <h2>📤 Soumettre votre travail</h2>
 
-        @if($submission->grade)
-            <div class="grade-display">
-                <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">Votre note</div>
-                <div class="grade-number">{{ $submission->grade }}/20</div>
-            </div>
-            @if($submission->teacher_comment)
-                <div class="comment-box">
-                    <strong>💬 Commentaire de l'enseignant:</strong>
-                    <p style="margin: 0.5rem 0 0 0;">{{ $submission->teacher_comment }}</p>
+            @if($tp->due_date && now()->gt($tp->due_date))
+                <div class="warning-box">
+                    ⚠️ La date limite de soumission est dépassée. Vous pouvez encore soumettre votre travail, mais il sera marqué comme en retard.
                 </div>
             @endif
-        @else
-            <div class="success-box">
-                ✓ Votre travail a été soumis avec succès le {{ $submission->submitted_at->format('d/m/Y à H:i') }}
-            </div>
-        @endif
 
-        @if($submission->attachments)
+            <form method="POST" action="{{ route('student.tps.submit', $tp->id) }}" enctype="multipart/form-data">
+                @csrf
+
+                <div class="form-group">
+                    <label>Commentaires / Réponse</label>
+                    <div class="enonce-box">
+                        <textarea id="comments"
+                                  name="comments"
+                                  placeholder="Rédigez votre réponse..."
+                                  required>{{ old('comments') }}</textarea>
+                        <div class="pdf-section">
+                            <span class="pdf-section-label">📎 Joindre un fichier (optionnel)</span>
+                            <x-file-upload id="submission_file" name="submission_file" accept=".pdf,.zip,.doc,.docx" hint="PDF, ZIP, DOC, DOCX uniquement · max 10 Mo" />
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit">📤 Soumettre mon travail</button>
+            </form>
+        </div>
+    @endif
+
+    @if($submission)
+        <div class="submission-card">
+            <h2>✅ Votre Soumission</h2>
+
+            @if($submission->grade)
+                <div class="grade-display">
+                    <div style="font-size: 1.2rem; margin-bottom: 0.5rem;">Votre note</div>
+                    <div class="grade-number">{{ $submission->grade }}/20</div>
+                </div>
+                @if($submission->teacher_comment)
+                    <div class="comment-box">
+                        <strong>💬 Commentaire de l'enseignant:</strong>
+                        <p style="margin: 0.5rem 0 0 0;">{{ $submission->teacher_comment }}</p>
+                    </div>
+                @endif
+            @else
+                <div class="success-box">
+                    ✓ Votre travail a été soumis avec succès le {{ $submission->submitted_at->format('d/m/Y à H:i') }}
+                </div>
+            @endif
+
+            @if($submission->attachments)
+                <div class="info-row">
+                    <div class="info-label">Fichier soumis:</div>
+                    <div class="info-value">
+                        <a href="{{ asset('storage/' . $submission->attachments) }}" target="_blank" style="color: #3b82f6;">
+                            📥 Télécharger mon fichier
+                        </a>
+                    </div>
+                </div>
+            @endif
+
+            @if($submission->content)
+                <div class="info-row">
+                    <div class="info-label">Vos commentaires:</div>
+                    <div class="info-value">{{ $submission->content }}</div>
+                </div>
+            @endif
+
             <div class="info-row">
-                <div class="info-label">Fichier soumis:</div>
-                <div class="info-value">
-                    <a href="{{ asset('storage/' . $submission->attachments) }}" target="_blank" style="color: #007bff;">
-                        📥 Télécharger mon fichier
-                    </a>
+                <div class="info-label">Date de soumission:</div>
+                <div class="info-value">{{ $submission->submitted_at->format('d/m/Y à H:i') }}</div>
+            </div>
+
+            @if($submission->status === 'late')
+                <div class="warning-box">⚠️ Soumission en retard</div>
+            @endif
+
+            @if(!$submission->grade && (!$tp->due_date || now()->lt($tp->due_date)))
+                <button onclick="document.getElementById('edit-form').style.display='block'; this.style.display='none';"
+                        style="margin-top:1rem; padding:0.75rem 1.5rem; background:#f59e0b; color:#1f2937; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">
+                    ✏️ Modifier ma soumission
+                </button>
+            @endif
+        </div>
+
+        @if(!$submission->grade && (!$tp->due_date || now()->lt($tp->due_date)))
+            <div id="edit-form" style="display:none;">
+                <div class="submit-form">
+                    <h2>✏️ Modifier votre Soumission</h2>
+
+                    <form method="POST" action="{{ route('student.tps.update-submission', $tp->id) }}" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="form-group">
+                            <label>Commentaires / Réponse</label>
+                            <div class="enonce-box">
+                                <textarea id="comments"
+                                          name="comments"
+                                          placeholder="Rédigez votre réponse...">{{ old('comments', $submission->content) }}</textarea>
+                                <div class="pdf-section">
+                                    <span class="pdf-section-label">📎 Remplacer le fichier (optionnel)</span>
+                                    <x-file-upload id="submission_file" name="submission_file" accept=".pdf,.zip,.doc,.docx" hint="PDF, ZIP, DOC, DOCX uniquement · max 10 Mo" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-submit">✓ Enregistrer les modifications</button>
+                    </form>
                 </div>
             </div>
         @endif
-
-        @if($submission->content)
-            <div class="info-row">
-                <div class="info-label">Vos commentaires:</div>
-                <div class="info-value">{{ $submission->content }}</div>
-            </div>
-        @endif
-
-        <div class="info-row">
-            <div class="info-label">Date de soumission:</div>
-            <div class="info-value">{{ $submission->submitted_at->format('d/m/Y à H:i') }}</div>
-        </div>
-
-        @if($submission->status === 'late')
-            <div class="warning-box">⚠️ Soumission en retard</div>
-        @endif
-
-        {{-- Show edit button only if not graded and deadline not passed --}}
-        @if(!$submission->grade && (!$tp->due_date || now()->lt($tp->due_date)))
-            <button onclick="document.getElementById('edit-form').style.display='block'; this.style.display='none';"
-                    style="margin-top:1rem; padding:0.75rem 1.5rem; background:#ffc107; color:#333; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">
-                ✏️ Modifier ma soumission
-            </button>
-        @endif
-    </div>
-
-    {{-- Edit form (hidden by default) --}}
-    @if(!$submission->grade && (!$tp->due_date || now()->lt($tp->due_date)))
-        <div id="edit-form" style="display:none;">
-            <div class="submit-form">
-                <h2>✏️ Modifier votre Soumission</h2>
-
-                <form method="POST" action="{{ route('student.tps.update-submission', $tp->id) }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="form-group">
-                        <label>Commentaires / Réponse</label>
-                        <div class="enonce-box">
-                            <textarea id="comments"
-                                      name="comments"
-                                      placeholder="Rédigez votre réponse...">{{ old('comments', $submission->content) }}</textarea>
-                            <div class="pdf-section">
-                                <span class="pdf-section-label">📎 Remplacer le fichier (optionnel)</span>
-                                <div class="file-upload" onclick="document.getElementById('submission_file').click()">
-                                    <input type="file"
-                                           id="submission_file"
-                                           name="submission_file"
-                                           accept=".pdf,.zip,.doc,.docx"
-                                           onchange="showFileName(this)">
-                                    📎 Cliquez pour sélectionner un fichier
-                                    <div style="font-size: 0.8rem; margin-top: 0.25rem; color: #999;">
-                                        PDF, ZIP, DOC, DOCX uniquement · max 10 Mo
-                                    </div>
-                                </div>
-                                <div id="file-selected" class="selected-file" style="display: none;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-submit">✓ Enregistrer les modifications</button>
-                </form>
-            </div>
-        </div>
     @endif
-@endif
 
-@endsection
-
-@section('extra-scripts')
-<script>
-function showFileName(input) {
-    const fileSelected = document.getElementById('file-selected');
-    if (input.files && input.files[0]) {
-        fileSelected.style.display = 'block';
-        fileSelected.innerHTML = '✓ Fichier sélectionné: ' + input.files[0].name;
-    } else {
-        fileSelected.style.display = 'none';
-    }
-}
-</script>
 @endsection

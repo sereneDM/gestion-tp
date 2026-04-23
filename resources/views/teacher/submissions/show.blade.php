@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', 'Noter la soumission')
 @section('page-title', 'Noter la soumission')
@@ -12,68 +12,74 @@
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        color: #e2e8f0;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
     }
     .btn-primary {
-        background-color: #28a745;
+        background-color: #4f46e5;
         color: white;
         padding: 0.75rem 1.5rem;
         flex: 1;
         text-align: center;
+    }
+    .btn:hover {
+        opacity: 0.95;
     }
     .header-actions {
         margin-bottom: 1.5rem;
         text-align: right;
     }
     .info-card {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
+        border-radius: 1rem;
         margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
     }
     .info-card h2 {
-        color: #007bff;
+        color: #c7d2fe;
         margin-bottom: 1rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid #334155;
     }
     .info-row {
         display: flex;
         margin-bottom: 1rem;
-        padding: 0.5rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #334155;
     }
     .info-label {
         font-weight: bold;
         min-width: 150px;
-        color: #555;
+        color: #94a3b8;
     }
     .info-value {
-        color: #333;
+        color: #e2e8f0;
     }
     .submission-content {
-        background-color: #f8f9fa;
+        background-color: #0f172a;
         padding: 1.5rem;
-        border-radius: 4px;
+        border-radius: 1rem;
         margin-top: 1rem;
         white-space: pre-wrap;
         min-height: 60px;
-        color: #555;
+        color: #cbd5e1;
         font-style: italic;
+        border: 1px solid #334155;
     }
     .form-container {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        border: 1px solid #334155;
     }
     .form-group {
         margin-bottom: 1.5rem;
@@ -81,27 +87,32 @@
     label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: #cbd5e1;
         font-weight: bold;
     }
     input, textarea {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
         font-size: 1rem;
         font-family: Arial, sans-serif;
+        background: #1e293b;
+        color: #e2e8f0;
     }
     textarea {
         min-height: 120px;
         resize: vertical;
     }
+    input::placeholder, textarea::placeholder {
+        color: #94a3b8;
+    }
     input:focus, textarea:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: #6366f1;
     }
     .error {
-        color: #dc3545;
+        color: #fca5a5;
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }

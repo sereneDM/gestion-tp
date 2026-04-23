@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Modifier une Classe')
 @section('page-title', 'Modifier une Classe')

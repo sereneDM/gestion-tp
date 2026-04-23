@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Logs Système')
 @section('page-title', 'Logs et Supervision Système')

@@ -1,4 +1,4 @@
-@extends('layouts.teacher')
+@extends('layouts.app')
 
 @section('title', 'Modifier le Cours')
 @section('page-title', 'Modifier le Cours')
@@ -6,10 +6,10 @@
 @section('extra-styles')
 <style>
     .form-container {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        border: 1px solid #334155;
         max-width: 800px;
     }
     .form-group {
@@ -18,27 +18,32 @@
     label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: #cbd5e1;
         font-weight: bold;
     }
     input, textarea, select {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
         font-size: 1rem;
         font-family: Arial, sans-serif;
+        background: #1e293b;
+        color: #e2e8f0;
     }
     textarea {
         min-height: 120px;
         resize: vertical;
     }
+    input::placeholder, textarea::placeholder {
+        color: #94a3b8;
+    }
     input:focus, textarea:focus, select:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: #6366f1;
     }
     .error {
-        color: #dc3545;
+        color: #fca5a5;
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
@@ -50,27 +55,28 @@
     .btn {
         padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 1rem;
         display: inline-block;
         flex: 1;
         text-align: center;
+        color: #e2e8f0;
     }
     .btn-primary {
-        background-color: #ffc107;
-        color: #333;
+        background-color: #4f46e5;
+        color: white;
     }
     .btn-primary:hover {
-        background-color: #e0a800;
+        background-color: #4338ca;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
     }
     .btn-secondary:hover {
-        background-color: #545b62;
+        background-color: #334155;
     }
 </style>
 @endsection
@@ -122,8 +128,8 @@
                     ✓ Enregistrer les modifications
                 </button>
                 <a href="{{ route('teacher.courses.show', $course->id) }}" class="btn btn-secondary">
-                    ✗ Annuler
-                </a>
+    Annuler
+</a>
             </div>
         </form>
     </div>

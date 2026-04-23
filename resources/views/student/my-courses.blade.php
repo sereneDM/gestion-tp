@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends('layouts.app')
 
 @section('title', 'Mes Cours')
 @section('page-title', 'Mes Cours')
@@ -15,11 +15,11 @@
         display: inline-block;
     }
     .btn-primary {
-        background-color: #007bff;
+        background-color: #4f46e5;
         color: white;
     }
     .btn-secondary {
-        background-color: #6c757d;
+        background-color: #475569;
         color: white;
     }
     .btn-danger {
@@ -42,12 +42,13 @@
         gap: 1.5rem;
     }
     .course-card {
-        background: white;
+        background: #0f172a;
         border-radius: 8px;
         padding: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         transition: transform 0.2s;
-        border-left: 4px solid #28a745;
+        border-left: 4px solid #4f46e5;
+        border: 1px solid #334155;
     }
     .course-card:hover {
         transform: translateY(-5px);
@@ -62,10 +63,10 @@
     .course-name {
         font-size: 1.2rem;
         font-weight: bold;
-        color: #333;
+        color: #f1f5f9;
     }
     .course-description {
-        color: #666;
+        color: #cbd5e1;
         margin-bottom: 1rem;
         font-size: 0.9rem;
     }
@@ -75,7 +76,7 @@
         gap: 0.5rem;
         margin-bottom: 1rem;
         font-size: 0.85rem;
-        color: #666;
+        color: #94a3b8;
     }
     .course-meta-item {
         display: flex;
@@ -90,8 +91,10 @@
     .empty-state {
         text-align: center;
         padding: 3rem;
-        background: white;
+        background: #0f172a;
         border-radius: 8px;
+        border: 1px solid #334155;
+        color: #cbd5e1;
     }
     .empty-state-icon {
         font-size: 4rem;
@@ -154,7 +157,7 @@
         <div class="empty-state">
             <div class="empty-state-icon">📚</div>
             <h2>Aucun cours rejoint</h2>
-            <p style="color: #666; margin: 1rem 0;">Demandez un code d'accès à votre enseignant pour rejoindre un cours!</p>
+            <p style="color: #cbd5e1; margin: 1rem 0;">Demandez un code d'accès à votre enseignant pour rejoindre un cours!</p>
             <a href="{{ route('student.join-course.form') }}" class="btn btn-primary">
                 ➕ Rejoindre mon premier cours
             </a>

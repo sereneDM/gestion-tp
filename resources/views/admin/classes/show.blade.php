@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('title', 'Détails de la Classe')
 @section('page-title', $class->name)

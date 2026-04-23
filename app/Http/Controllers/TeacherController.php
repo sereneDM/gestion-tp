@@ -255,6 +255,9 @@ if (!$request->filled('description') && !$request->hasFile('attachment')) {
         if ($tp->class->teacher_id !== Auth::id()) {
             abort(403, 'Accès non autorisé');
         }
+        // in your show() method
+        
+
 
         return view('teacher.tps.show', compact('tp'));
     }
@@ -319,8 +322,8 @@ if (!$request->filled('description') && !$request->hasFile('attachment') && !$tp
         $courseId = $tp->class_id;
         $tp->delete();
 
-        return redirect()->route('teacher.courses.show', $courseId)
-                         ->with('success', 'TP supprimé avec succès!');
+        return redirect()->route('teacher.courses.show', $courseId . '#tps')
+    ->with('success', 'TP supprimé avec succès!');
     }
 
     public function showSubmission($tpId, $submissionId)

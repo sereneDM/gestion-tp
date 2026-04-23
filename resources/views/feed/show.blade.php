@@ -1,106 +1,23 @@
-@extends(Auth::user()->isTeacher() ? 'layouts.teacher' : 'layouts.student')
+@extends('layouts.app')
 
 @section('title', $post->title)
 @section('page-title', 'Publication')
 
+@section('breadcrumbs')
+    {{ Breadcrumbs::render('posts.show', $post) }}
+@endsection
+
 @section('extra-styles')
 <style>
-/* CSS UNCHANGED */
-.post-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 2rem;
-}
-.post-type-badge {
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    display: inline-block;
-}
-.type-announcement { background: #fff3cd; color: #856404; }
-.type-tp_posted { background: #d4edda; color: #155724; }
-.type-reminder { background: #f8d7da; color: #721c24; }
-.type-general { background: #d1ecf1; color: #0c5460; }
-.post-title { font-size: 1.8rem; font-weight: bold; color: #333; margin-bottom: 0.5rem; }
-.post-meta { color: #999; font-size: 0.9rem; margin-bottom: 1.5rem; }
-.post-content { color: #444; line-height: 1.8; font-size: 1.05rem; white-space: pre-wrap; }
-.post-course {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background: #e7f3ff;
-    border-left: 4px solid #007bff;
-    border-radius: 4px;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-}
-.attachment-btn {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 0.6rem 1.2rem;
-    background: #007bff;
-    color: white;
-    border-radius: 4px;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-.back-btn {
-    display: inline-block;
-    margin-bottom: 1.5rem;
-    color: #007bff;
-    text-decoration: none;
-    font-size: 0.95rem;
-}
-.back-btn:hover { text-decoration: underline; }
-
-/* comments unchanged */
-.comments-section {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.comment {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-.comment-body { flex: 1; }
-.comment-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.4rem;
-}
-.comment-author { font-weight: bold; color: #333; font-size: 0.95rem; }
-.comment-role {
-    font-size: 0.75rem;
-    padding: 0.1rem 0.5rem;
-    border-radius: 10px;
-    background: #e9ecef;
-    color: #666;
-}
-.comment-role.teacher { background: #fce4ec; color: #c2185b; }
-.comment-time { font-size: 0.8rem; color: #999; margin-left: auto; }
-.comment-content { color: #444; line-height: 1.6; margin-bottom: 0.5rem; }
-.comment-actions { display: flex; gap: 1rem; font-size: 0.85rem; }
-.reply-btn, .delete-btn {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-}
-.reply-btn { color: #007bff; }
-.delete-btn { color: #dc3545; }
+/* Page-specific styles */
+.post-title { font-size: 1.8rem; }
+.post-content { font-size: 1.05rem; }
 
 .replies {
     margin-top: 1rem;
     margin-left: 1rem;
     padding-left: 1rem;
-    border-left: 3px solid #e9ecef;
+    border-left: 3px solid #334155;
 }
 .reply {
     display: flex;
@@ -114,40 +31,120 @@
 .add-comment-form {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 2px solid #f0f0f0;
+    border-top: 1px solid #334155;
 }
 .comment-input {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid #ddd;
+    border: 1px solid #475569;
     border-radius: 6px;
+    background: #0f172a;
+    color: #e2e8f0;
+    resize: vertical;
+    font-family: inherit;
+    font-size: 0.95rem;
 }
+.comment-input:focus {
+    outline: none;
+    border-color: #6366f1;
+}
+.comment-input::placeholder { color: #64748b; }
+
 .submit-comment-btn {
     margin-top: 0.75rem;
     padding: 0.6rem 1.5rem;
-    background: #007bff;
+    background: #4f46e5;
     color: white;
     border: none;
     border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
 }
+.submit-comment-btn:hover { background: #4338ca; }
+
 .cancel-reply-btn {
     margin-left: 0.5rem;
     padding: 0.6rem 1rem;
-    background: #6c757d;
-    color: white;
+    background: #334155;
+    color: #cbd5e1;
     border: none;
     border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+.cancel-reply-btn:hover { background: #475569; }
+
+/* 3-dots menu */
+.post-menu-btn {
+    background: transparent;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+}
+.post-menu-btn:hover {
+    background: #1e293b;
+    border-color: #475569;
+    color: #e2e8f0;
+}
+.post-menu-dropdown {
+    display: none;
+    position: absolute;
+    top: 2.2rem;
+    right: 0;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.75rem;
+    min-width: 150px;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.post-menu-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: #fca5a5;
+    cursor: pointer;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    transition: background 0.15s;
+}
+.post-menu-dropdown button:hover {
+    background: #334155;
 }
 </style>
 @endsection
 
 @section('content')
 
-@section('breadcrumbs')
-    {{ Breadcrumbs::render('posts.show', $post) }}
-@endsection
+<div class="post-card" style="position: relative;">
 
-<div class="post-card">
+    {{-- 3-dots menu (teacher only, own posts) --}}
+    @if(Auth::user()->isTeacher() && $post->user_id === Auth::id())
+        <div style="position:absolute; top:1rem; right:1rem;">
+            <button class="post-menu-btn" onclick="togglePostMenu()">⋮</button>
+            <div class="post-menu-dropdown" id="post-menu">
+                <form method="POST" action="{{ route('posts.destroy', $post->id) }}"
+                      style="display:block; width:100%;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit">🗑️ Supprimer</button>
+                </form>
+            </div>
+        </div>
+    @endif
+
     <span class="post-type-badge type-{{ $post->type }}">
         @if($post->type === 'announcement') 📢 Annonce
         @elseif($post->type === 'tp_posted') 📝 Nouveau TP
@@ -160,7 +157,13 @@
     <div class="post-meta">
         Par {{ $post->user->name }} · {{ $post->created_at->diffForHumans() }}
     </div>
-    <div class="post-content">{{ $post->content }}</div>
+    <div class="post-content" style="white-space: pre-line;">{{ $post->content }}</div>
+
+    @if($post->tp && $post->tp->due_date)
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem;">
+            📅 Échéance: {{ $post->tp->due_date->format('d/m/Y à H:i') }}
+        </div>
+    @endif
 
     @if($post->class)
         <div class="post-course">📚 {{ $post->class->name }}</div>
@@ -184,17 +187,15 @@
 </div>
 
 <div class="comments-section">
-    <h3 style="margin-bottom: 1.5rem;">💬 Commentaires ({{ $post->comments->count() }})</h3>
+    <h3 style="margin-bottom: 1.5rem; color: #f1f5f9;">💬 Commentaires ({{ $post->comments->count() }})</h3>
 
     @forelse($post->comments as $comment)
         <div class="comment">
-
             <img src="{{ $comment->user->profile_picture_url }}"
                  alt="{{ $comment->user->name }}"
                  style="width:40px;height:40px;min-width:40px;border-radius:50%;object-fit:cover;">
 
             <div class="comment-body">
-
                 <div class="comment-header">
                     <span class="comment-author">{{ $comment->user->name }}</span>
                     <span class="comment-role {{ $comment->user->isTeacher() ? 'teacher' : '' }}">
@@ -209,7 +210,6 @@
                     <button class="reply-btn" onclick="toggleReply('reply-form-{{ $comment->id }}')">
                         ↩️ Répondre
                     </button>
-
                     @if($comment->user_id === Auth::id())
                         <form method="POST" action="{{ route('comments.destroy', $comment->id) }}" style="display:inline;">
                             @csrf @method('DELETE')
@@ -239,7 +239,6 @@
                     <div class="replies">
                         @foreach($comment->replies as $reply)
                             <div class="reply">
-
                                 <img src="{{ $reply->user->profile_picture_url }}"
                                      alt="{{ $reply->user->name }}"
                                      style="width:32px;height:32px;min-width:32px;border-radius:50%;object-fit:cover;">
@@ -252,9 +251,7 @@
                                         </span>
                                         <span class="comment-time">{{ $reply->created_at->diffForHumans() }}</span>
                                     </div>
-
                                     <div class="comment-content">{{ $reply->content }}</div>
-
                                     @if($reply->user_id === Auth::id())
                                         <form method="POST" action="{{ route('comments.destroy', $reply->id) }}">
                                             @csrf @method('DELETE')
@@ -262,16 +259,14 @@
                                         </form>
                                     @endif
                                 </div>
-
                             </div>
                         @endforeach
                     </div>
                 @endif
-
             </div>
         </div>
     @empty
-        <p style="color: #999; text-align: center;">Aucun commentaire</p>
+        <p style="color: #64748b; text-align: center;">Aucun commentaire</p>
     @endforelse
 
     <div class="add-comment-form">
@@ -286,10 +281,24 @@
     </div>
 </div>
 
+@section('extra-scripts')
 <script>
 function toggleReply(id) {
     document.getElementById(id).classList.toggle('active');
 }
+
+function togglePostMenu() {
+    const menu = document.getElementById('post-menu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.post-menu-btn') && !e.target.closest('#post-menu')) {
+        const menu = document.getElementById('post-menu');
+        if (menu) menu.style.display = 'none';
+    }
+});
 </script>
+@endsection
 
 @endsection

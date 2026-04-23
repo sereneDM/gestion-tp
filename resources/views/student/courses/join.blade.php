@@ -1,4 +1,4 @@
-@extends('layouts.student')
+@extends('layouts.app')
 
 @section('title', 'Rejoindre un cours')
 @section('page-title', 'Rejoindre un Cours')
@@ -8,10 +8,11 @@
     .join-container {
         max-width: 500px;
         margin: 2rem auto;
-        background: white;
+        background: #0f172a;
         padding: 3rem;
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        border: 1px solid #334155;
     }
     .icon {
         text-align: center;
@@ -24,23 +25,25 @@
     label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: #e2e8f0;
         font-weight: bold;
     }
     input {
         width: 100%;
         padding: 1rem;
-        border: 2px solid #ddd;
+        border: 2px solid #475569;
         border-radius: 4px;
         font-size: 1.2rem;
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 0.2em;
         font-family: monospace;
+        background: #1e293b;
+        color: #e2e8f0;
     }
     input:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: #6366f1;
     }
     .error {
         color: #dc3545;
@@ -49,17 +52,18 @@
         text-align: center;
     }
     .info-box {
-        background: #e7f3ff;
-        border-left: 4px solid #007bff;
+        background: rgba(99,102,241,0.1);
+        border-left: 4px solid #6366f1;
         padding: 1rem;
         margin-bottom: 1.5rem;
         border-radius: 4px;
         font-size: 0.9rem;
+        color: #a5b4fc;
     }
     .btn {
         width: 100%;
         padding: 1rem;
-        background: #007bff;
+        background: #4f46e5;
         color: white;
         border: none;
         border-radius: 4px;
@@ -69,7 +73,7 @@
         transition: all 0.3s;
     }
     .btn:hover {
-        background: #0056b3;
+        background: #4338ca;
     }
 </style>
 @endsection
