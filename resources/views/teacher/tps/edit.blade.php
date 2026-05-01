@@ -177,9 +177,9 @@
                        id="title"
                        name="title"
                        value="{{ old('title', $tp->title) }}"
-                       maxlength="100"
+                       maxlength="50"
                        required>
-                <div class="char-counter" id="title-counter">0 / 100</div>
+                <div class="char-counter" id="title-counter">0 / 50</div>
                 @error('title') <div class="error">{{ $message }}</div> @enderror
             </div>
 
@@ -248,7 +248,7 @@
 
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">✓ Enregistrer les modifications</button>
-                <a href="{{ route('teacher.courses.show', $tp->class_id) }}#tps" class="btn btn-secondary">✗ Annuler</a>
+                <a href="{{ route('teacher.courses.show', $tp->class_id) }}?tab=tps" class="btn btn-secondary">✗ Annuler</a>
             </div>
         </form>
     </div>
@@ -257,7 +257,7 @@
         // Character counter for title
         const titleInput   = document.getElementById('title');
         const titleCounter = document.getElementById('title-counter');
-        const maxLength    = 100;
+        const maxLength    = 50;
 
         function updateCounter() {
             const len = titleInput.value.length;

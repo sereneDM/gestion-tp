@@ -185,4 +185,23 @@ public function updatePassword(Request $request)
         return redirect()->route('profile.edit')
                          ->with('success', 'Photo de profil supprimée.');
     }
+    // In ProfileController.php — add this method:
+
+public function search(Request $request)
+{
+    $q = $request->get('q', '');
+
+    $users = \App\Models\User::where('name', 'like', "%{$q}%")
+        ->orderBy('name')
+        ->limit(8)
+        ->get();
+
+    return response()->json($users->map(fn($u) => [
+        'id'         => $u->id,
+        'name'       => $u->name,
+        'avatar'     => $u->profile_picture_url,
+        'role'       => $u->isTeacher() ? 'Enseignant' : 'Étudiant',
+        'is_teacher' => $u->isTeacher(),
+    ]));
+}
 }

@@ -46,30 +46,41 @@ class StudentController extends Controller
         return view('student.courses.join');
     }
 
-    public function joinCourse(Request $request)
-    {
-        $request->validate([
-            'join_code' => 'required|string',
-        ]);
+   public function joinCourse(Request $request)
+{
+    $request->validate([
+        'join_code' => 'required|string',
+    ]);
 
-        $course = ClassModel::where('join_code', strtoupper($request->join_code))
-                            ->where('status', 'active')
-                            ->first();
+    $course = ClassModel::where('join_code', strtoupper($request->join_code))
+                        ->where('status', 'active')
+                        ->first();
 
-        if (!$course) {
-            return back()->withErrors(['join_code' => 'Code invalide ou cours non actif.']);
-        }
-
-        if ($course->students()->where('users.id', Auth::id())->exists()) {
-            return back()->withErrors(['join_code' => 'Vous êtes déjà inscrit à ce cours.']);
-        }
-
-        $course->students()->attach(Auth::id());
-
-        return redirect()->route('student.my-courses')
-                         ->with('success', 'Vous avez rejoint le cours: ' . $course->name);
+    if (!$course) {
+        return back()->withErrors(['join_code' => 'Code invalide ou cours non actif.']);
     }
 
+    if ($course->students()->where('users.id', Auth::id())->exists()) {
+        return back()->withErrors(['join_code' => 'Vous êtes déjà inscrit à ce cours.']);
+    }
+
+    $course->students()->attach(Auth::id());
+
+    // Notify the teacher
+    if (NotificationSetting::shouldNotify($course->teacher_id, $course->id, 'student_joined')) {
+        Notification::createFor(
+            $course->teacher_id,
+            'student_joined',
+            '👤 Nouvel étudiant: ' . Auth::user()->name,
+            Auth::user()->name . ' a rejoint le cours ' . $course->name,
+            route('teacher.courses.show', $course->id) . '?tab=students',
+            $course->id
+        );
+    }
+
+    return redirect()->route('student.my-courses')
+                     ->with('success', 'Vous avez rejoint le cours: ' . $course->name);
+}
     public function myCourses()
 {
     $student = Auth::user();
@@ -179,7 +190,7 @@ class StudentController extends Controller
         $filePath = $file->storeAs('submissions', $filename, 'public');
     }
 
-    $status = ($tp->due_date && now()->gt($tp->due_date)) ? 'late' : 'submitted';
+    $status = 'submitted';
 
     $submission = Submission::create([
         'tp_id'       => $tp->id,

@@ -142,7 +142,11 @@
                      style="cursor: pointer;">
                     <div class="course-header">
                         <div class="course-name">{{ $course->name }}</div>
-                        <div class="course-code">{{ $course->join_code }}</div>
+                        <div class="course-code"
+     title="Cliquer pour copier"
+     onclick="event.stopPropagation(); copyCode(this, '{{ $course->join_code }}')">
+    {{ $course->join_code }}
+</div>
                     </div>
 
                     <div class="course-description">
@@ -168,9 +172,16 @@
         <div class="empty-state">
             <h2>Aucun cours créé</h2>
             <p style="color: #666; margin: 1rem 0;">Créez votre premier cours pour commencer!</p>
-            <a href="{{ route('teacher.courses.create') }}" class="btn btn-primary">
-                ➕ Créer mon premier cours
-            </a>
+           
         </div>
     @endif
+@endsection
+@section('extra-scripts')
+<script>
+    function copyCode(el, code) {
+        navigator.clipboard.writeText(code).then(() => {
+            showToast('✓ Code copié : ' + code);
+        });
+    }
+</script>
 @endsection

@@ -78,6 +78,9 @@
     .btn-secondary:hover {
         background-color: #334155;
     }
+    .char-counter { text-align: right; font-size: 0.78rem; margin-top: 0.25rem; color: #64748b; transition: color 0.2s; }
+    .char-counter.warning { color: #f59e0b; }
+    .char-counter.danger  { color: #ef4444; }
 </style>
 @endsection
 
@@ -86,6 +89,7 @@
         <form method="POST" action="{{ route('teacher.courses.update', $course->id) }}">
             @csrf
             @method('PUT')
+            <input type="hidden" name="from" value="{{ request()->query('from', 'info') }}">
 
             <div class="form-group">
                 <label for="name">Nom du cours *</label>
@@ -93,7 +97,9 @@
                        id="name"
                        name="name"
                        value="{{ old('name', $course->name) }}"
+                       maxlength="50"
                        required>
+                <div class="char-counter" id="name-counter">0 / 50</div>
                 @error('name')
                     <div class="error">{{ $message }}</div>
                 @enderror
@@ -127,10 +133,26 @@
                 <button type="submit" class="btn btn-primary">
                     ✓ Enregistrer les modifications
                 </button>
-                <a href="{{ route('teacher.courses.show', $course->id) }}" class="btn btn-secondary">
-    Annuler
-</a>
+                <a href="{{ route('teacher.courses.show', $course->id) }}?tab={{ request()->query('from', 'info') }}" class="btn btn-secondary">
+                    ✗ Annuler
+                </a>
             </div>
         </form>
     </div>
+
+    <script>
+        const nameInput   = document.getElementById('name');
+        const nameCounter = document.getElementById('name-counter');
+        const maxLength   = 50;
+
+        function updateCounter() {
+            const len = nameInput.value.length;
+            nameCounter.textContent = len + ' / ' + maxLength;
+            nameCounter.classList.remove('warning', 'danger');
+            if (len >= maxLength)             nameCounter.classList.add('danger');
+            else if (len >= maxLength * 0.8)  nameCounter.classList.add('warning');
+        }
+        nameInput.addEventListener('input', updateCounter);
+        updateCounter();
+    </script>
 @endsection

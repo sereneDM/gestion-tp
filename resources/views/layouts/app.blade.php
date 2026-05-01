@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr" data-theme="dark">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <title>@yield('title','Plateforme TP')</title>
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
@@ -12,12 +16,12 @@
 <body class="bg-[#0f172a] text-slate-200 min-h-screen">
 
 {{-- TOP NAVBAR --}}
-<nav class="fixed top-0 left-0 right-0 h-14 bg-[#0f172a] border-b border-slate-800 flex items-center px-4 gap-4 z-50">
+<nav class="fixed top-0 left-0 right-0 h-[72px] bg-[#0f172a] border-b border-slate-800 flex items-center px-6 gap-4 z-50">
 
     {{-- Logo --}}
     <div class="flex items-center gap-2 min-w-[44px]">
-        <div class="w-7 h-7 rounded-lg bg-violet-600 flex items-center justify-center flex-shrink-0">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <div class="w-9 h-9 rounded-lg bg-violet-600 flex items-center justify-center flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
                 <rect x="1" y="1" width="4" height="4" rx="1" fill="white"/>
                 <rect x="9" y="1" width="4" height="4" rx="1" fill="white"/>
                 <rect x="1" y="9" width="4" height="4" rx="1" fill="white"/>
@@ -28,7 +32,7 @@
     </div>
 
     {{-- Divider --}}
-    <div class="w-px h-6 bg-slate-700"></div>
+    <div class="w-px h-7 bg-slate-700"></div>
 
     {{-- Nav links --}}
     <div class="flex items-center gap-1 flex-1 overflow-x-auto hide-scrollbar">
@@ -106,7 +110,7 @@
             $unreadNotifs = \App\Models\Notification::where('user_id', Auth::id())->where('is_read', false)->count();
         @endphp
         <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg hover:bg-slate-800 transition-colors">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="text-slate-200">
+            <svg width="20" height="20" viewBox="0 0 18 18" fill="none" class="text-slate-200">
                 <path d="M9 1a5 5 0 0 0-5 5v3l-1.5 2.5h13L14 9V6a5 5 0 0 0-5-5z" stroke="currentColor" stroke-width="1.5"/>
                 <path d="M7 14a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.5"/>
             </svg>
@@ -122,12 +126,12 @@
             <div tabindex="0" role="button" class="flex items-center gap-2 cursor-pointer p-1.5 rounded-lg hover:bg-slate-800 transition-colors">
                 <img src="{{ Auth::user()->profile_picture_url }}"
                      alt="{{ Auth::user()->name }}"
-                     class="w-7 h-7 rounded-full object-cover flex-shrink-0"
+                     class="w-9 h-9 rounded-full object-cover flex-shrink-0"
                      style="background: transparent;"
                      onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPj88L3RleHQ+PC9zdmc+'">
                 <div class="hidden md:block text-left">
                     <div class="text-xs font-medium text-white leading-tight">{{ Auth::user()->name }}</div>
-                    <div class="text-[10px] text-slate-200 leading-tight">
+                    <div class="text-[10px] text-slate-400 leading-tight">
                         @if(Auth::user()->isAdmin()) Administrateur
                         @elseif(Auth::user()->isTeacher()) Enseignant
                         @else Étudiant @endif
@@ -137,19 +141,18 @@
                     <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
             </div>
-            <ul tabindex="0" class="dropdown-content menu bg-[#1e293b] border border-slate-700 rounded-xl shadow-xl mt-2 w-48 p-1 z-50">
+            <ul tabindex="0" class="dropdown-content bg-[#1e293b] border border-slate-700 rounded-xl shadow-xl mt-2 w-48 p-1 z-50">
                 <li>
                     <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg px-3 py-2 text-sm">
-                        👤 Mon profil
+                        Mon profil
                     </a>
                 </li>
-                
                 <div class="border-t border-slate-700 my-1"></div>
                 <li>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="flex items-center gap-2 text-red-400 hover:text-red-300 hover:bg-slate-700 rounded-lg px-3 py-2 text-sm w-full text-left cursor-pointer">
-                            🚪 Déconnexion
+                            Déconnexion
                         </button>
                     </form>
                 </li>
@@ -159,19 +162,15 @@
 </nav>
 
 {{-- MAIN CONTENT --}}
-<main class="pt-14 min-h-screen">
+<main class="pt-[72px] min-h-screen">
     <div class="max-w-7xl mx-auto px-4 py-6">
 
-        {{-- Alerts --}}
+        {{-- Session toasts (rendered into the fixed toast container via JS) --}}
         @if(session('success'))
-            <div class="alert-success-bar mb-4">
-                ✓ {{ session('success') }}
-            </div>
+            <div class="toast-bar toast-success" data-toast>✓ {{ session('success') }}</div>
         @endif
         @if(session('error'))
-            <div class="alert-error-bar mb-4">
-                ✗ {{ session('error') }}
-            </div>
+            <div class="toast-bar toast-error" data-toast>✗ {{ session('error') }}</div>
         @endif
 
         {{-- Page header / breadcrumbs --}}
@@ -195,6 +194,9 @@
     </div>
 </main>
 
+{{-- Toast container (fixed, bottom-right, always visible regardless of scroll) --}}
+<div id="toast-container" style="position:fixed; bottom:2rem; right:2rem; z-index:9999; display:flex; flex-direction:column; gap:0.75rem; align-items:flex-end; pointer-events:none;"></div>
+
 {{-- Custom Confirm Modal --}}
 <div id="confirm-modal" class="hidden fixed inset-0 bg-black/60 z-[9999] items-center justify-center">
     <div class="bg-[#1e293b] border border-slate-700 rounded-2xl p-8 max-w-sm w-[90%] text-center shadow-2xl" style="animation: popIn 0.2s ease;">
@@ -214,9 +216,9 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 13px;
     color: #cbd5e1;
     text-decoration: none;
     white-space: nowrap;
@@ -230,23 +232,25 @@
     width: 100%;
 }
 
-.alert-success-bar {
+/* ── Unified toast styles ── */
+.toast-bar {
+    max-width: 320px;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: auto;
+}
+.toast-success {
     background: rgba(34,197,94,0.1);
     border: 1px solid rgba(34,197,94,0.3);
     color: #86efac;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    transition: opacity 0.5s ease;
 }
-.alert-error-bar {
+.toast-error {
     background: rgba(239,68,68,0.1);
     border: 1px solid rgba(239,68,68,0.3);
     color: #fca5a5;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    transition: opacity 0.5s ease;
 }
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -290,6 +294,20 @@ input[type="file"] {
 </style>
 
 <script>
+/* ── Unified toast function — use this everywhere ── */
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast-bar toast-' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    requestAnimationFrame(() => toast.style.opacity = '1');
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 document.addEventListener('keydown', function(e){
     if(e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file'){
         const form = e.target.closest('form');
@@ -388,14 +406,14 @@ document.addEventListener('DOMContentLoaded', function(){
         input.addEventListener('blur', validate);
     });
 
-    // Auto-dismiss alerts after 3 seconds
-    const alerts = document.querySelectorAll('.alert-success-bar, .alert-error-bar');
-    alerts.forEach(alert => {
+    // Move session toasts into the fixed container and animate them
+    document.querySelectorAll('[data-toast]').forEach(toast => {
+        toast.remove(); // remove from page flow
+        document.getElementById('toast-container').appendChild(toast);
+        requestAnimationFrame(() => toast.style.opacity = '1');
         setTimeout(() => {
-            alert.style.opacity = '0';
-            setTimeout(() => {
-                alert.remove();
-            }, 500);
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
         }, 3000);
     });
 });
@@ -409,6 +427,15 @@ function showFileName(input, id) {
         preview.style.display = 'none';
     }
 }
+</script>
+
+<script>
+    // Clear flash messages on back/forward navigation
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            document.querySelectorAll('[data-toast]').forEach(el => el.remove());
+        }
+    });
 </script>
 
 @yield('extra-scripts')

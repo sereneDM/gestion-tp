@@ -91,6 +91,10 @@ class NotificationController extends Controller
             'submission_graded_notifications' => $request->has('global_submission_graded'),
             'new_submission_notifications' => $request->has('global_new_submission'),
             'post_notifications' => $request->has('global_post'),
+             'student_joined_notifications' => $request->has('global_student_joined'),
+             'comment_notifications' => $request->has('global_comment'),
+             'like_notifications'    => $request->has('global_like'),
+
         ]);
 
         // Update per-course settings
@@ -102,6 +106,9 @@ class NotificationController extends Controller
                     'submission_graded_notifications' => isset($settings['submission_graded']),
                     'new_submission_notifications' => isset($settings['new_submission']),
                     'post_notifications' => isset($settings['post']),
+                    'student_joined_notifications' => isset($settings['student_joined']),
+                    'comment_notifications' => isset($settings['comment']),
+                    'like_notifications'    => isset($settings['like']),
                 ]);
             }
         }

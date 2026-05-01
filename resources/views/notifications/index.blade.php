@@ -11,111 +11,122 @@
         align-items: center;
         margin-bottom: 1.5rem;
     }
+    .unread-count {
+        font-size: 1rem;
+        color: #94a3b8;
+    }
+    .unread-count span {
+        color: #a5b4fc;
+        font-weight: bold;
+    }
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         display: inline-block;
+        font-weight: 500;
     }
     .btn-primary {
-        background: #007bff;
+        background: #4f46e5;
         color: white;
     }
-    .btn-primary:hover {
-        background: #0056b3;
-    }
+    .btn-primary:hover { background: #4338ca; }
     .btn-secondary {
-        background: #6c757d;
-        color: white;
+        background: #1e293b;
+        color: #e2e8f0;
+        border: 1px solid #334155;
+        margin-left: 0.5rem;
     }
+    .btn-secondary:hover { background: #334155; }
+
     .notification-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        border-left: 4px solid #007bff;
+        padding: 1.25rem 1.5rem;
+        border-radius: 0.75rem;
+        border-left: 4px solid #4f46e5;
         transition: all 0.2s;
         cursor: pointer;
+        margin-bottom: 0.75rem;
     }
     .notification-card:hover {
-        transform: translateX(5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        transform: translateX(4px);
     }
     .notification-card.unread {
-        background: #e7f3ff;
-        border-left-color: #007bff;
+        background: #1e293b;
+        border-left-color: #6366f1;
+        border: 1px solid #334155;
+        border-left: 4px solid #6366f1;
     }
     .notification-card.read {
-        background: white;
-        border-left-color: #ddd;
+        background: #0f172a;
+        border: 1px solid #1e293b;
+        border-left: 4px solid #334155;
         opacity: 0.7;
     }
     .notification-header {
         display: flex;
         justify-content: space-between;
-        align-items: start;
+        align-items: flex-start;
         margin-bottom: 0.5rem;
-    }
-    .notification-icon {
-        font-size: 1.5rem;
-        margin-right: 1rem;
     }
     .notification-title {
         font-weight: bold;
-        color: #333;
-        margin-bottom: 0.5rem;
-        font-size: 1.1rem;
+        color: #f1f5f9;
+        margin-bottom: 0.4rem;
+        font-size: 1rem;
     }
     .notification-message {
-        color: #666;
-        margin-bottom: 0.5rem;
+        color: #94a3b8;
+        margin-bottom: 0.25rem;
         line-height: 1.5;
+        font-size: 0.9rem;
     }
     .notification-time {
-        font-size: 0.85rem;
-        color: #999;
+        font-size: 0.8rem;
+        color: #475569;
+        white-space: nowrap;
+        margin-left: 1rem;
     }
     .type-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
         font-size: 0.75rem;
         font-weight: bold;
+        display: inline-block;
+        margin-bottom: 0.5rem;
     }
-    .type-new_tp {
-        background: #d4edda;
-        color: #155724;
-    }
-    .type-submission_graded {
-        background: #d1ecf1;
-        color: #0c5460;
-    }
-    .type-new_submission {
-        background: #fff3cd;
-        color: #856404;
-    }
-    .type-new_post {
-        background: #f8d7da;
-        color: #721c24;
-    }
+    .type-new_tp            { background: rgba(34,197,94,0.15);   color: #86efac; }
+    .type-submission_graded { background: rgba(99,102,241,0.15);  color: #a5b4fc; }
+    .type-new_submission    { background: rgba(251,191,36,0.15);  color: #fde68a; }
+    .type-new_post          { background: rgba(239,68,68,0.15);   color: #fca5a5; }
+    .type-student_joined    { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
+
     .empty-state {
-        background: white;
-        padding: 3rem;
         text-align: center;
-        border-radius: 8px;
-        color: #999;
+        padding: 4rem 2rem;
+        color: #475569;
+    }
+    .empty-state .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+    .empty-state h2 {
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    .empty-state p {
+        color: #475569;
+        font-size: 0.9rem;
     }
 </style>
 @endsection
 
 @section('content')
     <div class="notifications-header">
-        <div>
-            <span style="font-size: 1.2rem; color: #666;">
-                {{ $unreadCount }} notification(s) non lue(s)
-            </span>
+        <div class="unread-count">
+            <span>{{ $unreadCount }}</span> notification(s) non lue(s)
         </div>
         <div>
             @if($unreadCount > 0)
@@ -133,37 +144,36 @@
     </div>
 
     @forelse($notifications as $notification)
-        <div style="margin: 0 0 1rem 0;">
-            <form method="POST"
-                  action="{{ route('notifications.mark-read', $notification->id) }}"
-                  id="form-{{ $notification->id }}">
-                @csrf
-                <div class="notification-card {{ $notification->is_read ? 'read' : 'unread' }}"
-                     id="notif-{{ $notification->id }}"
-                     onclick="markRead({{ $notification->id }})">
-                    <div class="notification-header">
-                        <div style="flex: 1;">
-                            <span class="type-badge type-{{ $notification->type }}">
-                                @if($notification->type === 'new_tp') 📝 Nouveau TP
-                                @elseif($notification->type === 'submission_graded') ⭐ Note
-                                @elseif($notification->type === 'new_submission') 📤 Soumission
-                                @elseif($notification->type === 'new_post') 📢 Annonce
-                                @else 🔔 Notification
-                                @endif
-                            </span>
-                        </div>
-                        <div class="notification-time">
-                            {{ $notification->created_at->diffForHumans() }}
-                        </div>
+        <form method="POST"
+              action="{{ route('notifications.mark-read', $notification->id) }}"
+              id="form-{{ $notification->id }}">
+            @csrf
+            <div class="notification-card {{ $notification->is_read ? 'read' : 'unread' }}"
+                 id="notif-{{ $notification->id }}"
+                 onclick="markRead({{ $notification->id }})">
+                <div class="notification-header">
+                    <div>
+                        <span class="type-badge type-{{ $notification->type }}">
+                            @if($notification->type === 'new_tp') 📝 Nouveau TP
+                            @elseif($notification->type === 'submission_graded') ⭐ Note
+                            @elseif($notification->type === 'new_submission') 📤 Soumission
+                            @elseif($notification->type === 'new_post') 📢 Annonce
+                            @elseif($notification->type === 'student_joined') 👤 Nouvel étudiant
+                            @else 🔔 Notification
+                            @endif
+                        </span>
+                        <div class="notification-title">{{ $notification->title }}</div>
+                        <div class="notification-message">{{ $notification->message }}</div>
                     </div>
-                    <div class="notification-title">{{ $notification->title }}</div>
-                    <div class="notification-message">{{ $notification->message }}</div>
+                    <div class="notification-time">
+                        {{ $notification->created_at->diffForHumans() }}
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     @empty
         <div class="empty-state">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">🔔</div>
+            <div class="icon">🔔</div>
             <h2>Aucune notification</h2>
             <p>Vous n'avez pas encore de notifications</p>
         </div>
@@ -185,24 +195,19 @@ function markRead(id) {
         card.classList.remove('unread');
         card.classList.add('read');
 
-        // Update page counter
-        const countEl = document.querySelector('.notifications-header span');
+        const countEl = document.querySelector('.unread-count span');
         if (countEl) {
             const current = parseInt(countEl.textContent);
             if (!isNaN(current) && current > 0) {
-                countEl.textContent = (current - 1) + ' notification(s) non lue(s)';
+                countEl.textContent = current - 1;
             }
         }
 
-        // Update sidebar badge
-        const badge = document.getElementById('notif-badge');
+        const badge = document.querySelector('a[href="{{ route('notifications.index') }}"] span');
         if (badge) {
             const badgeCount = parseInt(badge.textContent) - 1;
-            if (badgeCount <= 0) {
-                badge.style.display = 'none';
-            } else {
-                badge.textContent = badgeCount;
-            }
+            if (badgeCount <= 0) badge.style.display = 'none';
+            else badge.textContent = badgeCount;
         }
     }
 

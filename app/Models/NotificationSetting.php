@@ -13,13 +13,19 @@ class NotificationSetting extends Model
         'submission_graded_notifications',
         'new_submission_notifications',
         'post_notifications',
+        'student_joined_notifications',
+        'comment_notifications',
+        'like_notifications',
     ];
 
     protected $casts = [
-        'new_tp_notifications' => 'boolean',
+        'new_tp_notifications'           => 'boolean',
         'submission_graded_notifications' => 'boolean',
-        'new_submission_notifications' => 'boolean',
-        'post_notifications' => 'boolean',
+        'new_submission_notifications'   => 'boolean',
+        'post_notifications'             => 'boolean',
+        'student_joined_notifications'   => 'boolean',
+        'comment_notifications'          => 'boolean',
+        'like_notifications'             => 'boolean',
     ];
 
     public function user()
@@ -32,21 +38,22 @@ class NotificationSetting extends Model
         return $this->belongsTo(ClassModel::class, 'class_id');
     }
 
-    // Get or create settings for a user and course
     public static function getFor($userId, $classId = null)
     {
         return self::firstOrCreate(
             ['user_id' => $userId, 'class_id' => $classId],
             [
-                'new_tp_notifications' => true,
+                'new_tp_notifications'           => true,
                 'submission_graded_notifications' => true,
-                'new_submission_notifications' => true,
-                'post_notifications' => true,
+                'new_submission_notifications'   => true,
+                'post_notifications'             => true,
+                'student_joined_notifications'   => true,
+                'comment_notifications'          => true,
+                'like_notifications'             => true,
             ]
         );
     }
 
-    // Check if user wants notifications for this type
     public static function shouldNotify($userId, $classId, $type)
     {
         $setting = self::getFor($userId, $classId);

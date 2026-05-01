@@ -52,33 +52,48 @@ class FeedController extends Controller
             'content'   => $request->content,
         ]);
 
-        if ($user->id !== $post->user_id) {
-            Notification::createFor(
-                $post->user_id,
-                'new_post',
-                '💬 Nouveau commentaire: ' . $post->title,
-                $user->name . ' a commenté: ' . Str::limit($request->content, 80),
-                route('posts.show', $post->id),
-                $post->id
-            );
-        }
+        // Link anchors directly to the new comment
+        $commentAnchor = route('posts.show', $post->id) . '?highlight=' . $comment->id;
 
-        if ($request->parent_id) {
-            $parentComment = Comment::find($request->parent_id);
-            if ($parentComment && $parentComment->user_id !== $user->id) {
+        // Notify post author (if not self)
+        if ($user->id !== $post->user_id) {
+            if (NotificationSetting::shouldNotify($post->user_id, $post->class_id, 'comment')) {
                 Notification::createFor(
-                    $parentComment->user_id,
-                    'new_post',
-                    '↩️ Nouvelle réponse à votre commentaire',
-                    $user->name . ' a répondu: ' . Str::limit($request->content, 80),
-                    route('posts.show', $post->id),
-                    $post->id
+                    $post->user_id,
+                    'new_comment',
+                    '💬 Nouveau commentaire: ' . $post->title,
+                    $user->name . ' a commenté: ' . Str::limit($request->content, 80),
+                    $commentAnchor,
+                    $comment->id
                 );
             }
         }
 
+        // Notify parent comment author if this is a reply (if not self)
+        if ($request->parent_id) {
+            $parentComment = Comment::find($request->parent_id);
+            if ($parentComment && $parentComment->user_id !== $user->id) {
+                if (NotificationSetting::shouldNotify($parentComment->user_id, $post->class_id, 'comment')) {
+                    Notification::createFor(
+                        $parentComment->user_id,
+                        'new_comment',
+                        '↩️ Nouvelle réponse à votre commentaire',
+                        $user->name . ' a répondu: ' . Str::limit($request->content, 80),
+                        $commentAnchor,
+                        $comment->id
+                    );
+                }
+            }
+        }
+
+        $scrollTo = $request->parent_id
+            ? 'comment-' . $request->parent_id
+            : 'comment-' . $comment->id;
+
         return redirect()->route('posts.show', $post->id)
-                         ->with('success', 'Commentaire ajouté!');
+                         ->with('success', 'Commentaire ajouté!')
+                         ->with('new_comment_id', $comment->id)
+                         ->with('scroll_to', $scrollTo);
     }
 
     public function destroyComment($id)
@@ -89,11 +104,15 @@ class FeedController extends Controller
             abort(403);
         }
 
-        $postId = $comment->post_id;
+        $postId   = $comment->post_id;
+        $parentId = $comment->parent_id;
         $comment->delete();
 
+        $scrollTo = $parentId ? 'comment-' . $parentId : 'comments';
+
         return redirect()->route('posts.show', $postId)
-                         ->with('success', 'Commentaire supprimé!');
+                         ->with('success', 'Commentaire supprimé!')
+                         ->with('scroll_to', $scrollTo);
     }
 
     public function index()
@@ -101,7 +120,9 @@ class FeedController extends Controller
         $user = Auth::user();
 
         if ($user->isStudent()) {
-            $posts = Post::visibleToStudent($user->id)->paginate(10);
+            $posts = Post::visibleToStudent($user->id)
+                         ->with(['comments.replies'])
+                         ->paginate(10);
 
             $enrolledCoursesCount = $user->enrolledClasses()->count();
             $availableTPs = \App\Models\TP::whereHas('class', function($query) use ($user) {
@@ -110,13 +131,14 @@ class FeedController extends Controller
                 });
             })->where('status', 'published')->count();
             $submittedCount = \App\Models\Submission::where('student_id', $user->id)->count();
-            $gradedCount = \App\Models\Submission::where('student_id', $user->id)
-                                      ->whereNotNull('grade')->count();
+            $gradedCount    = \App\Models\Submission::where('student_id', $user->id)->whereNotNull('grade')->count();
 
-            return view('student.dashboard', compact('posts', 'enrolledCoursesCount', 'availableTPs', 'submittedCount', 'gradedCount'));
+            return view('student.dashboard', compact(
+                'posts', 'enrolledCoursesCount', 'availableTPs', 'submittedCount', 'gradedCount'
+            ));
         } else {
             $posts = Post::where('user_id', $user->id)
-                         ->with(['class.students', 'tp'])
+                         ->with(['class.students', 'tp', 'comments.replies'])
                          ->orderBy('created_at', 'desc')
                          ->paginate(10);
 
@@ -143,16 +165,19 @@ class FeedController extends Controller
         ]);
 
         if ($request->class_id) {
-            $class = ClassModel::where('id', $request->class_id)
-                               ->where('teacher_id', $user->id)
-                               ->firstOrFail();
+            ClassModel::where('id', $request->class_id)
+                      ->where('teacher_id', $user->id)
+                      ->firstOrFail();
         }
 
         $attachmentPath = null;
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $attachmentPath = $file->storeAs('post_attachments', $filename, 'public');
+            $attachmentPath = $file->storeAs(
+                'post_attachments',
+                time() . '_' . $file->getClientOriginalName(),
+                'public'
+            );
         }
 
         $post = Post::create([
@@ -164,11 +189,9 @@ class FeedController extends Controller
             'attachment' => $attachmentPath,
         ]);
 
-        // Notify students — both for class-specific and general posts
         $this->notifyStudents($post);
 
-        return redirect()->route('feed.index')
-                         ->with('success', 'Post publié avec succès!');
+        return redirect()->route('feed.index')->with('success', 'Post publié avec succès!');
     }
 
     public function destroy($id)
@@ -185,36 +208,33 @@ class FeedController extends Controller
 
         $post->delete();
 
-        return redirect()->route('feed.index')
-                         ->with('success', 'Post supprimé avec succès!');
+        return redirect()->route('feed.index')->with('success', 'Post supprimé avec succès!');
     }
 
     private function notifyStudents($post)
-{
-    $teacher = Auth::user();
+    {
+        $teacher = Auth::user();
 
-    if ($post->class_id) {
-        $class = ClassModel::with('students')->find($post->class_id);
-        $students = $class->students;
-    } else {
-        // Fix: query students directly from pivot table
-        $teacherClassIds = ClassModel::where('teacher_id', $teacher->id)->pluck('id');
-        $students = User::whereHas('classes', function($q) use ($teacherClassIds) {
-            $q->whereIn('classes.id', $teacherClassIds);
-        })->get();
-    }
+        if ($post->class_id) {
+            $students = ClassModel::with('students')->find($post->class_id)->students;
+        } else {
+            $teacherClassIds = ClassModel::where('teacher_id', $teacher->id)->pluck('id');
+            $students = User::whereHas('classes', function($q) use ($teacherClassIds) {
+                $q->whereIn('classes.id', $teacherClassIds);
+            })->get();
+        }
 
-    foreach ($students as $student) {
-        if (NotificationSetting::shouldNotify($student->id, $post->class_id, 'post')) {
-            Notification::createFor(
-                $student->id,
-                'new_post',
-                '📢 Nouvelle annonce: ' . $post->title,
-                $post->content,
-                route('posts.show', $post->id),
-                $post->id
-            );
+        foreach ($students as $student) {
+            if (NotificationSetting::shouldNotify($student->id, $post->class_id, 'post')) {
+                Notification::createFor(
+                    $student->id,
+                    'new_post',
+                    '📢 Nouvelle annonce: ' . $post->title,
+                    $post->content,
+                    route('posts.show', $post->id),
+                    $post->id
+                );
+            }
         }
     }
-}
 }

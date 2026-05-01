@@ -30,10 +30,35 @@
     .btn:hover {
         opacity: 0.95;
     }
-    .header-actions {
+
+    /* ── Filter bar ── */
+    .course-filter {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
         margin-bottom: 1.5rem;
-        text-align: right;
+        flex-wrap: wrap;
     }
+    .course-filter label {
+        font-size: 0.9rem;
+        color: #94a3b8;
+        white-space: nowrap;
+        font-weight: bold;
+    }
+    .course-filter select {
+        background: #1e293b;
+        border: 1px solid #334155;
+        color: #e2e8f0;
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+        outline: none;
+    }
+    .course-filter select:focus {
+        border-color: #6366f1;
+    }
+
     .class-section {
         background: #0f172a;
         padding: 2rem;
@@ -67,15 +92,35 @@
     .students-table tr:hover {
         background-color: #1e293b;
     }
+
+    #no-results {
+        display: none;
+        text-align: center;
+        padding: 3rem;
+        color: #64748b;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 1rem;
+    }
 </style>
 @endsection
 
 @section('content')
-  
 
+    {{-- Filter bar --}}
+    <div class="course-filter">
+        <label for="class-filter">Filtrer par classe :</label>
+        <select id="class-filter" onchange="filterClass(this.value)">
+            <option value="">— Toutes les classes —</option>
+            @foreach($classes as $class)
+                <option value="class-{{ $class->id }}">{{ $class->name }}</option>
+            @endforeach
+        </select>
+    </div>
 
+    {{-- Class sections --}}
     @forelse($classes as $class)
-        <div class="class-section">
+        <div class="class-section" id="class-{{ $class->id }}">
             <h2>{{ $class->name }}</h2>
 
             @if($class->students->count() > 0)
@@ -115,4 +160,27 @@
             <p style="color: #999;">Vous n'avez aucune classe assignée</p>
         </div>
     @endforelse
+
+    <div id="no-results">Aucune classe trouvée.</div>
+
+@endsection
+
+@section('extra-scripts')
+<script>
+    function filterClass(value) {
+        const sections = document.querySelectorAll('.class-section');
+        let anyVisible = false;
+
+        sections.forEach(section => {
+            if (!value || section.id === value) {
+                section.style.display = 'block';
+                anyVisible = true;
+            } else {
+                section.style.display = 'none';
+            }
+        });
+
+        document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
+    }
+</script>
 @endsection

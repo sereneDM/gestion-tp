@@ -50,10 +50,8 @@
         transition: background 0.2s;
     }
     .btn-post:hover { background: #4338ca; }
-
     .error { color: #fca5a5; font-size: 0.875rem; margin-top: 0.5rem; }
 
-    /* Pagination Styles */
     .pagination {
         display: flex;
         justify-content: center;
@@ -69,178 +67,104 @@
         text-decoration: none;
         transition: all 0.2s;
     }
-    .page-link:hover {
-        background: #1e293b;
-        color: #e2e8f0;
-        border-color: #475569;
-    }
-    .page-item.active .page-link {
-        background: #4f46e5;
-        color: white;
-        border-color: #4f46e5;
-    }
-    .page-item.disabled .page-link {
-        color: #64748b;
-        background: #0f172a;
-        border-color: #334155;
-        cursor: not-allowed;
-    }
+    .page-link:hover { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+    .page-item.active .page-link { background: #4f46e5; color: white; border-color: #4f46e5; }
+    .page-item.disabled .page-link { color: #64748b; background: #0f172a; border-color: #334155; cursor: not-allowed; }
 
-    /* Breadcrumb Styles */
-    .breadcrumb {
-        background: transparent;
-        margin-bottom: 1rem;
-        padding: 0;
+    .breadcrumb { background: transparent; margin-bottom: 1rem; padding: 0; }
+    .breadcrumb-item { color: #94a3b8; }
+    .breadcrumb-item a { color: #cbd5e1; text-decoration: none; }
+    .breadcrumb-item a:hover { color: #e2e8f0; }
+    .breadcrumb-item.active { color: #e2e8f0; font-weight: bold; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #64748b; content: "/"; }
+
+    .post-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid #334155;
     }
-    .breadcrumb-item {
+    .like-btn {
+        background: none;
+        border: none;
+        padding: 0.25rem 0.4rem;
+        cursor: pointer;
         color: #94a3b8;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        transition: color 0.15s;
     }
-    .breadcrumb-item a {
-        color: #cbd5e1;
+    .like-btn:hover { color: #e2137a; }
+    .like-btn:hover .like-icon { transform: scale(1.3); }
+    .like-btn.liked { color: #e2137a; }
+    .like-btn.liked .like-icon { transform: scale(1.15); }
+    .like-icon { transition: transform 0.15s; display: inline-block; }
+
+    .comment-count-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        color: #94a3b8;
         text-decoration: none;
+        transition: color 0.15s;
     }
-    .breadcrumb-item a:hover {
-        color: #e2e8f0;
-    }
-    .breadcrumb-item.active {
-        color: #e2e8f0;
-        font-weight: bold;
-    }
-    .breadcrumb-item + .breadcrumb-item::before {
-        color: #64748b;
-        content: "/";
-    }
+    .comment-count-link:hover { color: #6366f1; }
 </style>
 @endsection
 
 @section('content')
 
-<!-- ✅ FORM (UNCHANGED) -->
 <div class="create-post-card">
     <h2>✍️ Créer une publication</h2>
-
     <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
         @csrf
-        
-          <div class="form-group">
-
-                <label for="type">Type de publication *</label>
-
-                <select id="type" name="type" required>
-
-                    <option value="announcement">📢 Annonce importante</option>
-
-                    <option value="reminder">⏰ Rappel</option>
-
-                    <option value="general">📌 Publication générale</option>
-
-                </select>
-
-                @error('type')
-
-                    <div class="error">{{ $message }}</div>
-
-                @enderror
-
-            </div>
-
-
-
-            <div class="form-group">
-
-                <label for="class_id">Cours (optionnel - laissez vide pour publication générale)</label>
-
-                <select id="class_id" name="class_id">
-
-                    <option value="">Tous mes étudiants (publication générale)</option>
-
-                    @foreach($courses as $course)
-
-                        <option value="{{ $course->id }}">{{ $course->name }} ({{ $course->students->count() }} étudiants)</option>
-
-                    @endforeach
-
-                </select>
-
-                @error('class_id')
-
-                    <div class="error">{{ $message }}</div>
-
-                @enderror
-
-            </div>
-
-
-
-            <div class="form-group">
-
-                <label for="title">Titre *</label>
-
-                <input type="text" 
-
-                       id="title" 
-
-                       name="title" 
-
-                       value="{{ old('title') }}"
-
-                       placeholder="Ex: Rappel - TP à rendre vendredi"
-
-                       required>
-
-                @error('title')
-
-                    <div class="error">{{ $message }}</div>
-
-                @enderror
-
-            </div>
-
-
-
-            <div class="form-group">
-
-                <label for="content">Contenu *</label>
-
-                <textarea id="content" 
-
-                          name="content" 
-
-                          required
-
-                          placeholder="Écrivez votre message...">{{ old('content') }}</textarea>
-
-                @error('content')
-
-                    <div class="error">{{ $message }}</div>
-
-                @enderror
-
-            </div>
-
-
-
-            <div class="form-group">
-
-                <label>Pièce jointe (optionnel)</label>
-
-                <x-file-upload id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.zip" hint="PDF, JPG, PNG, ZIP · max 10 Mo" />
-
-                @error('attachment')
-
-                    <div class="error">{{ $message }}</div>
-
-                @enderror
-
-            </div>
-
-
-
-            <button type="submit" class="btn-post">
-
-                📤 Publier
-
-            </button>
+        <div class="form-group">
+            <label for="type">Type de publication *</label>
+            <select id="type" name="type" required>
+                <option value="announcement">📢 Annonce importante</option>
+                <option value="reminder">⏰ Rappel</option>
+                <option value="general">📌 Publication générale</option>
+            </select>
+            @error('type')<div class="error">{{ $message }}</div>@enderror
+        </div>
+
+        <div class="form-group">
+            <label for="class_id">Cours (optionnel - laissez vide pour publication générale)</label>
+            <select id="class_id" name="class_id">
+                <option value="">Tous mes étudiants (publication générale)</option>
+                @foreach($courses as $course)
+                    <option value="{{ $course->id }}">{{ $course->name }} ({{ $course->students->count() }} étudiants)</option>
+                @endforeach
+            </select>
+            @error('class_id')<div class="error">{{ $message }}</div>@enderror
+        </div>
+
+        <div class="form-group">
+            <label for="title">Titre *</label>
+            <input type="text" id="title" name="title" value="{{ old('title') }}"
+                   placeholder="Ex: Rappel - TP à rendre vendredi" required>
+            @error('title')<div class="error">{{ $message }}</div>@enderror
+        </div>
+
+        <div class="form-group">
+            <label for="content">Contenu *</label>
+            <textarea id="content" name="content" required
+                      placeholder="Écrivez votre message...">{{ old('content') }}</textarea>
+            @error('content')<div class="error">{{ $message }}</div>@enderror
+        </div>
+
+        <div class="form-group">
+            <label>Pièce jointe (optionnel)</label>
+            <x-file-upload id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.zip" hint="PDF, JPG, PNG, ZIP · max 10 Mo" />
+            @error('attachment')<div class="error">{{ $message }}</div>@enderror
+        </div>
+
+        <button type="submit" class="btn-post">📤 Publier</button>
     </form>
 </div>
 
@@ -270,7 +194,6 @@
                         <div class="post-meta">Publié {{ $post->created_at->diffForHumans() }}</div>
                     </div>
                 </div>
-
             </div>
 
             <div class="post-content" style="white-space: pre-line;">{{ $post->content }}</div>
@@ -300,6 +223,22 @@
                     </a>
                 </div>
             @endif
+
+            {{-- Like + comment count --}}
+            <div class="post-actions">
+                <button
+                    class="like-btn {{ $post->isLikedBy(auth()->id()) ? 'liked' : '' }}"
+                    data-type="post"
+                    data-id="{{ $post->id }}">
+                    <span class="like-icon">{{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}</span>
+                    <span class="like-count">{{ $post->likes()->count() }}</span>
+                </button>
+
+                <a href="{{ route('posts.show', $post->id) }}#comments" class="comment-count-link">
+                    💬 {{ $post->comments->reduce(fn($carry, $c) => $carry + 1 + $c->replies->count(), 0) }}
+                </a>
+            </div>
+
         </div>
     @empty
         <div class="no-posts">
@@ -316,16 +255,28 @@
     @endif
 </div>
 
-<script>
-function showFileName(input) {
-    const fileSelected = document.getElementById('file-selected');
-    if (input.files && input.files[0]) {
-        fileSelected.style.display = 'block';
-        fileSelected.innerHTML = '✓ Fichier sélectionné: ' + input.files[0].name;
-    } else {
-        fileSelected.style.display = 'none';
-    }
-}
-</script>
+@endsection
 
+@section('extra-scripts')
+<script>
+document.querySelectorAll('.like-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const type = btn.dataset.type;
+        const id   = btn.dataset.id;
+        const url  = `/posts/${id}/like`;
+
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        });
+        const data = await res.json();
+        btn.querySelector('.like-icon').textContent = data.liked ? '❤️' : '🤍';
+        btn.querySelector('.like-count').textContent = data.count;
+        btn.classList.toggle('liked', data.liked);
+    });
+});
+</script>
 @endsection

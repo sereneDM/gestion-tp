@@ -52,11 +52,6 @@ class SettingController extends Controller
                 ],
             ],
             'submissions' => [
-                'allow_late_submissions' => [
-                    'label' => 'Autoriser les soumissions en retard',
-                    'type' => 'checkbox',
-                    'default' => '1',
-                ],
                 'max_file_size' => [
                     'label' => 'Taille maximale des fichiers (Mo)',
                     'type' => 'number',

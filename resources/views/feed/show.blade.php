@@ -1,304 +1,393 @@
 @extends('layouts.app')
 
-@section('title', $post->title)
-@section('page-title', 'Publication')
-
-@section('breadcrumbs')
-    {{ Breadcrumbs::render('posts.show', $post) }}
-@endsection
+@section('title', 'Accueil')
+@section('page-title', 'Fil d\'actualité')
 
 @section('extra-styles')
 <style>
-/* Page-specific styles */
-.post-title { font-size: 1.8rem; }
-.post-content { font-size: 1.05rem; }
+    .create-post-card {
+        background: #0f172a;
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid #334155;
+        margin-bottom: 2rem;
+    }
+    .create-post-card h2 {
+        margin-top: 0;
+        color: #f1f5f9;
+        border-bottom: 1px solid #334155;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.5rem; color: #cbd5e1; font-weight: bold; }
+    input[type="text"], textarea, select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #475569;
+        border-radius: 6px;
+        font-size: 1rem;
+        background: #1e293b;
+        color: #e2e8f0;
+    }
+    input[type="text"]::placeholder,
+    textarea::placeholder { color: #64748b; }
+    select option { background: #1e293b; color: #e2e8f0; }
+    textarea { min-height: 120px; resize: vertical; }
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: #6366f1;
+    }
+    .btn-post {
+        background: #4f46e5;
+        color: white;
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .btn-post:hover { background: #4338ca; }
+    .error { color: #fca5a5; font-size: 0.875rem; margin-top: 0.5rem; }
 
-.replies {
-    margin-top: 1rem;
-    margin-left: 1rem;
-    padding-left: 1rem;
-    border-left: 3px solid #334155;
-}
-.reply {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-}
+    /* Multi-select courses */
+    .courses-checkboxes {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        background: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 8px;
+        padding: 0.75rem;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    .courses-checkboxes::-webkit-scrollbar { width: 6px; }
+    .courses-checkboxes::-webkit-scrollbar-track { background: #0f172a; border-radius: 3px; }
+    .courses-checkboxes::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    .course-checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.4rem 0.5rem;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background 0.15s;
+        user-select: none;
+    }
+    .course-checkbox-item:hover { background: #273548; }
+    .course-checkbox-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: #6366f1;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .course-checkbox-item span {
+        color: #cbd5e1;
+        font-size: 0.9rem;
+    }
+    .course-checkbox-item.all-option {
+        border-bottom: 1px solid #334155;
+        padding-bottom: 0.6rem;
+        margin-bottom: 0.25rem;
+    }
+    .course-checkbox-item.all-option span { color: #a78bfa; font-weight: 500; }
+    .selected-courses-hint {
+        font-size: 0.8rem;
+        color: #64748b;
+        margin-top: 0.4rem;
+    }
 
-.reply-form { display: none; margin-top: 0.75rem; }
-.reply-form.active { display: block; }
+    /* Char counter */
+    .char-counter { text-align: right; font-size: 0.78rem; margin-top: 0.25rem; color: #64748b; transition: color 0.2s; }
+    .char-counter.warning { color: #f59e0b; }
+    .char-counter.danger  { color: #ef4444; }
 
-.add-comment-form {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #334155;
-}
-.comment-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #475569;
-    border-radius: 6px;
-    background: #0f172a;
-    color: #e2e8f0;
-    resize: vertical;
-    font-family: inherit;
-    font-size: 0.95rem;
-}
-.comment-input:focus {
-    outline: none;
-    border-color: #6366f1;
-}
-.comment-input::placeholder { color: #64748b; }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.5rem;
+        gap: 0.25rem;
+    }
+    .page-link {
+        color: #cbd5e1;
+        background: #0f172a;
+        border: 1px solid #334155;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .page-link:hover { background: #1e293b; color: #e2e8f0; border-color: #475569; }
+    .page-item.active .page-link { background: #4f46e5; color: white; border-color: #4f46e5; }
+    .page-item.disabled .page-link { color: #64748b; background: #0f172a; border-color: #334155; cursor: not-allowed; }
 
-.submit-comment-btn {
-    margin-top: 0.75rem;
-    padding: 0.6rem 1.5rem;
-    background: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-}
-.submit-comment-btn:hover { background: #4338ca; }
+    .breadcrumb { background: transparent; margin-bottom: 1rem; padding: 0; }
+    .breadcrumb-item { color: #94a3b8; }
+    .breadcrumb-item a { color: #cbd5e1; text-decoration: none; }
+    .breadcrumb-item a:hover { color: #e2e8f0; }
+    .breadcrumb-item.active { color: #e2e8f0; font-weight: bold; }
+    .breadcrumb-item + .breadcrumb-item::before { color: #64748b; content: "/"; }
 
-.cancel-reply-btn {
-    margin-left: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: #334155;
-    color: #cbd5e1;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: background 0.2s;
-}
-.cancel-reply-btn:hover { background: #475569; }
+    .post-actions {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid #334155;
+    }
+    .like-btn {
+        background: none;
+        border: none;
+        padding: 0.25rem 0.4rem;
+        cursor: pointer;
+        color: #94a3b8;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        transition: color 0.15s;
+    }
+    .like-btn:hover { color: #e2137a; }
+    .like-btn:hover .like-icon { transform: scale(1.3); }
+    .like-btn.liked { color: #e2137a; }
+    .like-btn.liked .like-icon { transform: scale(1.15); }
+    .like-icon { transition: transform 0.15s; display: inline-block; }
 
-/* 3-dots menu */
-.post-menu-btn {
-    background: transparent;
-    border: 1px solid #334155;
-    color: #94a3b8;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.15s;
-}
-.post-menu-btn:hover {
-    background: #1e293b;
-    border-color: #475569;
-    color: #e2e8f0;
-}
-.post-menu-dropdown {
-    display: none;
-    position: absolute;
-    top: 2.2rem;
-    right: 0;
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 0.75rem;
-    min-width: 150px;
-    z-index: 100;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-}
-.post-menu-dropdown button {
-    width: 100%;
-    text-align: left;
-    padding: 0.75rem 1rem;
-    background: none;
-    border: none;
-    color: #fca5a5;
-    cursor: pointer;
-    border-radius: 0.75rem;
-    font-size: 0.875rem;
-    transition: background 0.15s;
-}
-.post-menu-dropdown button:hover {
-    background: #334155;
-}
+    .comment-count-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        text-decoration: none;
+        transition: color 0.15s;
+    }
+    .comment-count-link:hover { color: #6366f1; }
 </style>
 @endsection
 
 @section('content')
 
-<div class="post-card" style="position: relative;">
+<div class="create-post-card">
+    <h2>✍️ Créer une publication</h2>
+    <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
+        @csrf
 
-    {{-- 3-dots menu (teacher only, own posts) --}}
-    @if(Auth::user()->isTeacher() && $post->user_id === Auth::id())
-        <div style="position:absolute; top:1rem; right:1rem;">
-            <button class="post-menu-btn" onclick="togglePostMenu()">⋮</button>
-            <div class="post-menu-dropdown" id="post-menu">
-                <form method="POST" action="{{ route('posts.destroy', $post->id) }}"
-                      style="display:block; width:100%;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">🗑️ Supprimer</button>
-                </form>
+        <div class="form-group">
+            <label for="type">Type de publication *</label>
+            <select id="type" name="type" required>
+                <option value="announcement">📢 Annonce importante</option>
+                <option value="reminder">⏰ Rappel</option>
+                <option value="general">📌 Publication générale</option>
+            </select>
+            @error('type')<div class="error">{{ $message }}</div>@enderror
+        </div>
+
+        <div class="form-group">
+            <label>Cours *</label>
+            <div class="courses-checkboxes">
+                {{-- "All students" option --}}
+                <label class="course-checkbox-item all-option">
+                    <input type="checkbox" name="class_ids[]" value="" id="course-all">
+                    <span>🌍 Tous mes étudiants (publication générale)</span>
+                </label>
+                @foreach($courses as $course)
+                    <label class="course-checkbox-item">
+                        <input type="checkbox" name="class_ids[]" value="{{ $course->id }}"
+                               class="course-specific"
+                               {{ is_array(old('class_ids')) && in_array($course->id, old('class_ids')) ? 'checked' : '' }}>
+                        <span>📚 {{ $course->name }} ({{ $course->students->count() }} étudiants)</span>
+                    </label>
+                @endforeach
             </div>
+            <div class="selected-courses-hint" id="courses-hint">Aucun cours sélectionné — publication générale par défaut</div>
+            @error('class_ids')<div class="error">{{ $message }}</div>@enderror
         </div>
-    @endif
 
-    <span class="post-type-badge type-{{ $post->type }}">
-        @if($post->type === 'announcement') 📢 Annonce
-        @elseif($post->type === 'tp_posted') 📝 Nouveau TP
-        @elseif($post->type === 'reminder') ⏰ Rappel
-        @else 📌 Général
-        @endif
-    </span>
-
-    <div class="post-title">{{ $post->title }}</div>
-    <div class="post-meta">
-        Par {{ $post->user->name }} · {{ $post->created_at->diffForHumans() }}
-    </div>
-    <div class="post-content" style="white-space: pre-line;">{{ $post->content }}</div>
-
-    @if($post->tp && $post->tp->due_date)
-        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem;">
-            📅 Échéance: {{ $post->tp->due_date->format('d/m/Y à H:i') }}
+        <div class="form-group">
+            <label for="title">Titre *</label>
+            <input type="text" id="title" name="title" value="{{ old('title') }}"
+                   placeholder="Ex: Rappel - TP à rendre vendredi"
+                   maxlength="50" required>
+            <div class="char-counter" id="title-counter">0 / 50</div>
+            @error('title')<div class="error">{{ $message }}</div>@enderror
         </div>
-    @endif
 
-    @if($post->class)
-        <div class="post-course">📚 {{ $post->class->name }}</div>
-    @endif
-
-    @if($post->tp)
-        <div style="margin-top: 1rem;">
-            @if(Auth::user()->isTeacher())
-                <a href="{{ route('teacher.tps.show', $post->tp->id) }}" class="attachment-btn">👁️ Voir le TP</a>
-            @else
-                <a href="{{ route('student.tps.show', $post->tp->id) }}" class="attachment-btn">👁️ Voir le TP</a>
-            @endif
+        <div class="form-group">
+            <label for="content">Contenu *</label>
+            <textarea id="content" name="content" required
+                      placeholder="Écrivez votre message...">{{ old('content') }}</textarea>
+            @error('content')<div class="error">{{ $message }}</div>@enderror
         </div>
-    @endif
 
-    @if($post->attachment)
-        <a href="{{ asset('storage/' . $post->attachment) }}" target="_blank" class="attachment-btn">
-            📎 Télécharger la pièce jointe
-        </a>
-    @endif
+        <div class="form-group">
+            <label>Pièce jointe (optionnel)</label>
+            <x-file-upload id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.zip" hint="PDF, JPG, PNG, ZIP · max 10 Mo" />
+            @error('attachment')<div class="error">{{ $message }}</div>@enderror
+        </div>
+
+        <button type="submit" class="btn-post">📤 Publier</button>
+    </form>
 </div>
 
-<div class="comments-section">
-    <h3 style="margin-bottom: 1.5rem; color: #f1f5f9;">💬 Commentaires ({{ $post->comments->count() }})</h3>
+<div class="feed-section">
+    <h2 style="margin-bottom: 1.5rem; color: #f1f5f9;">📰 Mes publications</h2>
 
-    @forelse($post->comments as $comment)
-        <div class="comment">
-            <img src="{{ $comment->user->profile_picture_url }}"
-                 alt="{{ $comment->user->name }}"
-                 style="width:40px;height:40px;min-width:40px;border-radius:50%;object-fit:cover;">
+    @forelse($posts as $post)
+        <div class="post-card"
+             style="cursor:pointer;"
+             onclick="if(event.target.closest('form, a, button')) return; window.location='{{ route('posts.show', $post->id) }}'">
 
-            <div class="comment-body">
-                <div class="comment-header">
-                    <span class="comment-author">{{ $comment->user->name }}</span>
-                    <span class="comment-role {{ $comment->user->isTeacher() ? 'teacher' : '' }}">
-                        {{ $comment->user->isTeacher() ? 'Enseignant' : 'Étudiant' }}
-                    </span>
-                    <span class="comment-time">{{ $comment->created_at->diffForHumans() }}</span>
-                </div>
+            <div class="post-header">
+                <div style="display:flex; gap:1rem; align-items:flex-start; flex:1;">
+                    <img src="{{ $post->user->profile_picture_url }}"
+                         alt="{{ $post->user->name }}"
+                         style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;">
 
-                <div class="comment-content">{{ $comment->content }}</div>
-
-                <div class="comment-actions">
-                    <button class="reply-btn" onclick="toggleReply('reply-form-{{ $comment->id }}')">
-                        ↩️ Répondre
-                    </button>
-                    @if($comment->user_id === Auth::id())
-                        <form method="POST" action="{{ route('comments.destroy', $comment->id) }}" style="display:inline;">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="delete-btn" onclick="return confirm('Supprimer ce commentaire?')">
-                                🗑️ Supprimer
-                            </button>
-                        </form>
-                    @endif
-                </div>
-
-                <div class="reply-form" id="reply-form-{{ $comment->id }}">
-                    <form method="POST" action="{{ route('posts.comments.store', $post->id) }}">
-                        @csrf
-                        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
-                        <textarea name="content"
-                                  class="comment-input"
-                                  rows="3"
-                                  required
-                                  placeholder="Ctrl+Entrée pour envoyer..."></textarea>
-                        <button type="submit" class="submit-comment-btn">↩️ Répondre</button>
-                        <button type="button" class="cancel-reply-btn"
-                                onclick="toggleReply('reply-form-{{ $comment->id }}')">Annuler</button>
-                    </form>
-                </div>
-
-                @if($comment->replies->count() > 0)
-                    <div class="replies">
-                        @foreach($comment->replies as $reply)
-                            <div class="reply">
-                                <img src="{{ $reply->user->profile_picture_url }}"
-                                     alt="{{ $reply->user->name }}"
-                                     style="width:32px;height:32px;min-width:32px;border-radius:50%;object-fit:cover;">
-
-                                <div class="comment-body">
-                                    <div class="comment-header">
-                                        <span class="comment-author">{{ $reply->user->name }}</span>
-                                        <span class="comment-role {{ $reply->user->isTeacher() ? 'teacher' : '' }}">
-                                            {{ $reply->user->isTeacher() ? 'Enseignant' : 'Étudiant' }}
-                                        </span>
-                                        <span class="comment-time">{{ $reply->created_at->diffForHumans() }}</span>
-                                    </div>
-                                    <div class="comment-content">{{ $reply->content }}</div>
-                                    @if($reply->user_id === Auth::id())
-                                        <form method="POST" action="{{ route('comments.destroy', $reply->id) }}">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="delete-btn">🗑️ Supprimer</button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </div>
-                        @endforeach
+                    <div class="post-info">
+                        <span class="post-type-badge type-{{ $post->type }}">
+                            @if($post->type === 'announcement') 📢 Annonce
+                            @elseif($post->type === 'tp_posted') 📝 TP
+                            @elseif($post->type === 'reminder') ⏰ Rappel
+                            @else 📌 Général
+                            @endif
+                        </span>
+                        <div class="post-title">{{ $post->title }}</div>
+                        <div class="post-meta">Publié {{ $post->created_at->diffForHumans() }}</div>
                     </div>
-                @endif
+                </div>
             </div>
+
+            <div class="post-content" style="white-space: pre-line;">{{ $post->content }}</div>
+
+            @if($post->tp && $post->tp->due_date)
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem;">
+                    📅 Échéance: {{ $post->tp->due_date->format('d/m/Y à H:i') }}
+                </div>
+            @endif
+
+            @if($post->class)
+                <div class="post-course">📚 {{ $post->class->name }} ({{ $post->class->students->count() }} étudiants)</div>
+            @else
+                <div class="post-course">🌍 Publication générale</div>
+            @endif
+
+            @if($post->tp)
+                <div style="margin-top: 1rem;">
+                    <a href="{{ route('teacher.tps.show', $post->tp->id) }}" class="attachment-btn">👁️ Voir le TP</a>
+                </div>
+            @endif
+
+            @if($post->attachment)
+                <div class="post-attachment">
+                    <a href="{{ asset('storage/' . $post->attachment) }}" target="_blank" class="attachment-btn">
+                        📎 Télécharger la pièce jointe
+                    </a>
+                </div>
+            @endif
+
+            <div class="post-actions">
+                <button
+                    class="like-btn {{ $post->isLikedBy(auth()->id()) ? 'liked' : '' }}"
+                    data-type="post"
+                    data-id="{{ $post->id }}">
+                    <span class="like-icon">{{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}</span>
+                    <span class="like-count">{{ $post->likes()->count() }}</span>
+                </button>
+
+                <a href="{{ route('posts.show', $post->id) }}#comments" class="comment-count-link">
+                    💬 {{ $post->comments->reduce(fn($carry, $c) => $carry + 1 + $c->replies->count(), 0) }}
+                </a>
+            </div>
+
         </div>
     @empty
-        <p style="color: #64748b; text-align: center;">Aucun commentaire</p>
+        <div class="no-posts">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
+            <h3 style="color: #94a3b8;">Aucune publication</h3>
+            <p style="margin-top: 0.5rem;">Créez votre première publication pour communiquer avec vos étudiants</p>
+        </div>
     @endforelse
 
-    <div class="add-comment-form">
-        <form method="POST" action="{{ route('posts.comments.store', $post->id) }}">
-            @csrf
-            <textarea name="content"
-                      class="comment-input"
-                      required
-                      placeholder="Écrivez un commentaire... (Ctrl+Entrée pour envoyer)"></textarea>
-            <button type="submit" class="submit-comment-btn">💬 Commenter</button>
-        </form>
-    </div>
+    @if($posts->hasPages())
+        <div style="margin-top: 1.5rem;">
+            {{ $posts->links() }}
+        </div>
+    @endif
 </div>
+
+@endsection
 
 @section('extra-scripts')
 <script>
-function toggleReply(id) {
-    document.getElementById(id).classList.toggle('active');
+// ── Title char counter ──
+const titleInput   = document.getElementById('title');
+const titleCounter = document.getElementById('title-counter');
+function updateTitleCounter() {
+    const len = titleInput.value.length;
+    titleCounter.textContent = len + ' / 50';
+    titleCounter.classList.remove('warning', 'danger');
+    if (len >= 50)       titleCounter.classList.add('danger');
+    else if (len >= 40)  titleCounter.classList.add('warning');
 }
+titleInput.addEventListener('input', updateTitleCounter);
+updateTitleCounter();
 
-function togglePostMenu() {
-    const menu = document.getElementById('post-menu');
-    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-}
+// ── Course checkboxes logic ──
+const allCheckbox      = document.getElementById('course-all');
+const specificBoxes    = document.querySelectorAll('.course-specific');
+const hint             = document.getElementById('courses-hint');
 
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.post-menu-btn') && !e.target.closest('#post-menu')) {
-        const menu = document.getElementById('post-menu');
-        if (menu) menu.style.display = 'none';
+function updateHint() {
+    const checked = [...specificBoxes].filter(cb => cb.checked);
+    if (allCheckbox.checked || checked.length === 0) {
+        hint.textContent = 'Publication générale — visible par tous vos étudiants';
+    } else if (checked.length === 1) {
+        hint.textContent = '1 cours sélectionné';
+    } else {
+        hint.textContent = checked.length + ' cours sélectionnés';
     }
+}
+
+// "All" toggles off specific ones
+allCheckbox.addEventListener('change', () => {
+    if (allCheckbox.checked) {
+        specificBoxes.forEach(cb => cb.checked = false);
+    }
+    updateHint();
+});
+
+// Checking a specific course unchecks "All"
+specificBoxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+        if (cb.checked) allCheckbox.checked = false;
+        updateHint();
+    });
+});
+
+updateHint();
+
+// ── Likes ──
+document.querySelectorAll('.like-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const id  = btn.dataset.id;
+        const res = await fetch(`/posts/${id}/like`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        });
+        const data = await res.json();
+        btn.querySelector('.like-icon').textContent = data.liked ? '❤️' : '🤍';
+        btn.querySelector('.like-count').textContent = data.count;
+        btn.classList.toggle('liked', data.liked);
+    });
 });
 </script>
-@endsection
-
 @endsection

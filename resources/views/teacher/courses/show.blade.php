@@ -252,10 +252,10 @@
     <div style="display:flex; justify-content:flex-end; margin-bottom:2rem; position:relative;">
         <button onclick="toggleMenu('course-menu')" style="background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:0.5rem 0.75rem; border-radius:0.5rem; cursor:pointer; font-size:1.2rem;">⋮</button>
         <div id="course-menu" style="display:none; position:absolute; top:2.5rem; right:0; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; min-width:180px; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
-            <a href="{{ route('teacher.courses.edit', $course->id) }}"
-               style="display:block; padding:0.75rem 1rem; color:#e2e8f0; text-decoration:none; border-radius:0.75rem 0.75rem 0 0;">
-                ✏️ Modifier le cours
-            </a>
+            <a href="{{ route('teacher.courses.edit', $course->id) }}?from=tps"
+   style="display:block; padding:0.75rem 1rem; color:#e2e8f0; text-decoration:none; border-radius:0.75rem 0.75rem 0 0;">
+    ✏️ Modifier le cours
+</a>
             <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
                 @csrf
                 <button type="submit"
@@ -386,7 +386,9 @@
 
     <!-- Tab: Students -->
     <div class="tab-content" id="tab-students">
-        <h2>👥 Étudiants Inscrits ({{ $course->students->count() }})</h2>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">👥 Étudiants Inscrits ({{ $course->students->count() }})</h3>
+        </div>
 
         @if($course->students->count() > 0)
             <table class="students-table">
@@ -440,11 +442,10 @@
         menu.style.display = isOpen ? 'none' : 'block';
     }
 
-    /* ── TP-level menus (only closes other tp menus) ── */
+    /* ── TP-level menus ── */
     function toggleTpMenu(id) {
         const menu = document.getElementById(id);
         const isOpen = menu.style.display === 'block';
-        // close all tp menus
         document.querySelectorAll('[id^="tp-menu-"]').forEach(m => m.style.display = 'none');
         menu.style.display = isOpen ? 'none' : 'block';
     }
@@ -453,37 +454,33 @@
         document.querySelectorAll('[id$="-menu"], [id^="tp-menu-"]').forEach(m => m.style.display = 'none');
     }
 
-    /* Close everything when clicking outside */
     document.addEventListener('click', closeAllMenus);
 
     function switchTab(tabName, event) {
-        document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         event.target.classList.add('active');
         document.getElementById('tab-' + tabName).classList.add('active');
-        history.replaceState(null, null, '#' + tabName);
+        history.replaceState(null, null, '?tab=' + tabName);
     }
 
     function copyJoinCode() {
-        const code = document.getElementById('joinCode').textContent.trim();
-        navigator.clipboard.writeText(code).then(() => {
-            alert('Code copié: ' + code);
+    const code = document.getElementById('joinCode').textContent.trim();
+    navigator.clipboard.writeText(code).then(() => showToast('✓ Code copié : ' + code));
+}
+
+    /* ── Activate correct tab from ?tab= param, no flash ── */
+    const tabParam = new URLSearchParams(window.location.search).get('tab');
+    const validTabs = ['info', 'tps', 'students'];
+    if (tabParam && validTabs.includes(tabParam)) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-' + tabParam).classList.add('active');
+        document.querySelectorAll('.tab').forEach(tab => {
+            if (tab.getAttribute('onclick')?.includes("'" + tabParam + "'")) {
+                tab.classList.add('active');
+            }
         });
     }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const fragment = window.location.hash.replace('#', '');
-        const validTabs = ['info', 'tps', 'students'];
-        if (fragment && validTabs.includes(fragment)) {
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            document.getElementById('tab-' + fragment).classList.add('active');
-            document.querySelectorAll('.tab').forEach(tab => {
-                if (tab.getAttribute('onclick') && tab.getAttribute('onclick').includes("'" + fragment + "'")) {
-                    tab.classList.add('active');
-                }
-            });
-        }
-    });
 </script>
 @endsection

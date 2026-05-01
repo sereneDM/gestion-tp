@@ -116,9 +116,6 @@
             <div style="font-size: 5rem; margin-bottom: 1rem;">📚</div>
             <h2>Aucun cours</h2>
             <p style="margin-top: 1rem;">Vous n'êtes inscrit à aucun cours pour le moment.</p>
-            <a href="{{ route('student.join-course.form') }}" class="btn btn-primary" style="margin-top: 1.5rem;">
-                ➕ Rejoindre un cours
-            </a>
         </div>
     @endif
 @endsection

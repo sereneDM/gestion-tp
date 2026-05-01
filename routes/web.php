@@ -10,6 +10,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\LikeController;
 
 
 Route::put('/tps/{id}/submit', [StudentController::class, 'updateSubmission'])->name('student.tps.update-submission');
@@ -17,6 +18,7 @@ Route::put('/tps/{id}/submit', [StudentController::class, 'updateSubmission'])->
 Route::delete('/profile/picture', [ProfileController::class, 'deletePicture'])
     ->name('profile.delete-picture')
     ->middleware('auth');
+Route::get('/users/search', [ProfileController::class, 'search'])->middleware('auth');
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -32,6 +34,8 @@ Route::middleware('auth')->group(function () {
 Route::get('/posts/{id}', [FeedController::class, 'show'])->name('posts.show');
 Route::post('/posts/{id}/comments', [FeedController::class, 'storeComment'])->name('posts.comments.store');
 Route::delete('/comments/{id}', [FeedController::class, 'destroyComment'])->name('comments.destroy');
+Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
+Route::post('/comments/{comment}/like', [LikeController::class, 'toggleComment'])->name('comments.like');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

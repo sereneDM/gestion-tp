@@ -32,4 +32,13 @@ class Comment extends Model
     {
         return $this->belongsTo(Comment::class, 'parent_id');
     }
+    public function likes()
+{
+    return $this->morphMany(Like::class, 'likeable');
+}
+
+public function isLikedBy($userId)
+{
+    return $this->likes()->where('user_id', $userId)->exists();
+}
 }
