@@ -13,8 +13,9 @@
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
-        color: #e2e8f0;
+        transition: opacity 0.15s;
     }
+<<<<<<< HEAD
     .btn-secondary {
         background-color: #475569;
         color: white;
@@ -32,6 +33,13 @@
     }
 
     /* ── Filter bar ── */
+=======
+    .btn:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
+    .btn-info  { background: var(--tp-accent); color: white; }
+    .btn-small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+
+>>>>>>> 29f2233 (fifth update)
     .course-filter {
         display: flex;
         align-items: center;
@@ -41,56 +49,75 @@
     }
     .course-filter label {
         font-size: 0.9rem;
+<<<<<<< HEAD
         color: #94a3b8;
+=======
+        color: var(--tp-text-muted);
+>>>>>>> 29f2233 (fifth update)
         white-space: nowrap;
         font-weight: bold;
     }
     .course-filter select {
+<<<<<<< HEAD
         background: #1e293b;
         border: 1px solid #334155;
         color: #e2e8f0;
+=======
+        background: var(--tp-input-bg);
+        border: 1px solid var(--tp-border);
+        color: var(--tp-text-primary);
+>>>>>>> 29f2233 (fifth update)
         padding: 0.5rem 1rem;
         border-radius: 0.75rem;
         font-size: 0.9rem;
         cursor: pointer;
         outline: none;
     }
+<<<<<<< HEAD
     .course-filter select:focus {
         border-color: #6366f1;
     }
+=======
+    .course-filter select:focus { border-color: #6366f1; }
+    .course-filter select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
+>>>>>>> 29f2233 (fifth update)
 
     .class-section {
-        background: #0f172a;
+        background: var(--tp-bg-raised);
         padding: 2rem;
         border-radius: 1rem;
         margin-bottom: 2rem;
-        border: 1px solid #334155;
+        border: 1px solid var(--tp-border);
     }
     .class-section h2 {
-        color: #c7d2fe;
+        color: var(--tp-accent-text);
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #334155;
+        border-bottom: 2px solid var(--tp-border);
     }
-    .students-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #0f172a;
-    }
+    .students-table { width: 100%; border-collapse: collapse; }
     .students-table th,
     .students-table td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #334155;
-        color: #cbd5e1;
+        border-bottom: 1px solid var(--tp-border);
+        color: var(--tp-text-secondary);
     }
     .students-table th {
-        background-color: #334155;
+        background: var(--tp-table-header);
         font-weight: bold;
-        color: #e2e8f0;
+        color: var(--tp-text-primary);
     }
-    .students-table tr:hover {
-        background-color: #1e293b;
+    .students-table tr:hover { background: var(--tp-table-row-hover); }
+
+    #no-results {
+        display: none;
+        text-align: center;
+        padding: 3rem;
+        color: var(--tp-text-faint);
+        background: var(--tp-bg-raised);
+        border: 1px solid var(--tp-border);
+        border-radius: 1rem;
     }
 
     #no-results {
@@ -107,7 +134,10 @@
 
 @section('content')
 
+<<<<<<< HEAD
     {{-- Filter bar --}}
+=======
+>>>>>>> 29f2233 (fifth update)
     <div class="course-filter">
         <label for="class-filter">Filtrer par classe :</label>
         <select id="class-filter" onchange="filterClass(this.value)">
@@ -150,14 +180,14 @@
                     </tbody>
                 </table>
             @else
-                <p style="color: #999; text-align: center; padding: 2rem;">
+                <p style="color: var(--tp-text-faint); text-align: center; padding: 2rem;">
                     Aucun étudiant dans cette classe
                 </p>
             @endif
         </div>
     @empty
         <div class="class-section" style="text-align: center;">
-            <p style="color: #999;">Vous n'avez aucune classe assignée</p>
+            <p style="color: var(--tp-text-faint);">Vous n'avez aucune classe assignée</p>
         </div>
     @endforelse
 
@@ -183,4 +213,8 @@
         document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
     }
 </script>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 29f2233 (fifth update)

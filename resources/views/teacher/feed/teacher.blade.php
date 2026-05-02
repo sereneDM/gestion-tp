@@ -6,40 +6,40 @@
 @section('extra-styles')
 <style>
     .create-post-card {
-        background: #0f172a;
+        background: var(--tp-bg-raised);
         padding: 2rem;
         border-radius: 12px;
-        border: 1px solid #334155;
+        border: 1px solid var(--tp-border);
         margin-bottom: 2rem;
     }
     .create-post-card h2 {
         margin-top: 0;
-        color: #f1f5f9;
-        border-bottom: 1px solid #334155;
+        color: var(--tp-text-primary);
+        border-bottom: 1px solid var(--tp-border);
         padding-bottom: 0.5rem;
         margin-bottom: 1.5rem;
     }
     .form-group { margin-bottom: 1.5rem; }
-    label { display: block; margin-bottom: 0.5rem; color: #cbd5e1; font-weight: bold; }
+    label { display: block; margin-bottom: 0.5rem; color: var(--tp-text-secondary); font-weight: bold; }
     input[type="text"], textarea, select {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #475569;
+        border: 1px solid var(--tp-input-border);
         border-radius: 6px;
         font-size: 1rem;
-        background: #1e293b;
-        color: #e2e8f0;
+        background: var(--tp-input-bg);
+        color: var(--tp-text-primary);
     }
     input[type="text"]::placeholder,
-    textarea::placeholder { color: #64748b; }
-    select option { background: #1e293b; color: #e2e8f0; }
+    textarea::placeholder { color: var(--tp-text-faint); }
+    select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
     textarea { min-height: 120px; resize: vertical; }
     input:focus, textarea:focus, select:focus {
         outline: none;
         border-color: #6366f1;
     }
     .btn-post {
-        background: #4f46e5;
+        background: var(--tp-accent);
         color: white;
         padding: 0.75rem 2rem;
         border: none;
@@ -49,15 +49,33 @@
         cursor: pointer;
         transition: background 0.2s;
     }
+<<<<<<< HEAD
     .btn-post:hover { background: #4338ca; }
     .error { color: #fca5a5; font-size: 0.875rem; margin-top: 0.5rem; }
 
     .pagination {
+=======
+    .btn-post:hover { background: var(--tp-accent-hover); }
+    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.5rem; }
+    [data-theme="dark"] .error { color: #fca5a5; }
+
+    .breadcrumb { background: transparent; margin-bottom: 1rem; padding: 0; }
+    .breadcrumb-item { color: var(--tp-text-muted); }
+    .breadcrumb-item a { color: var(--tp-text-secondary); text-decoration: none; }
+    .breadcrumb-item a:hover { color: var(--tp-text-primary); }
+    .breadcrumb-item.active { color: var(--tp-text-primary); font-weight: bold; }
+    .breadcrumb-item + .breadcrumb-item::before { color: var(--tp-text-faint); content: "/"; }
+
+    .post-actions {
+>>>>>>> 29f2233 (fifth update)
         display: flex;
-        justify-content: center;
-        margin-top: 1.5rem;
-        gap: 0.25rem;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--tp-border);
     }
+<<<<<<< HEAD
     .page-link {
         color: #cbd5e1;
         background: #0f172a;
@@ -104,16 +122,45 @@
     .like-btn.liked .like-icon { transform: scale(1.15); }
     .like-icon { transition: transform 0.15s; display: inline-block; }
 
+=======
+    .like-btn {
+        background: none;
+        border: none;
+        padding: 0.25rem 0.4rem;
+        cursor: pointer;
+        color: var(--tp-text-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 0.85rem;
+        transition: color 0.15s;
+    }
+    .like-btn:hover { color: #e2137a; }
+    .like-btn:hover .like-icon { transform: scale(1.3); }
+    .like-btn.liked { color: #e2137a; }
+    .like-btn.liked .like-icon { transform: scale(1.15); }
+    .like-icon { transition: transform 0.15s; display: inline-block; }
+
+>>>>>>> 29f2233 (fifth update)
     .comment-count-link {
         display: inline-flex;
         align-items: center;
         gap: 5px;
         font-size: 0.85rem;
+<<<<<<< HEAD
         color: #94a3b8;
+=======
+        color: var(--tp-text-muted);
+>>>>>>> 29f2233 (fifth update)
         text-decoration: none;
         transition: color 0.15s;
     }
     .comment-count-link:hover { color: #6366f1; }
+<<<<<<< HEAD
+=======
+
+    .feed-section h2 { color: var(--tp-text-primary); }
+>>>>>>> 29f2233 (fifth update)
 </style>
 @endsection
 
@@ -169,7 +216,7 @@
 </div>
 
 <div class="feed-section">
-    <h2 style="margin-bottom: 1.5rem; color: #f1f5f9;">📰 Mes publications</h2>
+    <h2 style="margin-bottom: 1.5rem;">📰 Mes publications</h2>
 
     @forelse($posts as $post)
         <div class="post-card"
@@ -199,7 +246,7 @@
             <div class="post-content" style="white-space: pre-line;">{{ $post->content }}</div>
 
             @if($post->tp && $post->tp->due_date)
-                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem;">
+                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--tp-border); color: var(--tp-text-secondary); font-size: 0.9rem;">
                     📅 Échéance: {{ $post->tp->due_date->format('d/m/Y à H:i') }}
                 </div>
             @endif
@@ -224,7 +271,10 @@
                 </div>
             @endif
 
+<<<<<<< HEAD
             {{-- Like + comment count --}}
+=======
+>>>>>>> 29f2233 (fifth update)
             <div class="post-actions">
                 <button
                     class="like-btn {{ $post->isLikedBy(auth()->id()) ? 'liked' : '' }}"
@@ -243,8 +293,8 @@
     @empty
         <div class="no-posts">
             <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
-            <h3 style="color: #94a3b8;">Aucune publication</h3>
-            <p style="margin-top: 0.5rem;">Créez votre première publication pour communiquer avec vos étudiants</p>
+            <h3 style="color: var(--tp-text-muted);">Aucune publication</h3>
+            <p style="margin-top: 0.5rem; color: var(--tp-text-muted);">Créez votre première publication pour communiquer avec vos étudiants</p>
         </div>
     @endforelse
 
@@ -279,4 +329,8 @@ document.querySelectorAll('.like-btn').forEach(btn => {
     });
 });
 </script>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 29f2233 (fifth update)

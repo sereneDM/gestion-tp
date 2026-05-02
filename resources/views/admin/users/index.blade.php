@@ -6,96 +6,55 @@
 @section('extra-styles')
 <style>
     .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
+        @apply px-5 py-3 border-none rounded-2xl cursor-pointer no-underline text-sm inline-flex items-center justify-center font-medium transition-colors duration-200;
     }
     .btn-primary {
-        background-color: #007bff;
-        color: white;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
+        @apply bg-violet-600 dark:bg-violet-600 text-white hover:bg-violet-700 dark:hover:bg-violet-700;
     }
     .btn-warning {
-        background-color: #ffc107;
-        color: #333;
-    }
-    .btn-warning:hover {
-        background-color: #e0a800;
+        @apply bg-amber-500 dark:bg-amber-600 text-slate-900 dark:text-white hover:bg-amber-600 dark:hover:bg-amber-700;
     }
     .btn-danger {
-        background-color: #dc3545;
-        color: white;
-    }
-    .btn-danger:hover {
-        background-color: #c82333;
+        @apply bg-red-600 dark:bg-red-600 text-white hover:bg-red-700 dark:hover:bg-red-700;
     }
     .btn-small {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
+        @apply px-3 py-2 text-xs;
     }
     .header-actions {
-        margin-bottom: 1.5rem;
-        text-align: right;
+        @apply mb-6 text-right;
     }
     table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
+        @apply w-full border-collapse bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-200;
     }
     thead {
-        background-color: #007bff;
-        color: white;
+        @apply bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-50 font-semibold;
     }
     th, td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
+        @apply px-4 py-3 text-left border-b border-slate-200 dark:border-slate-700;
     }
     tbody tr:hover {
-        background-color: #f8f9fa;
+        @apply bg-slate-50 dark:bg-slate-700/50 transition-colors;
     }
     .role-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        display: inline-block;
+        @apply px-3 py-1.5 rounded-full text-xs font-bold inline-flex items-center;
     }
     .role-student {
-        background-color: #e3f2fd;
-        color: #1976d2;
+        @apply bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300;
     }
     .role-teacher {
-        background-color: #fff3e0;
-        color: #f57c00;
+        @apply bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300;
     }
     .role-admin {
-        background-color: #ffebee;
-        color: #c62828;
+        @apply bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300;
     }
     .action-buttons {
-        display: flex;
-        gap: 0.5rem;
+        @apply flex gap-2;
     }
     .delete-form {
-        display: inline;
+        @apply inline;
     }
     select {
-        padding: 0.5rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        background: white;
-    }
-    select:focus {
-        outline: none;
-        border-color: #007bff;
+        @apply px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400;
     }
 </style>
 @endsection

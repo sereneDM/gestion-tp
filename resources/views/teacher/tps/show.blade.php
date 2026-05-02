@@ -5,9 +5,7 @@
 
 @section('extra-styles')
 <style>
-    .header-actions {
-        margin-bottom: 1.5rem;
-    }
+    .header-actions { margin-bottom: 1.5rem; }
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
@@ -16,42 +14,26 @@
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
-        color: #e2e8f0;
+        transition: opacity 0.15s;
     }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .btn-secondary:hover {
-        background-color: #334155;
-    }
-    .btn-primary {
-        background-color: #4f46e5;
-        color: white;
-    }
-    .btn-warning {
-        background-color: #f59e0b;
-        color: #1f2937;
-    }
-    .btn-danger {
-        background-color: #dc3545;
-        color: white;
-    }
-    .btn-small {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-    }
+    .btn:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
+    .btn-primary   { background: var(--tp-accent); color: white; }
+    .btn-warning   { background: #f59e0b; color: #1f2937; }
+    .btn-danger    { background: #dc2626; color: white; }
+    .btn-small     { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+
     .info-card {
-        background: #0f172a;
+        background: var(--tp-bg-raised);
         padding: 2rem;
         border-radius: 1rem;
         margin-bottom: 2rem;
-        border: 1px solid #334155;
+        border: 1px solid var(--tp-border);
     }
     .info-card h2 {
         margin-top: 0;
-        color: #c7d2fe;
-        border-bottom: 2px solid #334155;
+        color: var(--tp-accent-text);
+        border-bottom: 2px solid var(--tp-border);
         padding-bottom: 0.5rem;
         margin-bottom: 1.5rem;
     }
@@ -59,15 +41,12 @@
         display: grid;
         grid-template-columns: 200px 1fr;
         padding: 1rem 0;
-        border-bottom: 1px solid #334155;
+        border-bottom: 1px solid var(--tp-border);
         min-width: 0;
     }
-    .info-label {
-        font-weight: bold;
-        color: #94a3b8;
-    }
+    .info-label { font-weight: bold; color: var(--tp-text-muted); }
     .info-value {
-        color: #e2e8f0;
+        color: var(--tp-text-primary);
         min-width: 0;
         word-break: break-word;
         overflow-wrap: break-word;
@@ -82,69 +61,39 @@
         max-height: 6rem;
         overflow-y: auto;
         line-height: 1.5;
+        color: var(--tp-text-secondary);
     }
-    .status-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 9999px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        display: inline-block;
-    }
-    .status-published {
-        background: rgba(34,197,94,0.15);
-        color: #86efac;
-    }
-    .status-draft {
-        background: rgba(251,191,36,0.15);
-        color: #facc15;
-    }
-    .status-closed {
-        background: rgba(239,68,68,0.15);
-        color: #fca5a5;
-    }
-    .submissions-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #0f172a;
-    }
-    .submissions-table thead {
-        background: #334155;
-        color: #e2e8f0;
-    }
+    .info-value a { color: #6366f1; text-decoration: none; }
+    .info-value a:hover { text-decoration: underline; }
+
+    .status-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.85rem; font-weight: bold; display: inline-block; }
+    .status-published { background: rgba(34,197,94,0.15);  color: #16a34a; }
+    .status-draft     { background: rgba(251,191,36,0.15); color: #d97706; }
+    .status-closed    { background: rgba(239,68,68,0.15);  color: #dc2626; }
+    [data-theme="dark"] .status-published { color: #86efac; }
+    [data-theme="dark"] .status-draft     { color: #facc15; }
+    [data-theme="dark"] .status-closed    { color: #fca5a5; }
+
+    .submissions-table { width: 100%; border-collapse: collapse; }
+    .submissions-table thead { background: var(--tp-table-header); color: var(--tp-text-primary); }
     .submissions-table th,
     .submissions-table td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #475569;
-        color: #cbd5e1;
+        border-bottom: 1px solid var(--tp-border);
+        color: var(--tp-text-secondary);
     }
-    .submissions-table tbody tr:hover {
-        background: #1e293b;
-    }
-    .grade-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 9999px;
-        font-size: 0.9rem;
-        font-weight: bold;
-        display: inline-block;
-    }
-    .grade-good {
-        background: rgba(34,197,94,0.15);
-        color: #86efac;
-    }
-    .grade-average {
-        background: rgba(251,191,36,0.15);
-        color: #facc15;
-    }
-    .grade-poor {
-        background: rgba(239,68,68,0.15);
-        color: #fca5a5;
-    }
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        color: #94a3b8;
-    }
+    .submissions-table tbody tr:hover { background: var(--tp-table-row-hover); }
+
+    .grade-badge { padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.9rem; font-weight: bold; display: inline-block; }
+    .grade-good    { background: rgba(34,197,94,0.15);  color: #16a34a; }
+    .grade-average { background: rgba(251,191,36,0.15); color: #d97706; }
+    .grade-poor    { background: rgba(239,68,68,0.15);  color: #dc2626; }
+    [data-theme="dark"] .grade-good    { color: #86efac; }
+    [data-theme="dark"] .grade-average { color: #facc15; }
+    [data-theme="dark"] .grade-poor    { color: #fca5a5; }
+
+    .empty-state { text-align: center; padding: 3rem; color: var(--tp-text-muted); }
 </style>
 @endsection
 
@@ -195,7 +144,7 @@
             <div class="info-row">
                 <div class="info-label">Fichier attaché:</div>
                 <div class="info-value">
-                    <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank" style="color: #3b82f6;">
+                    <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank">
                         📎 Télécharger le PDF
                     </a>
                 </div>
@@ -232,7 +181,7 @@
                             </td>
                             <td>
                                 @if($submission->grade)
-                                    <span class="grade-badge 
+                                    <span class="grade-badge
                                         @if($submission->grade >= 14) grade-good
                                         @elseif($submission->grade >= 10) grade-average
                                         @else grade-poor
@@ -244,7 +193,7 @@
                                 @endif
                             </td>
                             <td>
-                                <a href="{{ route('teacher.submissions.show', [$tp->id, $submission->id]) }}" 
+                                <a href="{{ route('teacher.submissions.show', [$tp->id, $submission->id]) }}"
                                    class="btn btn-primary btn-small">
                                     👁️ Voir & Noter
                                 </a>
@@ -257,7 +206,7 @@
             <div class="empty-state">
                 <div style="font-size: 4rem; margin-bottom: 1rem;">📄</div>
                 <h3>Aucune soumission</h3>
-                <p>Les étudiants n'ont pas encore soumis ce TP</p>
+                <p style="color: var(--tp-text-faint);">Les étudiants n'ont pas encore soumis ce TP</p>
             </div>
         @endif
     </div>

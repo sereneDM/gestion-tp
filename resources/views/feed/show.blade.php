@@ -5,6 +5,7 @@
 
 @section('extra-styles')
 <style>
+<<<<<<< HEAD
     .create-post-card {
         background: #0f172a;
         padding: 2rem;
@@ -168,6 +169,62 @@
         transition: color 0.15s;
     }
     .comment-count-link:hover { color: #6366f1; }
+=======
+/* Page-specific styles - Light/Dark mode compatible */
+.post-title { 
+    @apply text-3xl font-bold text-slate-900 dark:text-white;
+}
+.post-content { 
+    @apply text-base text-slate-700 dark:text-slate-300;
+}
+
+.replies {
+    @apply mt-4 ml-4 pl-4 border-l-4 border-slate-300 dark:border-slate-600;
+}
+.reply {
+    @apply flex gap-3 mb-4;
+}
+
+.reply-form { @apply hidden mt-3; }
+.reply-form.active { @apply block; }
+
+.add-comment-form {
+    @apply mt-6 pt-4 border-t border-slate-300 dark:border-slate-600;
+}
+.comment-input {
+    @apply w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 resize-vertical font-inherit text-sm;
+}
+.comment-input::placeholder { @apply text-slate-500 dark:text-slate-400; }
+
+.submit-comment-btn {
+    @apply mt-2 px-4 py-2 bg-violet-600 dark:bg-violet-600 hover:bg-violet-700 dark:hover:bg-violet-700 text-white rounded-lg cursor-pointer text-sm font-medium transition-colors duration-200;
+}
+
+.cancel-reply-btn {
+    @apply ml-2 px-3 py-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-900 dark:text-slate-100 rounded-lg cursor-pointer text-sm transition-colors duration-200;
+}
+
+/* 3-dots menu */
+.post-menu-btn {
+    @apply bg-transparent border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-400 w-8 h-8 rounded-lg cursor-pointer text-lg flex items-center justify-center transition-all duration-150;
+}
+.post-menu-btn:hover {
+    @apply bg-slate-200 dark:bg-slate-700 border-slate-400 dark:border-slate-500 text-slate-900 dark:text-slate-200;
+}
+.post-menu-dropdown {
+    @apply hidden absolute top-10 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg min-w-[150px] z-100 shadow-lg;
+}
+.post-menu-dropdown button {
+    @apply w-full text-left px-4 py-2 bg-transparent border-none text-red-600 dark:text-red-400 cursor-pointer rounded-lg text-sm transition-colors duration-150;
+}
+.post-menu-dropdown button:hover {
+    @apply bg-red-50 dark:bg-slate-700;
+}
+
+.post-card {
+    @apply relative;
+}
+>>>>>>> 29f2233 (fifth update)
 </style>
 @endsection
 
@@ -209,6 +266,7 @@
             @error('class_ids')<div class="error">{{ $message }}</div>@enderror
         </div>
 
+<<<<<<< HEAD
         <div class="form-group">
             <label for="title">Titre *</label>
             <input type="text" id="title" name="title" value="{{ old('title') }}"
@@ -216,6 +274,25 @@
                    maxlength="50" required>
             <div class="char-counter" id="title-counter">0 / 50</div>
             @error('title')<div class="error">{{ $message }}</div>@enderror
+=======
+    <span class="post-type-badge type-{{ $post->type }}">
+        @if($post->type === 'announcement') 📢 Annonce
+        @elseif($post->type === 'tp_posted') 📝 Nouveau TP
+        @elseif($post->type === 'reminder') ⏰ Rappel
+        @else 📌 Général
+        @endif
+    </span>
+
+    <div class="post-title">{{ $post->title }}</div>
+    <div class="post-meta">
+        Par {{ $post->user->name }} · {{ $post->created_at->diffForHumans() }}
+    </div>
+    <div class="post-content" style="white-space: pre-line;">{{ $post->content }}</div>
+
+    @if($post->tp && $post->tp->due_date)
+        <div class="mt-6 pt-4 border-t border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm">
+            📅 Échéance: {{ $post->tp->due_date->format('d/m/Y à H:i') }}
+>>>>>>> 29f2233 (fifth update)
         </div>
 
         <div class="form-group">
@@ -235,8 +312,13 @@
     </form>
 </div>
 
+<<<<<<< HEAD
 <div class="feed-section">
     <h2 style="margin-bottom: 1.5rem; color: #f1f5f9;">📰 Mes publications</h2>
+=======
+<div class="comments-section">
+    <h3 class="mb-6 text-lg font-semibold text-slate-900 dark:text-slate-100">💬 Commentaires ({{ $post->comments->count() }})</h3>
+>>>>>>> 29f2233 (fifth update)
 
     @forelse($posts as $post)
         <div class="post-card"
@@ -307,11 +389,15 @@
 
         </div>
     @empty
+<<<<<<< HEAD
         <div class="no-posts">
             <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
             <h3 style="color: #94a3b8;">Aucune publication</h3>
             <p style="margin-top: 0.5rem;">Créez votre première publication pour communiquer avec vos étudiants</p>
         </div>
+=======
+        <p class="text-center text-slate-500 dark:text-slate-400">Aucun commentaire</p>
+>>>>>>> 29f2233 (fifth update)
     @endforelse
 
     @if($posts->hasPages())

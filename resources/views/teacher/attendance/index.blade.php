@@ -5,6 +5,27 @@
 
 @section('extra-styles')
 <style>
+    .form-container {
+        background: var(--tp-bg-raised);
+        padding: 2rem;
+        border-radius: 1rem;
+        max-width: 800px;
+        border: 1px solid var(--tp-border);
+    }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.5rem; color: var(--tp-text-secondary); font-weight: bold; }
+    select, input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--tp-input-border);
+        border-radius: 0.75rem;
+        font-size: 1rem;
+        background: var(--tp-input-bg);
+        color: var(--tp-text-primary);
+        box-sizing: border-box;
+    }
+    select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
+    select:focus, input:focus { outline: none; border-color: #6366f1; }
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
@@ -13,60 +34,19 @@
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
-        color: #e2e8f0;
+        transition: opacity 0.15s;
     }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .btn-primary {
-        background-color: #4f46e5;
-        color: white;
-        font-size: 1rem;
-        width: 100%;
-    }
-    .header-actions {
-        margin-bottom: 1.5rem;
-        text-align: right;
-    }
-    .form-container {
-        background: #0f172a;
-        padding: 2rem;
-        border-radius: 1rem;
-        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
-        max-width: 800px;
-        border: 1px solid #334155;
-    }
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #cbd5e1;
-        font-weight: bold;
-    }
-    select, input {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #475569;
-        border-radius: 0.75rem;
-        font-size: 1rem;
-        background: #1e293b;
-        color: #e2e8f0;
-    }
-    select:focus, input:focus {
-        outline: none;
-        border-color: #6366f1;
-    }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary  { background: var(--tp-accent); color: white; font-size: 1rem; width: 100%; }
+    .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
+    h2 { margin-bottom: 1.5rem; color: var(--tp-text-primary); }
 </style>
 @endsection
 
 @section('content')
- 
 
     <div class="form-container">
-        <h2 style="margin-bottom: 1.5rem;">Prendre les présences</h2>
+        <h2>Prendre les présences</h2>
 
         <form method="GET" action="{{ route('teacher.attendance.show') }}">
             <div class="form-group">

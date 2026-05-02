@@ -6,70 +6,43 @@
 @section('extra-styles')
 <style>
     .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
+        @apply px-5 py-2.5 border-none rounded-2xl cursor-pointer no-underline text-sm inline-flex items-center justify-center font-medium transition-colors duration-200;
     }
     .btn-secondary {
-        background-color: #6c757d;
-        color: white;
+        @apply bg-slate-400 dark:bg-slate-600 text-white hover:bg-slate-500 dark:hover:bg-slate-700;
     }
     .section {
-        background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        @apply bg-white dark:bg-slate-800 px-8 py-8 rounded-2xl mb-8 shadow-md dark:shadow-lg border border-slate-200 dark:border-slate-700;
     }
     .section h2 {
-        color: #007bff;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        @apply text-violet-600 dark:text-violet-400 mb-6 pb-2 border-b border-slate-200 dark:border-slate-700 font-bold text-xl;
     }
     .info-row {
-        display: flex;
-        margin-bottom: 1rem;
-        padding: 0.5rem;
+        @apply flex mb-4 py-3;
     }
     .info-label {
-        font-weight: bold;
-        min-width: 200px;
-        color: #555;
+        @apply font-bold min-w-[200px] text-slate-700 dark:text-slate-300;
     }
     .info-value {
-        color: #333;
+        @apply text-slate-900 dark:text-slate-100;
     }
     .join-code {
-        font-family: monospace;
-        background: #007bff;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-        font-size: 1.2rem;
-        font-weight: bold;
+        @apply font-mono bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-300 px-4 py-2 rounded-2xl text-lg font-bold inline-block;
     }
     table {
-        width: 100%;
-        border-collapse: collapse;
+        @apply w-full border-collapse bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-900 dark:text-slate-200;
     }
     thead {
-        background-color: #007bff;
-        color: white;
+        @apply bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-50 font-bold;
     }
     th, td {
-        padding: 1rem;
-        text-align: left;
+        @apply px-4 py-3 text-left border-b border-slate-200 dark:border-slate-600;
     }
     tbody tr {
-        border-bottom: 1px solid #ddd;
+        @apply bg-transparent;
     }
     tbody tr:hover {
-        background-color: #f8f9fa;
+        @apply bg-slate-50 dark:bg-slate-700/50 transition-colors;
     }
 </style>
 @endsection

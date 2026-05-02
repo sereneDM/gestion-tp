@@ -1,227 +1,88 @@
 @extends('layouts.app')
-
 @section('title', 'Ma Progression')
 @section('page-title', 'Ma Progression Académique')
 
-@section('extra-styles')
-<style>
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
-    }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .header-actions {
-        margin-bottom: 1.5rem;
-        text-align: right;
-    }
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .stat-card {
-        background: #0f172a;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
-        border: 1px solid #334155;
-    }
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #6366f1;
-    }
-    .stat-label {
-        color: #cbd5e1;
-        margin-top: 0.5rem;
-    }
-    .section {
-        background: #0f172a;
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        border: 1px solid #334155;
-    }
-    .section h2 {
-        color: #6366f1;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #334155;
-    }
-    .chart-container {
-        background: #1e293b;
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-top: 1rem;
-        border: 1px solid #334155;
-    }
-    .grade-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
-        border-bottom: 1px solid #334155;
-        color: #e2e8f0;
-    }
-    .grade-item:last-child {
-        border-bottom: none;
-    }
-    .grade-value {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #6366f1;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #334155;
-        color: #e2e8f0;
-    }
-    th {
-        background-color: #1e293b;
-        font-weight: bold;
-        color: #cbd5e1;
-    }
-    tr:hover {
-        background-color: #334155;
-    }
-    .status-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        display: inline-block;
-    }
-    .status-present {
-        background-color: #86efac;
-        color: #065f46;
-    }
-    .status-absent {
-        background-color: #fca5a5;
-        color: #7f1d1d;
-    }
-    .status-late {
-        background-color: #fbbf24;
-        color: #78350f;
-    }
-    .status-excused {
-        background-color: #a5b4fc;
-        color: #312e81;
-    }
-</style>
-@endsection
-
 @section('content')
-    {{ Breadcrumbs::render('student.progress') }}
-
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalSubmissions }}</div>
-            <div class="stat-label">TP soumis</div>
+    {{-- Stats overview --}}
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow">
+            <div class="text-3xl mb-2">📝</div>
+            <div class="text-2xl font-bold text-violet-400">{{ $totalTPs }}</div>
+            <div class="text-sm text-slate-600 dark:text-slate-400 mt-1">TP Total</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $gradedSubmissions }}</div>
-            <div class="stat-label">TP notés</div>
+        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow">
+            <div class="text-3xl mb-2">✅</div>
+            <div class="text-2xl font-bold text-violet-400">{{ $submittedTPs }}</div>
+            <div class="text-sm text-slate-600 dark:text-slate-400 mt-1">TP Soumis</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $pendingSubmissions }}</div>
-            <div class="stat-label">En attente</div>
+        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow">
+            <div class="text-3xl mb-2">⭐</div>
+            <div class="text-2xl font-bold text-violet-400">{{ $gradedTPs }}</div>
+            <div class="text-sm text-slate-600 dark:text-slate-400 mt-1">TP Notés</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $averageGrade ? number_format($averageGrade, 2) : 'N/A' }}</div>
-            <div class="stat-label">Moyenne</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $attendanceStats['present'] }}</div>
-            <div class="stat-label">Présences</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $attendanceStats['absent'] }}</div>
-            <div class="stat-label">Absences</div>
+        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow">
+            <div class="text-3xl mb-2">📊</div>
+            <div class="text-2xl font-bold text-violet-400">{{ $averageGrade }}</div>
+            <div class="text-sm text-slate-600 dark:text-slate-400 mt-1">Moyenne /20</div>
         </div>
     </div>
 
-    <div class="section">
-        <h2>Mes Notes par TP</h2>
-        @if($gradesByTP->count() > 0)
-            <div class="chart-container">
-                @foreach($gradesByTP as $item)
-                    <div class="grade-item">
-                        <div>
-                            <strong>{{ $item['tp']->title }}</strong>
-                            <div style="color: #cbd5e1; font-size: 0.9rem; margin-top: 0.25rem;">
-                                Enseignant: {{ $item['tp']->teacher->name }}
-                            </div>
-                            <div style="color: #999; font-size: 0.85rem; margin-top: 0.25rem;">
-                                Soumis le: {{ $item['submitted_at']->format('d/m/Y') }}
-                            </div>
-                        </div>
-                        <div class="grade-value">{{ number_format($item['grade'], 2) }}/20</div>
-                    </div>
-                @endforeach
+    {{-- Completion rate --}}
+    <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 mb-6 shadow">
+        <strong class="text-slate-800 dark:text-slate-200">Taux de Complétion</strong>
+        <div class="w-full h-7 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mt-2">
+            <div class="h-full bg-violet-600 flex items-center justify-center text-white text-sm font-bold transition-all"
+                 style="width: {{ $completionRate }}%">
+                {{ $completionRate }}%
             </div>
-        @else
-            <p style="text-align: center; color: #999; padding: 2rem;">
-                Aucune note disponible pour le moment
-            </p>
-        @endif
+        </div>
     </div>
 
-    <div class="section">
-        <h2>Historique de Présence</h2>
-        @if($attendances->count() > 0)
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Classe</th>
-                        <th>Statut</th>
-                        <th>Notes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($attendances->take(20) as $attendance)
-                        <tr>
-                            <td>{{ $attendance->date->format('d/m/Y') }}</td>
-                            <td>{{ $attendance->class->name }}</td>
-                            <td>
-                                <span class="status-badge status-{{ $attendance->status }}">
-                                    @if($attendance->status === 'present')
-                                        ✓ Présent
-                                    @elseif($attendance->status === 'absent')
-                                        ✗ Absent
-                                    @elseif($attendance->status === 'late')
-                                        ⏰ Retard
-                                    @else
-                                        📝 Excusé
-                                    @endif
-                                </span>
-                            </td>
-                            <td>{{ $attendance->notes ?? '-' }}</td>
-                        </tr>
+    {{-- Per course progress --}}
+    <h2 class="text-slate-800 dark:text-slate-200 font-semibold text-lg mt-6 mb-4">Progression par Cours</h2>
+
+    @forelse($courses as $course)
+        <div class="bg-slate-100 dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 mb-4 shadow">
+            <h3 class="font-bold text-slate-900 dark:text-white text-base pb-2 mb-3 border-b border-slate-200 dark:border-slate-700">
+                {{ $course->name }}
+            </h3>
+            <p class="text-slate-500 dark:text-slate-400 text-sm mb-3">👨‍🏫 {{ $course->teacher->name }}</p>
+
+            @if($course->tps->count() > 0)
+                <div class="flex flex-col gap-2">
+                    @foreach($course->tps as $tp)
+                        @php
+                            $submission = App\Models\Submission::where('tp_id', $tp->id)
+                                ->where('student_id', Auth::id())->first();
+                        @endphp
+                        <div class="grid grid-cols-[1fr_auto_auto] gap-3 items-center px-3 py-2.5
+                                    bg-white dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+                            <span class="font-medium text-slate-800 dark:text-slate-200 text-sm">{{ $tp->title }}</span>
+                            @if($submission)
+                                @if($submission->grade)
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                                        Note: {{ $submission->grade }}/20
+                                    </span>
+                                @else
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">✓ Soumis</span>
+                                @endif
+                            @else
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300">À faire</span>
+                            @endif
+                            <a href="{{ route('student.tps.show', $tp->id) }}"
+                               class="text-violet-500 hover:text-violet-400 text-sm transition">Voir →</a>
+                        </div>
                     @endforeach
-                </tbody>
-            </table>
-        @else
-            <p style="text-align: center; color: #999; padding: 2rem;">
-                Aucun enregistrement de présence
-            </p>
-        @endif
-    </div>
+                </div>
+            @else
+                <p class="text-slate-400 text-center py-4 text-sm">Aucun TP disponible pour ce cours</p>
+            @endif
+        </div>
+    @empty
+        <div class="text-center py-16 bg-slate-100 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div class="text-6xl mb-4">📊</div>
+            <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">Aucune donnée de progression</h2>
+            <p class="text-slate-500 dark:text-slate-400">Inscrivez-vous à des cours pour voir votre progression</p>
+        </div>
+    @endforelse
 @endsection

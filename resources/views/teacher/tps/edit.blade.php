@@ -7,127 +7,69 @@
 <style>
     .form-container {
         max-width: 800px;
-        background: #0f172a;
-        border: 1px solid #334155;
+        background: var(--tp-bg-raised);
+        border: 1px solid var(--tp-border);
         border-radius: 1rem;
         padding: 2rem;
     }
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #cbd5e1;
-        font-weight: bold;
-    }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.5rem; color: var(--tp-text-secondary); font-weight: bold; }
     input, textarea, select {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #475569;
+        border: 1px solid var(--tp-input-border);
         border-radius: 0.75rem;
         font-size: 1rem;
-        background: #1e293b;
-        color: #e2e8f0;
+        background: var(--tp-input-bg);
+        color: var(--tp-text-primary);
         box-sizing: border-box;
     }
-    textarea {
-        min-height: 150px;
-        resize: vertical;
-    }
-    input::placeholder, textarea::placeholder {
-        color: #94a3b8;
-    }
-    input:focus, textarea:focus, select:focus {
-        outline: none;
-        border-color: #6366f1;
-    }
-    .char-counter {
-        text-align: right;
-        font-size: 0.78rem;
-        margin-top: 0.25rem;
-        color: #64748b;
-        transition: color 0.2s;
-    }
-    .char-counter.warning { color: #f59e0b; }
-    .char-counter.danger  { color: #ef4444; }
+    textarea { min-height: 150px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: var(--tp-text-faint); }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #6366f1; }
+    select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
+
     .enonce-box {
-        border: 1px solid #475569;
+        border: 1px solid var(--tp-input-border);
         border-radius: 0.75rem;
         overflow: hidden;
-        background: #0f172a;
+        background: var(--tp-bg-raised);
     }
     .enonce-box textarea {
         border: none;
-        border-bottom: 1px solid #334155;
+        border-bottom: 1px solid var(--tp-border);
         border-radius: 0;
         margin: 0;
-        background: #0f172a;
-        color: #e2e8f0;
+        background: var(--tp-bg-raised);
+        color: var(--tp-text-primary);
     }
-    .enonce-box textarea:focus {
-        outline: none;
-        border-color: #334155;
-        box-shadow: none;
-    }
-    .pdf-section {
-        padding: 1rem;
-        background: #0f172a;
-    }
+    .enonce-box textarea:focus { outline: none; border-color: var(--tp-border); box-shadow: none; }
+
+    .pdf-section { padding: 1rem; background: var(--tp-bg-raised); }
     .pdf-section-label {
         font-size: 0.85rem;
         font-weight: bold;
-        color: #cbd5e1;
+        color: var(--tp-text-secondary);
         margin-bottom: 0.75rem;
         display: block;
     }
     .current-file {
-        background: rgba(59,130,246,0.12);
-        border-left: 3px solid #4f46e5;
+        background: rgba(99,102,241,0.1);
+        border-left: 3px solid var(--tp-accent);
         padding: 0.6rem 0.9rem;
         border-radius: 0.75rem;
         font-size: 0.9rem;
         margin-bottom: 0.75rem;
-        color: #cbd5e1;
+        color: var(--tp-text-secondary);
     }
-    .file-upload {
-        border: 2px dashed #475569;
-        padding: 1rem;
-        text-align: center;
-        border-radius: 0.75rem;
-        background: #1e293b;
-        cursor: pointer;
-        transition: all 0.3s;
-        font-size: 0.9rem;
-        color: #cbd5e1;
-    }
-    .file-upload:hover {
-        background: #273548;
-        border-color: #6366f1;
-        color: #a5b4fc;
-    }
-    .file-upload input[type="file"] {
-        display: none;
-    }
-    .selected-file {
-        margin-top: 0.5rem;
-        padding: 0.4rem 0.75rem;
-        background: rgba(34,197,94,0.1);
-        border-left: 3px solid #22c55e;
-        border-radius: 0.75rem;
-        font-size: 0.85rem;
-        color: #a7f3d0;
-    }
-    .error {
-        color: #fca5a5;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-    .button-group {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
+    .current-file a { color: #6366f1; text-decoration: none; }
+    .current-file a:hover { text-decoration: underline; }
+    .due-hint { font-size: 0.8rem; color: var(--tp-text-faint); margin-top: 0.25rem; }
+
+    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.25rem; }
+    [data-theme="dark"] .error { color: #fca5a5; }
+
+    .button-group { display: flex; gap: 1rem; margin-top: 2rem; }
     .btn {
         padding: 0.75rem 1.5rem;
         border: none;
@@ -138,25 +80,20 @@
         display: inline-block;
         flex: 1;
         text-align: center;
-        color: #e2e8f0;
+        transition: opacity 0.15s;
     }
-    .btn-primary {
-        background-color: #4f46e5;
-        color: white;
-    }
-    .btn-primary:hover { background-color: #4338ca; }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .btn-secondary:hover { background-color: #334155; }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary  { background: var(--tp-accent); color: white; }
+    .btn-primary:hover  { background: var(--tp-accent-hover); opacity: 1; }
+    .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
+
     .course-info {
-        background: #0f172a;
-        border-left: 4px solid #4f46e5;
+        background: var(--tp-bg-raised);
+        border-left: 4px solid var(--tp-accent);
         padding: 1rem;
         margin-bottom: 2rem;
         border-radius: 0.75rem;
-        color: #cbd5e1;
+        color: var(--tp-text-secondary);
     }
 </style>
 @endsection
@@ -195,7 +132,7 @@
                         @if($tp->attachments)
                             <div class="current-file">
                                 📄 Fichier actuel:
-                                <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank" style="color: #007bff;">
+                                <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank">
                                     Télécharger
                                 </a>
                             </div>
@@ -208,9 +145,7 @@
                                    accept=".pdf"
                                    onchange="showFileName(this)">
                             📎 Cliquez pour {{ $tp->attachments ? 'remplacer' : 'sélectionner' }} un fichier PDF
-                            <div style="font-size: 0.8rem; margin-top: 0.25rem; color: #64748b;">
-                                PDF uniquement · max 10 Mo
-                            </div>
+                            <div class="due-hint">PDF uniquement · max 10 Mo</div>
                         </div>
                         <div id="file-selected" class="selected-file" style="display: none;"></div>
                         @error('attachment') <div class="error">{{ $message }}</div> @enderror
@@ -224,9 +159,7 @@
                        id="due_date"
                        name="due_date"
                        value="{{ old('due_date', $tp->due_date ? $tp->due_date->format('Y-m-d\TH:i') : '') }}">
-                <div style="font-size:0.8rem; color:#64748b; margin-top:0.25rem;">
-                    Par défaut: minuit (00:00) si l'heure n'est pas modifiée
-                </div>
+                <div class="due-hint">Par défaut: minuit (00:00) si l'heure n'est pas modifiée</div>
                 @error('due_date') <div class="error">{{ $message }}</div> @enderror
             </div>
 
@@ -254,7 +187,6 @@
     </div>
 
     <script>
-        // Character counter for title
         const titleInput   = document.getElementById('title');
         const titleCounter = document.getElementById('title-counter');
         const maxLength    = 50;
@@ -267,9 +199,8 @@
             else if (len >= maxLength * 0.8)  titleCounter.classList.add('warning');
         }
         titleInput.addEventListener('input', updateCounter);
-        updateCounter(); // init with existing value
+        updateCounter();
 
-        // File name display
         function showFileName(input) {
             const fileSelected = document.getElementById('file-selected');
             if (input.files && input.files[0]) {
@@ -280,7 +211,6 @@
             }
         }
 
-        // Enforce min date (only if no past date already set)
         const dueDateInput = document.getElementById('due_date');
         const currentValue = dueDateInput.value;
         const now = new Date();

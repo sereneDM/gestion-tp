@@ -1,781 +1,181 @@
 @extends('layouts.app')
-
 @section('title', $course->name)
-@section('page-title', $course->name)
-
-@section('extra-styles')
-<style>
-    .btn {
-        display: block;
-        width: 100%;
-        padding: 0.65rem;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 0.75rem;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        border: none;
-        cursor: pointer;
-        color: white;
-    }
-    .btn-primary        { background: #4f46e5; }
-    .btn-primary:hover  { background: #4338ca; }
-    .btn-success        { background: #22c55e; }
-    .btn-success:hover  { background: #16a34a; }
-    .btn-info           { background: #0891b2; }
-    .btn-info:hover     { background: #0e7490; }
-
-    /* ── Tabs (matches teacher) ── */
-    .tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #334155;
-    }
-    .tab {
-        padding: 1rem 2rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-        color: #94a3b8;
-        border-bottom: 3px solid transparent;
-        transition: all 0.3s;
-    }
-    .tab:hover { color: #a5b4fc; }
-    .tab.active {
-        color: #c7d2fe;
-        border-bottom-color: #8b5cf6;
-        font-weight: bold;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    .info-card {
-        background: #0f172a;
-        padding: 1.5rem;
-        border-radius: 1rem;
-        text-align: center;
-        border: 1px solid #334155;
-    }
-    .info-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #818cf8;
-    }
-    .info-label {
-        color: #94a3b8;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-    }
-
-    /* ── TP grid ── */
-    .tps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-    .tp-card {
-        background: #0f172a;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        border: 1px solid #334155;
-        cursor: pointer;
-        transition: transform 0.2s, border-color 0.2s;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        min-height: 220px;
-    }
-    .tp-card:hover {
-        transform: translateY(-5px);
-        border-color: #475569;
-        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
-    }
-    .tp-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 0.75rem;
-        gap: 0.75rem;
-    }
-    .tp-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #c7d2fe;
-        flex: 1;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        min-width: 0;
-    }
-    .status-badge {
-        display: inline-block;
-        padding: 0.3rem 0.8rem;
-        border-radius: 9999px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-    .status-pending   { background: rgba(251,191,36,0.15); color: #facc15; }
-    .status-submitted { background: rgba(34,197,94,0.15);  color: #86efac; }
-    .status-graded    { background: rgba(6,182,212,0.15);  color: #67e8f9; }
-
-    .tp-description {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 2.88rem;
-        max-height: 2.88rem;
-    }
-    .tp-meta {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-bottom: 0.4rem;
-    }
-    .tp-grade {
-        font-family: monospace;
-        background: #164e63;
-        color: #67e8f9;
-        padding: 0.3rem 0.75rem;
-        border-radius: 0.75rem;
-        font-size: 0.95rem;
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 0.75rem;
-        align-self: flex-start;
-    }
-    .tp-spacer { flex: 1; }
-
-    /* ── 3-dots menu ── */
-    .course-menu-btn {
-        background: transparent;
-        border: 1px solid #334155;
-        color: #94a3b8;
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s;
-    }
-    .course-menu-btn:hover {
-        background: #1e293b;
-        border-color: #475569;
-        color: #e2e8f0;
-    }
-    .course-menu-dropdown {
-        display: none;
-        position: absolute;
-        top: 2.2rem;
-        right: 0;
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        min-width: 150px;
-        z-index: 100;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .course-menu-dropdown button {
-        width: 100%;
-        text-align: left;
-        padding: 0.75rem 1rem;
-        background: none;
-        border: none;
-        color: #fca5a5;
-        cursor: pointer;
-        border-radius: 0.75rem;
-        font-size: 0.875rem;
-        transition: background 0.15s;
-    }
-    .course-menu-dropdown button:hover { background: #334155; }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: #0f172a;
-        border-radius: 1rem;
-        color: #94a3b8;
-        border: 1px solid #334155;
-    }
-</style>
-@endsection
 
 @section('content')
 
-    {{-- Course header row (teacher name + leave menu) --}}
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-        <div>
-            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.25rem;">Enseignant</div>
-            <div style="color:#cbd5e1; font-size:0.95rem;">👨‍🏫 {{ $course->teacher->name }}</div>
+{{-- Header: teacher + leave menu --}}
+<div class="flex justify-between items-center mb-6">
+    <div>
+        <div class="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Enseignant</div>
+        <div class="text-slate-700 dark:text-slate-300 text-sm">👨‍🏫 {{ $course->teacher->name }}</div>
+    </div>
+    <div class="relative">
+        <button onclick="toggleCourseMenu()"
+                class="w-8 h-8 flex items-center justify-center rounded-lg border
+                       border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400
+                       hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-lg">⋮</button>
+        <div id="course-menu"
+             class="hidden absolute top-9 right-0 z-50 min-w-[150px] rounded-xl shadow-xl
+                    bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700">
+            <form method="POST" action="{{ route('student.leave-course', $course->id) }}" class="block w-full">
+                @csrf @method('DELETE')
+                <button type="submit"
+                        class="w-full text-left px-4 py-3 text-sm text-red-600 dark:text-red-400
+                               hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
+                    🚪 Quitter le cours
+                </button>
+            </form>
         </div>
-        <div style="position:relative;">
-            <button class="course-menu-btn" onclick="toggleCourseMenu()">⋮</button>
-            <div class="course-menu-dropdown" id="course-menu">
-                <form method="POST" action="{{ route('student.leave-course', $course->id) }}"
-                      style="display:block; width:100%;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">🚪 Quitter le cours</button>
-                </form>
-            </div>
+    </div>
+</div>
+
+{{-- Tabs --}}
+<div class="flex gap-1 mb-6 border-b-2 border-slate-200 dark:border-slate-700">
+    <button class="tab-btn active-tab px-6 py-3 text-sm font-medium border-b-[3px] transition-colors"
+            onclick="switchTab('info', event)">📋 Informations</button>
+    <button class="tab-btn px-6 py-3 text-sm font-medium border-b-[3px] border-transparent
+                   text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+            onclick="switchTab('tps', event)">📝 Travaux Pratiques</button>
+</div>
+
+{{-- Tab: Info --}}
+<div class="tab-content" id="tab-info">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+            <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $course->tps->count() }}</div>
+            <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">Travaux pratiques</div>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+            <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $submissions->count() }}</div>
+            <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">Mes soumissions</div>
+        </div>
+        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+            <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $submissions->filter(fn($s) => $s->grade !== null)->count() }}</div>
+            <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">TP notés</div>
         </div>
     </div>
 
-    {{-- Tabs --}}
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('info', event)">📋 Informations</button>
-        <button class="tab" onclick="switchTab('tps', event)">📝 Travaux Pratiques</button>
-    </div>
-
-    {{-- Tab: Info --}}
-    <div class="tab-content active" id="tab-info">
-
-        <div class="info-grid">
-            <div class="info-card">
-                <div class="info-number">{{ $course->tps->count() }}</div>
-                <div class="info-label">Travaux pratiques</div>
-            </div>
-            <div class="info-card">
-                <div class="info-number">{{ $submissions->count() }}</div>
-                <div class="info-label">Mes soumissions</div>
-            </div>
-            <div class="info-card">
-                <div class="info-number">{{ $submissions->filter(fn($s) => $s->grade !== null)->count() }}</div>
-                <div class="info-label">TP notés</div>
-            </div>
+    @if($course->description)
+        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600 p-5">
+            <div class="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Description</div>
+            <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed m-0">{{ $course->description }}</p>
         </div>
+    @endif
+</div>
 
-        @if($course->description)
-            <div style="background:#0f172a; border:1px solid #334155; border-radius:1rem; padding:1.5rem;">
-                <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.5rem;">Description</div>
-                <p style="margin:0; color:#cbd5e1; font-size:0.95rem; line-height:1.6;">{{ $course->description }}</p>
-            </div>
-        @endif
+{{-- Tab: TPs --}}
+<div class="tab-content hidden" id="tab-tps">
+    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-5">
+        📝 Travaux Pratiques ({{ $course->tps->count() }})
+    </h3>
 
-    </div>
+    @if($course->tps->count() > 0)
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            @foreach($course->tps as $tp)
+                @php
+                    $submission   = $submissions->get($tp->id);
+                    $hasSubmitted = $submission !== null;
+                    $isGraded     = $hasSubmitted && $submission->grade !== null;
+                @endphp
+                <div class="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-700
+                            p-5 cursor-pointer flex flex-col min-h-[200px]
+                            hover:-translate-y-1 hover:border-violet-400 dark:hover:border-violet-500 transition-all shadow-sm"
+                     onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'">
 
-    {{-- Tab: TPs --}}
-    <div class="tab-content" id="tab-tps">
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">📝 Travaux Pratiques ({{ $course->tps->count() }})</h3>
-        </div>
-
-        @if($course->tps->count() > 0)
-            <div class="tps-grid">
-                @foreach($course->tps as $tp)
-                    @php
-                        $submission   = $submissions->get($tp->id);
-                        $hasSubmitted = $submission !== null;
-                        $isGraded     = $hasSubmitted && $submission->grade !== null;
-                    @endphp
-
-                    <div class="tp-card"
-                         onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'">
-
-                        <div class="tp-header">
-                            <div class="tp-title">{{ $tp->title }}</div>
-                            @if($isGraded)
-                                <span class="status-badge status-graded">✓ Noté</span>
-                            @elseif($hasSubmitted)
-                                <span class="status-badge status-submitted">✓ Soumis</span>
-                            @else
-                                <span class="status-badge status-pending">À faire</span>
-                            @endif
-                        </div>
-
-                        <div class="tp-description">
-                            @if(filled($tp->description))
-                                {{ $tp->description }}
-                            @else
-                                <span style="font-style:italic;">Aucune description</span>
-                            @endif
-                        </div>
-
-                        <div class="tp-meta">📅 Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Non définie' }}</div>
-                        <div class="tp-meta">👨‍🏫 {{ $course->teacher->name }}</div>
-                        @if($hasSubmitted)
-                            <div class="tp-meta">📤 Soumis le {{ $submission->submitted_at->format('d/m/Y à H:i') }}</div>
-                        @endif
-
+                    <div class="flex justify-between items-start gap-3 mb-3">
+                        <div class="font-bold text-slate-900 dark:text-slate-100 truncate flex-1">{{ $tp->title }}</div>
                         @if($isGraded)
-                            <div class="tp-grade">🎯 {{ $submission->grade }}/20</div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 shrink-0">✓ Noté</span>
+                        @elseif($hasSubmitted)
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 shrink-0">✓ Soumis</span>
+                        @else
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 shrink-0">À faire</span>
                         @endif
-
-                        <div class="tp-spacer"></div>
-
-                        <a href="{{ route('student.tps.show', $tp->id) }}"
-                           onclick="event.stopPropagation();"
-                           class="btn {{ $isGraded ? 'btn-info' : ($hasSubmitted ? 'btn-success' : 'btn-primary') }}">
-                            @if($isGraded)
-                                Voir ma note &amp; commentaires
-                            @elseif($hasSubmitted)
-                                Voir ma soumission
-                            @else
-                                Voir et soumettre
-                            @endif
-                        </a>
-
                     </div>
-                @endforeach
-            </div>
-        @else
-            <div class="empty-state">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
-                <h2>Aucun TP disponible</h2>
-                <p>Votre enseignant n'a pas encore publié de travaux pratiques.</p>
-            </div>
-        @endif
 
-    </div>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-3 min-h-[2.5rem]">
+                        {{ filled($tp->description) ? $tp->description : 'Aucune description' }}
+                    </p>
+
+                    <div class="text-xs text-slate-400 dark:text-slate-500 mb-1">
+                        📅 {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Pas d\'échéance' }}
+                    </div>
+                    @if($hasSubmitted)
+                        <div class="text-xs text-slate-400 dark:text-slate-500 mb-1">
+                            📤 Soumis le {{ $submission->submitted_at->format('d/m/Y à H:i') }}
+                        </div>
+                    @endif
+                    @if($isGraded)
+                        <div class="inline-block font-mono text-sm font-bold px-3 py-1 rounded-lg mb-3
+                                    bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300">
+                            🎯 {{ $submission->grade }}/20
+                        </div>
+                    @endif
+
+                    <div class="mt-auto pt-3">
+                        <a href="{{ route('student.tps.show', $tp->id) }}"
+                           onclick="event.stopPropagation()"
+                           class="block w-full text-center py-2.5 rounded-lg text-sm font-bold text-white transition-colors
+                               {{ $isGraded ? 'bg-cyan-600 hover:bg-cyan-700' : ($hasSubmitted ? 'bg-green-600 hover:bg-green-700' : 'bg-violet-600 hover:bg-violet-700') }}">
+                            @if($isGraded) Voir ma note &amp; commentaires
+                            @elseif($hasSubmitted) Voir ma soumission
+                            @else Voir et soumettre @endif
+                        </a>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @else
+        <div class="text-center py-16 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+            <div class="text-6xl mb-4">📝</div>
+            <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Aucun TP disponible</h2>
+            <p class="text-slate-500 dark:text-slate-400">Votre enseignant n'a pas encore publié de travaux pratiques.</p>
+        </div>
+    @endif
+</div>
+
+<style>
+.active-tab {
+    color: #7c3aed;
+    border-bottom-color: #7c3aed;
+    font-weight: 600;
+}
+.dark .active-tab {
+    color: #c4b5fd;
+    border-bottom-color: #7c3aed;
+}
+</style>
 
 @endsection
 
 @section('extra-scripts')
 <script>
-    function toggleCourseMenu() {
+function toggleCourseMenu() {
+    const menu = document.getElementById('course-menu');
+    menu.classList.toggle('hidden');
+}
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.relative')) {
         const menu = document.getElementById('course-menu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        if (menu) menu.classList.add('hidden');
     }
-
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.course-menu-btn') && !e.target.closest('#course-menu')) {
-            const menu = document.getElementById('course-menu');
-            if (menu) menu.style.display = 'none';
-        }
+});
+function switchTab(tabName, event) {
+    document.querySelectorAll('.tab-btn').forEach(t => {
+        t.classList.remove('active-tab');
+        t.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
     });
-
-    function switchTab(tabName, event) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('tab-' + tabName).classList.add('active');
-        history.replaceState(null, null, '#' + tabName);
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    event.target.classList.add('active-tab');
+    event.target.classList.remove('text-slate-500', 'border-transparent');
+    document.getElementById('tab-' + tabName).classList.remove('hidden');
+    history.replaceState(null, null, '#' + tabName);
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const fragment = window.location.hash.replace('#', '');
+    if (['info','tps'].includes(fragment)) {
+        document.querySelectorAll('.tab-btn')[fragment === 'tps' ? 1 : 0].click();
     }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const fragment = window.location.hash.replace('#', '');
-        const validTabs = ['info', 'tps'];
-        if (fragment && validTabs.includes(fragment)) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-' + fragment).classList.add('active');
-            document.querySelectorAll('.tab').forEach(t => {
-                if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + fragment + "'")) {
-                    t.classList.add('active');
-                }
-            });
-        }
-    });
-</script>
-@endsection@extends('layouts.app')
-
-@section('title', $course->name)
-@section('page-title', $course->name)
-
-@section('extra-styles')
-<style>
-    .btn {
-        display: block;
-        width: 100%;
-        padding: 0.65rem;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 0.75rem;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        border: none;
-        cursor: pointer;
-        color: white;
-    }
-    .btn-primary        { background: #4f46e5; }
-    .btn-primary:hover  { background: #4338ca; }
-    .btn-success        { background: #22c55e; }
-    .btn-success:hover  { background: #16a34a; }
-    .btn-info           { background: #0891b2; }
-    .btn-info:hover     { background: #0e7490; }
-
-    /* ── Tabs (matches teacher) ── */
-    .tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #334155;
-    }
-    .tab {
-        padding: 1rem 2rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-        color: #94a3b8;
-        border-bottom: 3px solid transparent;
-        transition: all 0.3s;
-    }
-    .tab:hover { color: #a5b4fc; }
-    .tab.active {
-        color: #c7d2fe;
-        border-bottom-color: #8b5cf6;
-        font-weight: bold;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    .info-card {
-        background: #0f172a;
-        padding: 1.5rem;
-        border-radius: 1rem;
-        text-align: center;
-        border: 1px solid #334155;
-    }
-    .info-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #818cf8;
-    }
-    .info-label {
-        color: #94a3b8;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-    }
-
-    /* ── TP grid ── */
-    .tps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-    .tp-card {
-        background: #0f172a;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        border: 1px solid #334155;
-        cursor: pointer;
-        transition: transform 0.2s, border-color 0.2s;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        min-height: 220px;
-    }
-    .tp-card:hover {
-        transform: translateY(-5px);
-        border-color: #475569;
-        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
-    }
-    .tp-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 0.75rem;
-        gap: 0.75rem;
-    }
-    .tp-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #c7d2fe;
-        flex: 1;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        min-width: 0;
-    }
-    .status-badge {
-        display: inline-block;
-        padding: 0.3rem 0.8rem;
-        border-radius: 9999px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-    .status-pending   { background: rgba(251,191,36,0.15); color: #facc15; }
-    .status-submitted { background: rgba(34,197,94,0.15);  color: #86efac; }
-    .status-graded    { background: rgba(6,182,212,0.15);  color: #67e8f9; }
-
-    .tp-description {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 2.88rem;
-        max-height: 2.88rem;
-    }
-    .tp-meta {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-bottom: 0.4rem;
-    }
-    .tp-grade {
-        font-family: monospace;
-        background: #164e63;
-        color: #67e8f9;
-        padding: 0.3rem 0.75rem;
-        border-radius: 0.75rem;
-        font-size: 0.95rem;
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 0.75rem;
-        align-self: flex-start;
-    }
-    .tp-spacer { flex: 1; }
-
-    /* ── 3-dots menu ── */
-    .course-menu-btn {
-        background: transparent;
-        border: 1px solid #334155;
-        color: #94a3b8;
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s;
-    }
-    .course-menu-btn:hover {
-        background: #1e293b;
-        border-color: #475569;
-        color: #e2e8f0;
-    }
-    .course-menu-dropdown {
-        display: none;
-        position: absolute;
-        top: 2.2rem;
-        right: 0;
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        min-width: 150px;
-        z-index: 100;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .course-menu-dropdown button {
-        width: 100%;
-        text-align: left;
-        padding: 0.75rem 1rem;
-        background: none;
-        border: none;
-        color: #fca5a5;
-        cursor: pointer;
-        border-radius: 0.75rem;
-        font-size: 0.875rem;
-        transition: background 0.15s;
-    }
-    .course-menu-dropdown button:hover { background: #334155; }
-
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: #0f172a;
-        border-radius: 1rem;
-        color: #94a3b8;
-        border: 1px solid #334155;
-    }
-</style>
-@endsection
-
-@section('content')
-
-    {{-- Course header row (teacher name + leave menu) --}}
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-        <div>
-            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.25rem;">Enseignant</div>
-            <div style="color:#cbd5e1; font-size:0.95rem;">👨‍🏫 {{ $course->teacher->name }}</div>
-        </div>
-        <div style="position:relative;">
-            <button class="course-menu-btn" onclick="toggleCourseMenu()">⋮</button>
-            <div class="course-menu-dropdown" id="course-menu">
-                <form method="POST" action="{{ route('student.leave-course', $course->id) }}"
-                      style="display:block; width:100%;">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">🚪 Quitter le cours</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    {{-- Tabs --}}
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('info', event)">📋 Informations</button>
-        <button class="tab" onclick="switchTab('tps', event)">📝 Travaux Pratiques</button>
-    </div>
-
-    {{-- Tab: Info --}}
-    <div class="tab-content active" id="tab-info">
-
-        <div class="info-grid">
-            <div class="info-card">
-                <div class="info-number">{{ $course->tps->count() }}</div>
-                <div class="info-label">Travaux pratiques</div>
-            </div>
-            <div class="info-card">
-                <div class="info-number">{{ $submissions->count() }}</div>
-                <div class="info-label">Mes soumissions</div>
-            </div>
-            <div class="info-card">
-                <div class="info-number">{{ $submissions->filter(fn($s) => $s->grade !== null)->count() }}</div>
-                <div class="info-label">TP notés</div>
-            </div>
-        </div>
-
-        @if($course->description)
-            <div style="background:#0f172a; border:1px solid #334155; border-radius:1rem; padding:1.5rem;">
-                <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.5rem;">Description</div>
-                <p style="margin:0; color:#cbd5e1; font-size:0.95rem; line-height:1.6;">{{ $course->description }}</p>
-            </div>
-        @endif
-
-    </div>
-
-    {{-- Tab: TPs --}}
-    <div class="tab-content" id="tab-tps">
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">📝 Travaux Pratiques ({{ $course->tps->count() }})</h3>
-        </div>
-
-        @if($course->tps->count() > 0)
-            <div class="tps-grid">
-                @foreach($course->tps as $tp)
-                    @php
-                        $submission   = $submissions->get($tp->id);
-                        $hasSubmitted = $submission !== null;
-                        $isGraded     = $hasSubmitted && $submission->grade !== null;
-                    @endphp
-
-                    <div class="tp-card"
-                         onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'">
-
-                        <div class="tp-header">
-                            <div class="tp-title">{{ $tp->title }}</div>
-                            @if($isGraded)
-                                <span class="status-badge status-graded">✓ Noté</span>
-                            @elseif($hasSubmitted)
-                                <span class="status-badge status-submitted">✓ Soumis</span>
-                            @else
-                                <span class="status-badge status-pending">À faire</span>
-                            @endif
-                        </div>
-
-                        <div class="tp-description">
-                            @if(filled($tp->description))
-                                {{ $tp->description }}
-                            @else
-                                <span style="font-style:italic;">Aucune description</span>
-                            @endif
-                        </div>
-
-                        <div class="tp-meta">📅 Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Non définie' }}</div>
-                        <div class="tp-meta">👨‍🏫 {{ $course->teacher->name }}</div>
-                        @if($hasSubmitted)
-                            <div class="tp-meta">📤 Soumis le {{ $submission->submitted_at->format('d/m/Y à H:i') }}</div>
-                        @endif
-
-                        @if($isGraded)
-                            <div class="tp-grade">🎯 {{ $submission->grade }}/20</div>
-                        @endif
-
-                        <div class="tp-spacer"></div>
-
-                        <a href="{{ route('student.tps.show', $tp->id) }}"
-                           onclick="event.stopPropagation();"
-                           class="btn {{ $isGraded ? 'btn-info' : ($hasSubmitted ? 'btn-success' : 'btn-primary') }}">
-                            @if($isGraded)
-                                Voir ma note &amp; commentaires
-                            @elseif($hasSubmitted)
-                                Voir ma soumission
-                            @else
-                                Voir et soumettre
-                            @endif
-                        </a>
-
-                    </div>
-                @endforeach
-            </div>
-        @else
-            <div class="empty-state">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
-                <h2>Aucun TP disponible</h2>
-                <p>Votre enseignant n'a pas encore publié de travaux pratiques.</p>
-            </div>
-        @endif
-
-    </div>
-
-@endsection
-
-@section('extra-scripts')
-<script>
-    function toggleCourseMenu() {
-        const menu = document.getElementById('course-menu');
-        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    }
-
-    document.addEventListener('click', function(e) {
-        if (!e.target.closest('.course-menu-btn') && !e.target.closest('#course-menu')) {
-            const menu = document.getElementById('course-menu');
-            if (menu) menu.style.display = 'none';
-        }
-    });
-
-    function switchTab(tabName, event) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('tab-' + tabName).classList.add('active');
-        history.replaceState(null, null, '#' + tabName);
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const fragment = window.location.hash.replace('#', '');
-        const validTabs = ['info', 'tps'];
-        if (fragment && validTabs.includes(fragment)) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('tab-' + fragment).classList.add('active');
-            document.querySelectorAll('.tab').forEach(t => {
-                if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + fragment + "'")) {
-                    t.classList.add('active');
-                }
-            });
-        }
-    });
+});
 </script>
 @endsection

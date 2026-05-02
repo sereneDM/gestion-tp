@@ -6,92 +6,50 @@
 @section('extra-styles')
 <style>
     .form-container {
-        background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        max-width: 800px;
+        @apply bg-white dark:bg-slate-800 px-8 py-8 rounded-2xl shadow-md dark:shadow-lg max-w-4xl border border-slate-200 dark:border-slate-700;
     }
     .form-group {
-        margin-bottom: 1.5rem;
+        @apply mb-6;
     }
     label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #333;
-        font-weight: bold;
+        @apply block mb-2 text-slate-900 dark:text-slate-100 font-bold;
     }
     input, select, textarea {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1rem;
-        font-family: Arial, sans-serif;
+        @apply w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-base font-sans bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400;
     }
     textarea {
-        min-height: 100px;
-        resize: vertical;
+        @apply min-h-[100px] resize-vertical;
     }
     input:focus, select:focus, textarea:focus {
-        outline: none;
-        border-color: #007bff;
+        @apply outline-none border-violet-500 dark:border-violet-400 ring-2 ring-violet-200 dark:ring-violet-900/30;
     }
     .error {
-        color: #dc3545;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
+        @apply text-red-600 dark:text-red-400 text-sm mt-1;
     }
     .students-list {
-        max-height: 300px;
-        overflow-y: auto;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 1rem;
+        @apply max-h-[300px] overflow-y-auto border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-3 bg-white dark:bg-slate-700;
     }
     .student-checkbox {
-        display: flex;
-        align-items: center;
-        padding: 0.5rem;
-        margin-bottom: 0.5rem;
-        border-radius: 4px;
-    }
-    .student-checkbox:hover {
-        background-color: #f8f9fa;
+        @apply flex items-center py-2 px-2 mb-1 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-600;
     }
     .student-checkbox input {
-        width: auto;
-        margin-right: 0.75rem;
+        @apply w-auto mr-3;
     }
     .button-group {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
+        @apply flex gap-4 mt-8;
     }
     .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 1rem;
-        display: inline-block;
-        flex: 1;
-        text-align: center;
+        @apply px-6 py-3 border-none rounded-lg cursor-pointer no-underline text-base inline-flex items-center justify-center flex-1 font-medium transition-colors duration-200;
     }
     .btn-primary {
-        background-color: #007bff;
-        color: white;
-    }
-    .btn-primary:hover {
-        background-color: #0056b3;
+        @apply bg-violet-600 dark:bg-violet-600 text-white hover:bg-violet-700 dark:hover:bg-violet-700;
     }
     .btn-secondary {
-        background-color: #6c757d;
-        color: white;
+        @apply bg-slate-400 dark:bg-slate-600 text-white hover:bg-slate-500 dark:hover:bg-slate-700;
     }
-    .btn-secondary:hover {
-        background-color: #545b62;
+</style>
+@endsection
+        background-color: #334155;
     }
 </style>
 @endsection

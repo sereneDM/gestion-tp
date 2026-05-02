@@ -13,19 +13,12 @@
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
-        color: #e2e8f0;
+        transition: opacity 0.15s;
     }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .btn:hover {
-        opacity: 0.95;
-    }
-    .header-actions {
-        margin-bottom: 1.5rem;
-        text-align: right;
-    }
+    .btn:hover { opacity: 0.9; }
+    .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
+    .header-actions { margin-bottom: 1.5rem; text-align: right; }
+
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -33,54 +26,38 @@
         margin-bottom: 2rem;
     }
     .stat-card {
-        background: #0f172a;
+        background: var(--tp-bg-raised);
         padding: 1.5rem;
         border-radius: 1rem;
-        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
         text-align: center;
-        border: 1px solid #334155;
+        border: 1px solid var(--tp-border);
     }
-    .stat-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #818cf8;
-    }
-    .stat-label {
-        color: #94a3b8;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-    }
+    .stat-number { font-size: 2rem; font-weight: bold; color: #818cf8; }
+    .stat-label  { color: var(--tp-text-muted); margin-top: 0.5rem; font-size: 0.9rem; }
+
     .section {
-        background: #0f172a;
+        background: var(--tp-bg-raised);
         padding: 2rem;
         border-radius: 1rem;
         margin-bottom: 2rem;
-        border: 1px solid #334155;
+        border: 1px solid var(--tp-border);
     }
     .section h2 {
-        color: #c7d2fe;
+        color: var(--tp-accent-text);
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #334155;
+        border-bottom: 2px solid var(--tp-border);
     }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+    table { width: 100%; border-collapse: collapse; }
     th, td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #334155;
-        color: #cbd5e1;
+        border-bottom: 1px solid var(--tp-border);
+        color: var(--tp-text-secondary);
     }
-    th {
-        background-color: #334155;
-        font-weight: bold;
-        color: #e2e8f0;
-    }
-    tr:hover {
-        background-color: #1e293b;
-    }
+    th { background: var(--tp-table-header); font-weight: bold; color: var(--tp-text-primary); }
+    tr:hover { background: var(--tp-table-row-hover); }
+
     .status-badge {
         padding: 0.3rem 0.8rem;
         border-radius: 9999px;
@@ -88,33 +65,26 @@
         font-weight: bold;
         display: inline-block;
     }
-    .status-graded {
-        background-color: rgba(34,197,94,0.15);
-        color: #86efac;
-    }
-    .status-submitted {
-        background-color: rgba(251,191,36,0.15);
-        color: #facc15;
-    }
-    .status-present {
-        background-color: rgba(34,197,94,0.15);
-        color: #86efac;
-    }
-    .status-absent {
-        background-color: rgba(239,68,68,0.15);
-        color: #fca5a5;
-    }
-    .status-late {
-        background-color: rgba(251,191,36,0.15);
-        color: #facc15;
-    }
+    .status-graded   { background: rgba(34,197,94,0.15);  color: #16a34a; }
+    .status-submitted{ background: rgba(251,191,36,0.15); color: #d97706; }
+    .status-present  { background: rgba(34,197,94,0.15);  color: #16a34a; }
+    .status-absent   { background: rgba(239,68,68,0.15);  color: #dc2626; }
+    .status-late     { background: rgba(251,191,36,0.15); color: #d97706; }
+    .status-excused  { background: rgba(23,162,184,0.15); color: #0891b2; }
+    [data-theme="dark"] .status-graded    { color: #86efac; }
+    [data-theme="dark"] .status-submitted { color: #facc15; }
+    [data-theme="dark"] .status-present   { color: #86efac; }
+    [data-theme="dark"] .status-absent    { color: #fca5a5; }
+    [data-theme="dark"] .status-late      { color: #facc15; }
+    [data-theme="dark"] .status-excused   { color: #5eead4; }
 </style>
 @endsection
 
-
 @section('content')
-    
 
+    <div class="header-actions">
+        <a href="{{ route('teacher.progress.index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
 
     <div class="stats-grid">
         <div class="stat-card">
@@ -169,7 +139,7 @@
                 </tbody>
             </table>
         @else
-            <p style="text-align: center; color: #999; padding: 2rem;">
+            <p style="text-align: center; color: var(--tp-text-faint); padding: 2rem;">
                 Aucune soumission pour le moment
             </p>
         @endif
@@ -201,7 +171,7 @@
                 </tbody>
             </table>
         @else
-            <p style="text-align: center; color: #999; padding: 2rem;">
+            <p style="text-align: center; color: var(--tp-text-faint); padding: 2rem;">
                 Aucun enregistrement de présence
             </p>
         @endif

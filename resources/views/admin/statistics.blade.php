@@ -1,283 +1,197 @@
 @extends('layouts.app')
-
 @section('title', 'Statistiques Globales')
-@section('page-title', 'Statistiques Globales du Système')
-
-@section('extra-styles')
-<style>
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
-    }
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-    }
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .stat-card {
-        background: white;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #007bff;
-    }
-    .stat-label {
-        color: #666;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-    }
-    .section {
-        background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .section h2 {
-        color: #007bff;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
-    }
-    .section-heading {
-        color: #333;
-        margin-bottom: 1rem;
-        margin-top: 2rem;
-    }
-    .grid-2col {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-    th {
-        background-color: #f8f9fa;
-        font-weight: bold;
-        color: #555;
-    }
-    tr:hover {
-        background-color: #f8f9fa;
-    }
-    .status-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        display: inline-block;
-    }
-    .status-graded {
-        background-color: #28a745;
-        color: white;
-    }
-    .status-submitted {
-        background-color: #ffc107;
-        color: #333;
-    }
-    .header-actions {
-        margin-bottom: 1.5rem;
-        text-align: right;
-    }
-</style>
-@endsection
 
 @section('content')
-    
 
+{{-- Stat card macro as a reusable pattern --}}
+@php
+function statCard($number, $label, $color = 'violet') {
+    $colors = ['violet'=>'text-violet-600 dark:text-violet-400','green'=>'text-green-600 dark:text-green-400','amber'=>'text-amber-500 dark:text-amber-400','red'=>'text-red-600 dark:text-red-400'];
+    $c = $colors[$color] ?? $colors['violet'];
+    return "<div class=\"bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600\"><div class=\"text-3xl font-bold {$c} mb-1\">{$number}</div><div class=\"text-xs text-slate-500 dark:text-slate-400\">{$label}</div></div>";
+}
+@endphp
 
-    <h3 class="section-heading">👥 Utilisateurs</h3>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalUsers }}</div>
-            <div class="stat-label">Total utilisateurs</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $totalStudents }}</div>
-            <div class="stat-label">Étudiants</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $totalTeachers }}</div>
-            <div class="stat-label">Enseignants</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #dc3545;">{{ $totalAdmins }}</div>
-            <div class="stat-label">Administrateurs</div>
-        </div>
+{{-- Users --}}
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 mt-2">👥 Utilisateurs</h3>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $totalUsers }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Total</div>
     </div>
-
-    <h3 class="section-heading">📚 Classes</h3>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalClasses }}</div>
-            <div class="stat-label">Total classes</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $classesWithStudents }}</div>
-            <div class="stat-label">Classes avec étudiants</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $classesWithTeachers }}</div>
-            <div class="stat-label">Classes avec enseignants</div>
-        </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">{{ $totalStudents }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Étudiants</div>
     </div>
-
-    <h3 class="section-heading">📝 Travaux Pratiques</h3>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalTPs }}</div>
-            <div class="stat-label">Total TP</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $publishedTPs }}</div>
-            <div class="stat-label">TP publiés</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $draftTPs }}</div>
-            <div class="stat-label">Brouillons</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalSubmissions }}</div>
-            <div class="stat-label">Total soumissions</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $gradedSubmissions }}</div>
-            <div class="stat-label">Notées</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $pendingSubmissions }}</div>
-            <div class="stat-label">En attente</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $averageGrade ? number_format($averageGrade, 2) : 'N/A' }}</div>
-            <div class="stat-label">Moyenne générale</div>
-        </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-amber-500 dark:text-amber-400 mb-1">{{ $totalTeachers }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Enseignants</div>
     </div>
-
-    <h3 class="section-heading">✓ Présences</h3>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalAttendances }}</div>
-            <div class="stat-label">Total enregistrements</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $presentCount }}</div>
-            <div class="stat-label">Présents</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #dc3545;">{{ $absentCount }}</div>
-            <div class="stat-label">Absents</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $lateCount }}</div>
-            <div class="stat-label">Retards</div>
-        </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-red-600 dark:text-red-400 mb-1">{{ $totalAdmins }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Administrateurs</div>
     </div>
+</div>
 
-    <div class="grid-2col">
-        <div class="section">
-            <h2>🏆 Meilleurs étudiants</h2>
-            @if($topStudents->count() > 0)
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Étudiant</th>
-                            <th>Moyenne</th>
-                            <th>TP soumis</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($topStudents as $item)
-                            <tr>
-                                <td>{{ $item->student->name }}</td>
-                                <td><strong>{{ number_format($item->avg_grade, 2) }}/20</strong></td>
-                                <td>{{ $item->total_submissions }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <p style="text-align: center; color: #999; padding: 2rem;">Aucune donnée</p>
-            @endif
-        </div>
-
-        <div class="section">
-            <h2>👨‍🏫 Enseignants les plus actifs</h2>
-            @if($activeTeachers->count() > 0)
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Enseignant</th>
-                            <th>TP créés</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($activeTeachers as $item)
-                            <tr>
-                                <td>{{ $item->teacher->name }}</td>
-                                <td><strong>{{ $item->tps_count }}</strong></td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <p style="text-align: center; color: #999; padding: 2rem;">Aucune donnée</p>
-            @endif
-        </div>
+{{-- Classes --}}
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">📚 Classes</h3>
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $totalClasses }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Total classes</div>
     </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $classesWithStudents }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Avec étudiants</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $classesWithTeachers }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Avec enseignants</div>
+    </div>
+</div>
 
-    <div class="section">
-        <h2>📋 Soumissions récentes</h2>
-        @if($recentSubmissions->count() > 0)
-            <table>
-                <thead>
-                    <tr>
-                        <th>Étudiant</th>
-                        <th>TP</th>
-                        <th>Date</th>
-                        <th>Statut</th>
-                        <th>Note</th>
-                    </tr>
-                </thead>
+{{-- TPs --}}
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">📝 Travaux Pratiques</h3>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $totalTPs }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Total TP</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">{{ $publishedTPs }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Publiés</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-amber-500 dark:text-amber-400 mb-1">{{ $draftTPs }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Brouillons</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $totalSubmissions }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Soumissions</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">{{ $gradedSubmissions }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Notées</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-amber-500 dark:text-amber-400 mb-1">{{ $pendingSubmissions }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">En attente</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $averageGrade ? number_format($averageGrade,2) : 'N/A' }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Moyenne /20</div>
+    </div>
+</div>
+
+{{-- Attendance --}}
+<h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">✓ Présences</h3>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-violet-600 dark:text-violet-400 mb-1">{{ $totalAttendances }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Total</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-green-600 dark:text-green-400 mb-1">{{ $presentCount }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Présents</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-red-600 dark:text-red-400 mb-1">{{ $absentCount }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Absents</div>
+    </div>
+    <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
+        <div class="text-3xl font-bold text-amber-500 dark:text-amber-400 mb-1">{{ $lateCount }}</div>
+        <div class="text-xs text-slate-500 dark:text-slate-400">Retards</div>
+    </div>
+</div>
+
+{{-- Tables --}}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    {{-- Top students --}}
+    <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-5">
+        <h2 class="font-bold text-violet-600 dark:text-violet-400 text-base mb-4 pb-2 border-b border-slate-200 dark:border-slate-600">🏆 Meilleurs étudiants</h2>
+        @if($topStudents->count() > 0)
+            <table class="w-full text-sm">
+                <thead><tr class="text-left">
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">Étudiant</th>
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">Moyenne</th>
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">TP</th>
+                </tr></thead>
                 <tbody>
-                    @foreach($recentSubmissions as $submission)
-                        <tr>
-                            <td>{{ $submission->student->name }}</td>
-                            <td>{{ $submission->tp->title }}</td>
-                            <td>{{ $submission->submitted_at->format('d/m/Y H:i') }}</td>
-                            <td>
-                                <span class="status-badge status-{{ $submission->status }}">
-                                    {{ ucfirst($submission->status) }}
-                                </span>
-                            </td>
-                            <td>{{ $submission->grade ? $submission->grade . '/20' : 'En attente' }}</td>
+                    @foreach($topStudents as $item)
+                        <tr class="border-t border-slate-200 dark:border-slate-600">
+                            <td class="py-2 text-slate-700 dark:text-slate-200">{{ $item->student->name }}</td>
+                            <td class="py-2 font-bold text-green-600 dark:text-green-400">{{ number_format($item->avg_grade,2) }}/20</td>
+                            <td class="py-2 text-slate-500 dark:text-slate-400">{{ $item->total_submissions }}</td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         @else
-            <p style="text-align: center; color: #999; padding: 2rem;">Aucune soumission</p>
+            <p class="text-center text-slate-400 py-6 text-sm">Aucune donnée</p>
         @endif
     </div>
+
+    {{-- Active teachers --}}
+    <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-5">
+        <h2 class="font-bold text-violet-600 dark:text-violet-400 text-base mb-4 pb-2 border-b border-slate-200 dark:border-slate-600">👨‍🏫 Enseignants actifs</h2>
+        @if($activeTeachers->count() > 0)
+            <table class="w-full text-sm">
+                <thead><tr class="text-left">
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">Enseignant</th>
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">TP créés</th>
+                </tr></thead>
+                <tbody>
+                    @foreach($activeTeachers as $item)
+                        <tr class="border-t border-slate-200 dark:border-slate-600">
+                            <td class="py-2 text-slate-700 dark:text-slate-200">{{ $item->teacher->name }}</td>
+                            <td class="py-2 font-bold text-violet-600 dark:text-violet-400">{{ $item->tps_count }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p class="text-center text-slate-400 py-6 text-sm">Aucune donnée</p>
+        @endif
+    </div>
+</div>
+
+{{-- Recent submissions --}}
+<div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-5">
+    <h2 class="font-bold text-violet-600 dark:text-violet-400 text-base mb-4 pb-2 border-b border-slate-200 dark:border-slate-600">📋 Soumissions récentes</h2>
+    @if($recentSubmissions->count() > 0)
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead><tr class="text-left">
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">Étudiant</th>
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">TP</th>
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">Date</th>
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">Statut</th>
+                    <th class="pb-2 text-slate-500 dark:text-slate-400 font-medium">Note</th>
+                </tr></thead>
+                <tbody>
+                    @foreach($recentSubmissions as $submission)
+                        <tr class="border-t border-slate-200 dark:border-slate-600">
+                            <td class="py-2 text-slate-700 dark:text-slate-200">{{ $submission->student->name }}</td>
+                            <td class="py-2 text-slate-600 dark:text-slate-300">{{ $submission->tp->title }}</td>
+                            <td class="py-2 text-slate-500 dark:text-slate-400">{{ $submission->submitted_at->format('d/m/Y H:i') }}</td>
+                            <td class="py-2">
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold
+                                    @if($submission->grade) bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300
+                                    @else bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 @endif">
+                                    {{ $submission->grade ? 'Noté' : 'En attente' }}
+                                </span>
+                            </td>
+                            <td class="py-2 font-medium text-slate-700 dark:text-slate-200">
+                                {{ $submission->grade ? $submission->grade.'/20' : '—' }}
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    @else
+        <p class="text-center text-slate-400 py-6 text-sm">Aucune soumission</p>
+    @endif
+</div>
+
 @endsection

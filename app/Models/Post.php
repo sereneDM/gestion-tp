@@ -3,6 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+
+use App\Models\User;
+use App\Models\ClassModel;
+use App\Models\Tp;
+use App\Models\Comment;
+use App\Models\Like;
 
 class Post extends Model
 {
@@ -16,61 +25,83 @@ class Post extends Model
         'attachment',
     ];
 
-    protected $casts = [
-        'created_at' => 'datetime',
-    ];
-
-    public function user()
+    /**
+     * Author of the post
+     */
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function class()
+    /**
+     * Related class (course)
+     */
+    public function class(): BelongsTo
     {
         return $this->belongsTo(ClassModel::class, 'class_id');
     }
 
-    public function tp()
+    /**
+     * Related TP
+     */
+    public function tp(): BelongsTo
     {
-        return $this->belongsTo(TP::class);
+        return $this->belongsTo(Tp::class);
     }
 
-    public function comments()
+    /**
+     * Comments (non-polymorphic)
+     */
+    public function comments(): HasMany
     {
-        return $this->hasMany(Comment::class)
+        return $this->hasMany(Comment::class, 'post_id')
                     ->whereNull('parent_id')
-                    ->with(['user', 'replies'])
                     ->orderBy('created_at', 'asc');
     }
 
-  public static function visibleToStudent($studentId)
-{
-    $student = User::find($studentId);
-    $enrolledClassIds = $student->enrolledClasses()->pluck('classes.id');
+    /**
+     * Likes (polymorphic)
+     */
+    public function likes(): MorphMany
+    {
+        return $this->morphMany(Like::class, 'likeable');
+    }
 
-    // Get teacher IDs of enrolled classes
-    $teacherIds = ClassModel::whereIn('id', $enrolledClassIds)->pluck('teacher_id');
+    /**
+     * Check if user liked this post
+     */
+    public function isLikedBy($userId): bool
+    {
+        if (!$userId) return false;
 
-    return self::with(['user', 'class', 'tp'])
-               ->where(function($query) use ($enrolledClassIds, $teacherIds) {
-                   // Posts from enrolled classes
-                   $query->whereIn('class_id', $enrolledClassIds)
-                         // OR general posts from their teachers
-                         ->orWhere(function($q) use ($teacherIds) {
-                             $q->whereNull('class_id')
-                               ->whereIn('user_id', $teacherIds);
-                         });
-               })
-               ->orderBy('created_at', 'desc');
-}
+        if ($this->relationLoaded('likes')) {
+            return $this->likes->contains('user_id', $userId);
+        }
 
-public function likes()
-{
-    return $this->morphMany(Like::class, 'likeable');
-}
+        return $this->likes()
+                    ->where('user_id', $userId)
+                    ->exists();
+    }
 
-public function isLikedBy($userId)
-{
-    return $this->likes()->where('user_id', $userId)->exists();
-}
+    /**
+     * Get posts visible to a student
+     */
+    public static function visibleToStudent($studentId)
+    {
+        return self::where(function ($query) use ($studentId) {
+
+            // Posts linked to classes where student is enrolled
+            $query->whereHas('class', function ($q) use ($studentId) {
+                $q->whereHas('students', function ($q2) use ($studentId) {
+                    $q2->where('users.id', $studentId);
+                });
+            })
+
+            // OR public posts (no class assigned)
+            ->orWhereNull('class_id');
+
+        })
+        ->with(['class', 'tp', 'likes', 'comments'])
+        ->orderBy('created_at', 'desc');
+    }
 }

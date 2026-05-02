@@ -7,90 +7,59 @@
 <style>
     .form-container {
         max-width: 800px;
-        background: #0f172a;
-        border: 1px solid #334155;
+        background: var(--tp-bg-raised);
+        border: 1px solid var(--tp-border);
         border-radius: 1rem;
         padding: 2rem;
     }
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #cbd5e1;
-        font-weight: bold;
-    }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.5rem; color: var(--tp-text-secondary); font-weight: bold; }
     input, textarea, select {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #475569;
+        border: 1px solid var(--tp-input-border);
         border-radius: 0.75rem;
         font-size: 1rem;
-        background: #1e293b;
-        color: #e2e8f0;
+        background: var(--tp-input-bg);
+        color: var(--tp-text-primary);
         box-sizing: border-box;
     }
-    textarea {
-        min-height: 150px;
-        resize: vertical;
-    }
-    input::placeholder, textarea::placeholder {
-        color: #94a3b8;
-    }
-    input:focus, textarea:focus, select:focus {
-        outline: none;
-        border-color: #6366f1;
-    }
-    .char-counter {
-        text-align: right;
-        font-size: 0.78rem;
-        margin-top: 0.25rem;
-        color: #64748b;
-        transition: color 0.2s;
-    }
-    .char-counter.warning { color: #f59e0b; }
-    .char-counter.danger  { color: #ef4444; }
+    textarea { min-height: 150px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: var(--tp-text-faint); }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #6366f1; }
+    select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
+    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.25rem; }
+    [data-theme="dark"] .error { color: #fca5a5; }
+
     .enonce-box {
-        border: 1px solid #475569;
+        border: 1px solid var(--tp-input-border);
         border-radius: 0.75rem;
         overflow: hidden;
-        background: #0f172a;
+        background: var(--tp-bg-raised);
     }
     .enonce-box textarea {
         border: none;
-        border-bottom: 1px solid #334155;
+        border-bottom: 1px solid var(--tp-border);
         border-radius: 0;
         margin: 0;
-        background: #0f172a;
-        color: #e2e8f0;
+        background: var(--tp-bg-raised);
+        color: var(--tp-text-primary);
     }
-    .enonce-box textarea:focus {
-        outline: none;
-        border-color: #334155;
-        box-shadow: none;
-    }
+    .enonce-box textarea:focus { outline: none; border-color: var(--tp-border); box-shadow: none; }
     .pdf-section {
         padding: 1rem;
-        background: #0f172a;
+        background: var(--tp-bg-raised);
     }
     .pdf-section-label {
         font-size: 0.85rem;
         font-weight: bold;
-        color: #cbd5e1;
+        color: var(--tp-text-secondary);
         margin-bottom: 0.75rem;
         display: block;
     }
-    .error {
-        color: #fca5a5;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-    .button-group {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
+    .due-hint { font-size: 0.8rem; color: var(--tp-text-faint); margin-top: 0.25rem; }
+
+    .button-group { display: flex; gap: 1rem; margin-top: 2rem; }
     .btn {
         padding: 0.75rem 1.5rem;
         border: none;
@@ -101,26 +70,30 @@
         display: inline-block;
         flex: 1;
         text-align: center;
-        color: #e2e8f0;
+        transition: opacity 0.15s;
     }
-    .btn-primary {
-        background-color: #4f46e5;
-        color: white;
-    }
-    .btn-primary:hover { background-color: #4338ca; }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .btn-secondary:hover { background-color: #334155; }
+    .btn:hover { opacity: 0.9; }
+    .btn-primary  { background: var(--tp-accent); color: white; }
+    .btn-primary:hover  { background: var(--tp-accent-hover); opacity: 1; }
+    .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
+
     .course-info {
-        background: #0f172a;
-        border-left: 4px solid #4f46e5;
+        background: var(--tp-bg-raised);
+        border-left: 4px solid var(--tp-accent);
         padding: 1rem;
         margin-bottom: 2rem;
         border-radius: 0.75rem;
-        color: #cbd5e1;
+        color: var(--tp-text-secondary);
     }
+
+    .post-option-box {
+        background: var(--tp-bg-raised);
+        border-left: 4px solid var(--tp-accent);
+        padding: 1rem;
+        border-radius: 4px;
+    }
+    .post-option-box .opt-title { font-weight: bold; color: var(--tp-text-primary); }
+    .post-option-box .opt-hint { font-size: 0.85rem; color: var(--tp-text-faint); margin-top: 0.25rem; }
 </style>
 @endsection
 
@@ -167,9 +140,7 @@
                        id="due_date"
                        name="due_date"
                        value="{{ old('due_date', '') }}">
-                <div style="font-size:0.8rem; color:#64748b; margin-top:0.25rem;">
-                    Par défaut: minuit (00:00) si l'heure n'est pas modifiée
-                </div>
+                <div class="due-hint">Par défaut: minuit (00:00) si l'heure n'est pas modifiée</div>
                 @error('due_date') <div class="error">{{ $message }}</div> @enderror
             </div>
 
@@ -187,14 +158,12 @@
             </div>
 
             <div class="form-group" id="post-option" style="display:none;">
-                <div style="background: #0f172a; border-left: 4px solid #4f46e5; padding: 1rem; border-radius: 4px;">
+                <div class="post-option-box">
                     <label style="display:flex; align-items:center; gap:0.75rem; cursor:pointer; font-weight:normal;">
                         <input type="checkbox" name="create_post" value="1" style="width:18px;height:18px;">
                         <div>
-                            <div style="font-weight:bold; color: #e2e8f0;">📢 Publier une annonce dans le fil d'actualité</div>
-                            <div style="font-size:0.85rem; color:#64748b; margin-top:0.25rem;">
-                                Les étudiants verront une notification dans leur fil d'actualité
-                            </div>
+                            <div class="opt-title">📢 Publier une annonce dans le fil d'actualité</div>
+                            <div class="opt-hint">Les étudiants verront une notification dans leur fil d'actualité</div>
                         </div>
                     </label>
                 </div>
@@ -208,7 +177,6 @@
     </div>
 
     <script>
-        // Character counter for title
         const titleInput   = document.getElementById('title');
         const titleCounter = document.getElementById('title-counter');
         const maxLength    = 50;
@@ -221,16 +189,14 @@
             else if (len >= maxLength * 0.8) titleCounter.classList.add('warning');
         }
         titleInput.addEventListener('input', updateCounter);
-        updateCounter(); // init on load (handles old() value)
+        updateCounter();
 
-        // Show/hide post option based on status
         document.getElementById('status').addEventListener('change', function () {
             document.getElementById('post-option').style.display =
                 this.value === 'published' ? 'block' : 'none';
         });
         document.getElementById('status').dispatchEvent(new Event('change'));
 
-        // Enforce min date
         const dueDateInput = document.getElementById('due_date');
         const currentValue = dueDateInput.value;
         const now = new Date();

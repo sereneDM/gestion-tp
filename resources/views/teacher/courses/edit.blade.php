@@ -6,52 +6,31 @@
 @section('extra-styles')
 <style>
     .form-container {
-        background: #0f172a;
+        background: var(--tp-bg-raised);
         padding: 2rem;
         border-radius: 1rem;
-        border: 1px solid #334155;
+        border: 1px solid var(--tp-border);
         max-width: 800px;
     }
-    .form-group {
-        margin-bottom: 1.5rem;
-    }
-    label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #cbd5e1;
-        font-weight: bold;
-    }
+    .form-group { margin-bottom: 1.5rem; }
+    label { display: block; margin-bottom: 0.5rem; color: var(--tp-text-secondary); font-weight: bold; }
     input, textarea, select {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #475569;
+        border: 1px solid var(--tp-input-border);
         border-radius: 0.75rem;
         font-size: 1rem;
-        font-family: Arial, sans-serif;
-        background: #1e293b;
-        color: #e2e8f0;
+        background: var(--tp-input-bg);
+        color: var(--tp-text-primary);
+        box-sizing: border-box;
     }
-    textarea {
-        min-height: 120px;
-        resize: vertical;
-    }
-    input::placeholder, textarea::placeholder {
-        color: #94a3b8;
-    }
-    input:focus, textarea:focus, select:focus {
-        outline: none;
-        border-color: #6366f1;
-    }
-    .error {
-        color: #fca5a5;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
-    }
-    .button-group {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
+    textarea { min-height: 120px; resize: vertical; }
+    input::placeholder, textarea::placeholder { color: var(--tp-text-faint); }
+    input:focus, textarea:focus, select:focus { outline: none; border-color: #6366f1; }
+    select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
+    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.25rem; }
+    [data-theme="dark"] .error { color: #fca5a5; }
+    .button-group { display: flex; gap: 1rem; margin-top: 2rem; }
     .btn {
         padding: 0.75rem 1.5rem;
         border: none;
@@ -62,25 +41,18 @@
         display: inline-block;
         flex: 1;
         text-align: center;
-        color: #e2e8f0;
+        transition: opacity 0.15s;
     }
-    .btn-primary {
-        background-color: #4f46e5;
-        color: white;
-    }
-    .btn-primary:hover {
-        background-color: #4338ca;
-    }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .btn-secondary:hover {
-        background-color: #334155;
-    }
+<<<<<<< HEAD
     .char-counter { text-align: right; font-size: 0.78rem; margin-top: 0.25rem; color: #64748b; transition: color 0.2s; }
     .char-counter.warning { color: #f59e0b; }
     .char-counter.danger  { color: #ef4444; }
+=======
+    .btn:hover { opacity: 0.9; }
+    .btn-primary  { background: var(--tp-accent); color: white; }
+    .btn-primary:hover  { background: var(--tp-accent-hover); opacity: 1; }
+    .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
+>>>>>>> 29f2233 (fifth update)
 </style>
 @endsection
 
@@ -155,4 +127,8 @@
         nameInput.addEventListener('input', updateCounter);
         updateCounter();
     </script>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> 29f2233 (fifth update)

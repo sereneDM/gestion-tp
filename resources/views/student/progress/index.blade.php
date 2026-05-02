@@ -1,226 +1,95 @@
 @extends('layouts.app')
-
 @section('title', 'Ma Progression')
-@section('page-title', 'Ma Progression Académique')
-
-@section('extra-styles')
-<style>
-    .stats-overview {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
-    }
-    .stat-card {
-        background: #0f172a;
-        padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        text-align: center;
-        border: 1px solid #334155;
-    }
-    .stat-icon {
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
-    }
-    .stat-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #6366f1;
-        margin-bottom: 0.5rem;
-    }
-    .stat-label {
-        color: #cbd5e1;
-        font-size: 0.9rem;
-    }
-    .progress-bar {
-        width: 100%;
-        height: 30px;
-        background: #334155;
-        border-radius: 15px;
-        overflow: hidden;
-        margin-top: 0.5rem;
-    }
-    .progress-fill {
-        height: 100%;
-        background: #6366f1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        transition: width 0.3s;
-    }
-    .course-progress {
-        background: #0f172a;
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        border: 1px solid #334155;
-    }
-    .course-progress h3 {
-        margin-top: 0;
-        color: #e2e8f0;
-        border-bottom: 2px solid #334155;
-        padding-bottom: 0.5rem;
-        margin-bottom: 1rem;
-    }
-    .course-teacher {
-        color: #cbd5e1;
-        font-size: 0.9rem;
-        margin-bottom: 1rem;
-    }
-    .tp-list {
-        display: grid;
-        gap: 0.5rem;
-    }
-    .tp-item {
-        display: grid;
-        grid-template-columns: 1fr auto auto;
-        gap: 1rem;
-        padding: 0.75rem;
-        background: #1e293b;
-        border-radius: 4px;
-        align-items: center;
-        border: 1px solid #334155;
-    }
-    .tp-name {
-        color: #e2e8f0;
-        font-weight: 500;
-    }
-    .tp-status {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
-    }
-    .tp-status.done {
-        background: #d4edda;
-        color: #155724;
-    }
-    .tp-status.pending {
-        background: rgba(219,234,254,0.3);
-        color: #a5b4fc;
-    }
-    .tp-status.submitted {
-        background: rgba(219,234,254,0.3);
-        color: #a5b4fc;
-    }
-    .tp-grade {
-        font-weight: bold;
-        color: #6366f1;
-    }
-    .grade-good {
-        color: #86efac;
-    }
-    .grade-average {
-        color: #fbbf24;
-    }
-    .grade-poor {
-        color: #fca5a5;
-    }
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: #0f172a;
-        border-radius: 8px;
-        color: #94a3b8;
-        border: 1px solid #334155;
-    }
-}
-.outer-wrapper {
-        color: #856404;
-    }
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: #0f172a;
-        border-radius: 8px;
-        color: #999;
-    }
-</style>
-@endsection
 
 @section('content')
-    <div class="stats-overview">
-        <div class="stat-card">
-            <div class="stat-icon">📝</div>
-            <div class="stat-number">{{ $totalTPs }}</div>
-            <div class="stat-label">TP Total</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">✅</div>
-            <div class="stat-number">{{ $submittedTPs }}</div>
-            <div class="stat-label">TP Soumis</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">⭐</div>
-            <div class="stat-number">{{ $gradedTPs }}</div>
-            <div class="stat-label">TP Notés</div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">📊</div>
-            <div class="stat-number">{{ $averageGrade }}</div>
-            <div class="stat-label">Moyenne /20</div>
+
+{{-- Stats --}}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="text-3xl mb-2">📝</div>
+        <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $totalTPs }}</div>
+        <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">TP Total</div>
+    </div>
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="text-3xl mb-2">✅</div>
+        <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $submittedTPs }}</div>
+        <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">TP Soumis</div>
+    </div>
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="text-3xl mb-2">⭐</div>
+        <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $gradedTPs }}</div>
+        <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">TP Notés</div>
+    </div>
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="text-3xl mb-2">📊</div>
+        <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $averageGrade }}</div>
+        <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">Moyenne /20</div>
+    </div>
+</div>
+
+{{-- Completion bar --}}
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 mb-6 shadow-sm">
+    <div class="flex justify-between items-center mb-2">
+        <strong class="text-slate-800 dark:text-slate-200 text-sm">Taux de Complétion</strong>
+        <span class="text-sm font-bold text-violet-600 dark:text-violet-400">{{ $completionRate }}%</span>
+    </div>
+    <div class="w-full h-5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div class="h-full bg-violet-600 rounded-full transition-all"
+             style="width: {{ $completionRate }}%">
         </div>
     </div>
+</div>
 
-    <div class="stat-card">
-        <div style="text-align: left;">
-            <strong>Taux de Complétion</strong>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: {{ $completionRate }}%;">
-                    {{ $completionRate }}%
-                </div>
-            </div>
-        </div>
-    </div>
+{{-- Per course --}}
+<h2 class="font-semibold text-slate-800 dark:text-slate-200 text-lg mb-4">Progression par Cours</h2>
 
-    <h2 style="margin: 2rem 0 1rem 0; color: #e2e8f0;">Progression par Cours</h2>
+@forelse($courses as $course)
+    <div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 mb-4 shadow-sm">
+        <h3 class="font-bold text-slate-900 dark:text-white text-base pb-2 mb-3 border-b border-slate-200 dark:border-slate-700">
+            {{ $course->name }}
+        </h3>
+        <p class="text-slate-500 dark:text-slate-400 text-sm mb-3">👨‍🏫 {{ $course->teacher->name }}</p>
 
-    @forelse($courses as $course)
-        <div class="course-progress">
-            <h3>{{ $course->name }}</h3>
-            <div class="course-teacher">👨‍🏫 {{ $course->teacher->name }}</div>
-
-            @if($course->tps->count() > 0)
-                <div class="tp-list">
-                    @foreach($course->tps as $tp)
-                        @php
-                            $submission = App\Models\Submission::where('tp_id', $tp->id)
-                                ->where('student_id', Auth::id())
-                                ->first();
-                        @endphp
-                        <div class="tp-item">
-                            <div class="tp-name">{{ $tp->title }}</div>
-                            @if($submission)
-                                @if($submission->grade)
-                                    <span class="tp-status done">Note: {{ $submission->grade }}/20</span>
-                                @else
-                                    <span class="tp-status done">✓ Soumis</span>
-                                @endif
+        @if($course->tps->count() > 0)
+            <div class="flex flex-col gap-2">
+                @foreach($course->tps as $tp)
+                    @php
+                        $submission = App\Models\Submission::where('tp_id', $tp->id)
+                            ->where('student_id', Auth::id())->first();
+                    @endphp
+                    <div class="grid grid-cols-[1fr_auto_auto] gap-3 items-center
+                                px-3 py-2.5 rounded-lg border
+                                bg-slate-50 dark:bg-slate-700/50
+                                border-slate-200 dark:border-slate-600">
+                        <span class="font-medium text-slate-800 dark:text-slate-200 text-sm truncate">{{ $tp->title }}</span>
+                        @if($submission)
+                            @if($submission->grade)
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 whitespace-nowrap">
+                                    {{ $submission->grade }}/20
+                                </span>
                             @else
-                                <span class="tp-status pending">À faire</span>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 whitespace-nowrap">✓ Soumis</span>
                             @endif
-                            <a href="{{ route('student.tps.show', $tp->id) }}" style="color: #6366f1; font-size: 0.85rem;">
-                                Voir →
-                            </a>
-                        </div>
-                    @endforeach
-                </div>
-            @else
-                <p style="color: #999; text-align: center; padding: 1rem;">Aucun TP disponible pour ce cours</p>
-            @endif
-        </div>
-    @empty
-        <div class="empty-state">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📊</div>
-            <h2>Aucune donnée de progression</h2>
-            <p>Inscrivez-vous à des cours pour voir votre progression</p>
-        </div>
-    @endforelse
+                        @else
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-200 dark:bg-slate-600 text-slate-600 dark:text-slate-300 whitespace-nowrap">À faire</span>
+                        @endif
+                        <a href="{{ route('student.tps.show', $tp->id) }}"
+                           class="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 text-sm transition-colors whitespace-nowrap">
+                            Voir →
+                        </a>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-slate-400 dark:text-slate-500 text-center py-4 text-sm">Aucun TP disponible pour ce cours</p>
+        @endif
+    </div>
+@empty
+    <div class="text-center py-16 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+        <div class="text-6xl mb-4">📊</div>
+        <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">Aucune donnée de progression</h2>
+        <p class="text-slate-500 dark:text-slate-400">Inscrivez-vous à des cours pour voir votre progression</p>
+    </div>
+@endforelse
+
 @endsection

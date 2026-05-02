@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurer votre mot de passe</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+      // Prevent flash - Load theme immediately
+      const theme = localStorage.getItem('theme') || 'dark';
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,101 +25,57 @@
             margin: 0;
         }
         .container {
-            background: white;
-            padding: 3rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 500px;
+            @apply bg-white dark:bg-[#1e293b] rounded-lg shadow-lg p-12 w-full max-w-md;
         }
         h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 0.5rem;
+            @apply text-2xl font-bold text-center text-slate-900 dark:text-white mb-1;
         }
         .subtitle {
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
+            @apply text-center text-slate-600 dark:text-slate-400 text-sm mb-6;
         }
         .icon {
-            text-align: center;
-            font-size: 4rem;
-            margin-bottom: 1rem;
+            @apply text-center text-5xl mb-4;
         }
         .form-group {
-            margin-bottom: 1.5rem;
+            @apply mb-6;
         }
         label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: bold;
+            @apply block mb-2 text-slate-700 dark:text-slate-200 font-semibold;
         }
         input {
-            width: 100%;
-            padding: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
+            @apply w-full px-3 py-2 border-2 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:border-violet-500 dark:focus:border-violet-400;
         }
-        input:focus {
-            outline: none;
-            border-color: #007bff;
+        input:disabled {
+            @apply opacity-60 cursor-not-allowed;
         }
         .error {
-            color: #dc3545;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+            @apply text-red-600 dark:text-red-400 text-sm mt-1;
         }
         .requirements {
-            background: #e7f3ff;
-            border-left: 4px solid #007bff;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border-radius: 4px;
-            font-size: 0.9rem;
+            @apply bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-400 px-4 py-3 mb-6 rounded text-sm text-slate-700 dark:text-slate-300;
         }
         .requirements ul {
-            margin: 0.5rem 0 0 1.5rem;
-            padding: 0;
+            @apply ml-5 mt-2 list-disc;
         }
         .requirements li {
-            margin: 0.25rem 0;
+            @apply my-1;
         }
         .btn {
-            width: 100%;
-            padding: 1rem;
-            background: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-        .btn:hover {
-            background: #0056b3;
+            @apply w-full py-2 px-4 bg-violet-600 dark:bg-violet-600 hover:bg-violet-700 dark:hover:bg-violet-700 text-white font-semibold rounded-lg cursor-pointer transition-colors duration-200;
         }
         .password-strength {
-            margin-top: 0.5rem;
-            height: 4px;
-            background: #ddd;
-            border-radius: 2px;
-            overflow: hidden;
+            @apply mt-2 h-1 bg-slate-300 dark:bg-slate-600 rounded-full overflow-hidden;
         }
         .password-strength-bar {
-            height: 100%;
+            @apply h-full transition-all duration-300;
             width: 0%;
-            transition: all 0.3s;
         }
-        .strength-weak { background: #dc3545; width: 33%; }
-        .strength-medium { background: #ffc107; width: 66%; }
-        .strength-strong { background: #28a745; width: 100%; }
+        .strength-weak { @apply bg-red-500; width: 33%; }
+        .strength-medium { @apply bg-yellow-500; width: 66%; }
+        .strength-strong { @apply bg-green-500; width: 100%; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 dark:bg-[#0f172a] min-h-screen flex items-center justify-center">
     <div class="container">
         <div class="icon">🔐</div>
         <h1>Configurez votre mot de passe</h1>

@@ -1,149 +1,56 @@
 @extends('layouts.app')
-
 @section('title', 'Logs Système')
-@section('page-title', 'Logs et Supervision Système')
-
-@section('extra-styles')
-<style>
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
-    }
-    .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-    }
-    .header-actions {
-        margin-bottom: 1.5rem;
-        text-align: right;
-    }
-    .section {
-        background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .section h2 {
-        color: #007bff;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
-    }
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 1rem;
-    }
-    .info-item {
-        padding: 1rem;
-        background: #f8f9fa;
-        border-radius: 4px;
-    }
-    .info-label {
-        font-weight: bold;
-        color: #555;
-        margin-bottom: 0.5rem;
-    }
-    .info-value {
-        color: #333;
-        font-size: 1.1rem;
-    }
-    .activity-item {
-        padding: 1rem;
-        border-left: 4px solid #007bff;
-        background: #f8f9fa;
-        margin-bottom: 1rem;
-        border-radius: 4px;
-    }
-    .activity-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-    }
-    .activity-action {
-        font-weight: bold;
-        color: #333;
-    }
-    .activity-time {
-        color: #999;
-        font-size: 0.9rem;
-    }
-    .activity-user {
-        color: #007bff;
-        font-size: 0.9rem;
-    }
-    .activity-details {
-        color: #666;
-        font-size: 0.9rem;
-    }
-    .empty-state {
-        text-align: center;
-        color: #999;
-        padding: 2rem;
-    }
-</style>
-@endsection
 
 @section('content')
 
-    <div class="section">
-        <h2>ℹ️ Informations Système</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Version PHP</div>
-                <div class="info-value">{{ $systemInfo['php_version'] }}</div>
+{{-- System info --}}
+<div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-6 mb-6">
+    <h2 class="font-bold text-violet-600 dark:text-violet-400 text-base mb-4 pb-2 border-b border-slate-200 dark:border-slate-600">
+        ℹ️ Informations Système
+    </h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        @foreach([
+            ['PHP', $systemInfo['php_version']],
+            ['Laravel', $systemInfo['laravel_version']],
+            ['Base de données', ucfirst($systemInfo['database'])],
+            ['Environnement', ucfirst($systemInfo['environment'])],
+            ['Mode Debug', $systemInfo['debug_mode']],
+            ['Fuseau horaire', $systemInfo['timezone']],
+        ] as [$label, $value])
+            <div class="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 px-4 py-3">
+                <div class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">{{ $label }}</div>
+                <div class="text-slate-800 dark:text-slate-100 font-medium">{{ $value }}</div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Version Laravel</div>
-                <div class="info-value">{{ $systemInfo['laravel_version'] }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Base de données</div>
-                <div class="info-value">{{ ucfirst($systemInfo['database']) }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Environnement</div>
-                <div class="info-value">{{ ucfirst($systemInfo['environment']) }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Mode Debug</div>
-                <div class="info-value">{{ $systemInfo['debug_mode'] }}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Fuseau horaire</div>
-                <div class="info-value">{{ $systemInfo['timezone'] }}</div>
-            </div>
-        </div>
+        @endforeach
     </div>
+</div>
 
-    <div class="section">
-        <h2>🕐 Activité Récente</h2>
-        @forelse($activities as $activity)
-            <div class="activity-item">
-                <div class="activity-header">
-                    <div class="activity-action">{{ $activity->description }}</div>
-                    <div class="activity-time">{{ $activity->created_at->diffForHumans() }}</div>
-                </div>
-                <div class="activity-user">
-                    👤 {{ $activity->causer?->email ?? 'Système' }}
-                </div>
-                @if($activity->subject_type)
-                    <div class="activity-details">
-                        {{ class_basename($activity->subject_type) }} #{{ $activity->subject_id }}
-                    </div>
-                @endif
+{{-- Activity log --}}
+<div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-6">
+    <h2 class="font-bold text-violet-600 dark:text-violet-400 text-base mb-4 pb-2 border-b border-slate-200 dark:border-slate-600">
+        🕐 Activité Récente
+    </h2>
+    @forelse($activities as $activity)
+        <div class="bg-white dark:bg-slate-800 border-l-4 border-violet-500 dark:border-violet-400
+                    border border-slate-200 dark:border-slate-600 rounded-lg px-4 py-3 mb-3">
+            <div class="flex justify-between items-start mb-1">
+                <span class="font-semibold text-slate-800 dark:text-slate-100 text-sm">{{ $activity->description }}</span>
+                <span class="text-xs text-slate-400 dark:text-slate-500 ml-3 shrink-0">{{ $activity->created_at->diffForHumans() }}</span>
             </div>
-        @empty
-            <div class="empty-state">
-                Aucune activité enregistrée pour le moment.
+            <div class="text-xs text-violet-600 dark:text-violet-400">
+                👤 {{ $activity->causer?->email ?? 'Système' }}
             </div>
-        @endforelse
-    </div>
+            @if($activity->subject_type)
+                <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    {{ class_basename($activity->subject_type) }} #{{ $activity->subject_id }}
+                </div>
+            @endif
+        </div>
+    @empty
+        <div class="text-center text-slate-400 dark:text-slate-500 py-10 text-sm">
+            Aucune activité enregistrée pour le moment.
+        </div>
+    @endforelse
+</div>
 
 @endsection

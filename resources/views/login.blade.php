@@ -1,13 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Plateforme TP</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+      // Prevent flash - Load theme immediately
+      const theme = localStorage.getItem('theme') || 'dark';
+      if (theme === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -15,81 +24,63 @@
             margin: 0;
         }
         .login-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
+            @apply bg-white dark:bg-[#1e293b] shadow-lg rounded-lg p-8 w-full max-w-md;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         h1 {
-            text-align: center;
-            color: #333;
+            @apply text-2xl font-bold text-center mb-6 text-slate-900 dark:text-white;
         }
         .form-group {
-            margin-bottom: 1rem;
+            @apply mb-4;
         }
         label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #555;
+            @apply block mb-2 text-slate-700 dark:text-slate-200 font-medium;
         }
         input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            @apply w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400;
         }
         button {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        button:hover {
-            background-color: #0056b3;
+            @apply w-full py-2 px-4 bg-violet-600 dark:bg-violet-600 hover:bg-violet-700 dark:hover:bg-violet-700 text-white font-semibold rounded-lg transition-colors duration-200;
         }
         .error {
-            color: red;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+            @apply text-red-600 dark:text-red-400 text-sm mt-1;
+        }
+        .forgot-password {
+            @apply text-right mt-2;
+        }
+        .forgot-password a {
+            @apply text-violet-600 dark:text-violet-400 text-sm hover:underline;
         }
     </style>
 </head>
-<body>
-    <div class="login-container">
-        <h1>Plateforme de Gestion des TP</h1>
+<body class="bg-slate-50 dark:bg-[#0f172a]">
+    <div class="login-container bg-white dark:bg-[#1e293b] shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-6 text-slate-900 dark:text-white">Plateforme de Gestion des TP</h1>
         
         <form method="POST" action="{{ route('login') }}">
             @csrf
             
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required autofocus value="{{ old('email') }}">
+            <div class="form-group mb-4">
+                <label for="email" class="block mb-2 text-slate-700 dark:text-slate-200 font-medium">Email</label>
+                <input type="email" id="email" name="email" required autofocus value="{{ old('email') }}" class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400">
                 @error('email')
-                    <div class="error">{{ $message }}</div>
+                    <div class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</div>
                 @enderror
             </div>
 
-           <div class="form-group">
-    <label for="password">Mot de passe</label>
-    <input type="password" id="password" name="password" required>
-    @error('password')
-        <div class="error">{{ $message }}</div>
-    @enderror
+           <div class="form-group mb-4">
+                <label for="password" class="block mb-2 text-slate-700 dark:text-slate-200 font-medium">Mot de passe</label>
+                <input type="password" id="password" name="password" required class="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400">
+                @error('password')
+                    <div class="text-red-600 dark:text-red-400 text-sm mt-1">{{ $message }}</div>
+                @enderror
+                <div class="text-right mt-2">
+                    <a href="{{ route('password.forgot') }}" class="text-violet-600 dark:text-violet-400 text-sm hover:underline">Mot de passe oublié ?</a>
+                </div>
+            </div>
 
-    <div style="text-align: right; margin-top: 0.5rem;">
-        <a href="{{ route('password.forgot') }}" style="color: #007bff; font-size: 0.85rem; text-decoration: none;">
-            Mot de passe oublié ?
-        </a>
+            <button type="submit" class="w-full py-2 px-4 bg-violet-600 dark:bg-violet-600 hover:bg-violet-700 dark:hover:bg-violet-700 text-white font-semibold rounded-lg transition-colors duration-200">Se connecter</button>
+        </form>
     </div>
-</div>
-
-<button type="submit">Se connecter</button>
 </body>
 </html>

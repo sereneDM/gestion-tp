@@ -6,74 +6,40 @@
 @section('extra-styles')
 <style>
     .form-container {
-        background: white;
-        padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        max-width: 600px;
+        @apply bg-white dark:bg-slate-800 px-8 py-8 rounded-2xl shadow-md dark:shadow-lg max-w-2xl border border-slate-200 dark:border-slate-700;
     }
     .form-group {
-        margin-bottom: 1.5rem;
+        @apply mb-6;
     }
     label {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: #333;
-        font-weight: bold;
+        @apply block mb-2 text-slate-900 dark:text-slate-100 font-bold;
     }
     input, select {
-        width: 100%;
-        padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 1rem;
+        @apply w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-base bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400;
+    }
+    input::placeholder {
+        @apply text-slate-500 dark:text-slate-400;
     }
     input:focus, select:focus {
-        outline: none;
-        border-color: #007bff;
+        @apply outline-none border-violet-500 dark:border-violet-400 ring-2 ring-violet-200 dark:ring-violet-900/30;
     }
     .error {
-        color: #dc3545;
-        font-size: 0.875rem;
-        margin-top: 0.25rem;
+        @apply text-red-600 dark:text-red-400 text-sm mt-1;
     }
     .info {
-        background-color: #e7f3ff;
-        padding: 0.75rem;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        color: #0056b3;
-        margin-bottom: 1rem;
+        @apply bg-blue-50 dark:bg-blue-900/20 px-3 py-2 rounded-lg text-sm text-slate-900 dark:text-slate-200 mb-4 border border-blue-300 dark:border-blue-700;
     }
     .button-group {
-        display: flex;
-        gap: 1rem;
-        margin-top: 2rem;
+        @apply flex gap-4 mt-8;
     }
     .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 1rem;
-        display: inline-block;
-        flex: 1;
-        text-align: center;
+        @apply px-6 py-3 border-none rounded-lg cursor-pointer no-underline text-base inline-flex items-center justify-center flex-1 font-medium transition-colors duration-200;
     }
     .btn-primary {
-        background-color: #ffc107;
-        color: #333;
-    }
-    .btn-primary:hover {
-        background-color: #e0a800;
+        @apply bg-amber-500 dark:bg-amber-600 text-slate-900 dark:text-white hover:bg-amber-600 dark:hover:bg-amber-700;
     }
     .btn-secondary {
-        background-color: #6c757d;
-        color: white;
-    }
-    .btn-secondary:hover {
-        background-color: #545b62;
+        @apply bg-slate-400 dark:bg-slate-600 text-white hover:bg-slate-500 dark:hover:bg-slate-700;
     }
 </style>
 @endsection
