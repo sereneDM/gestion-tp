@@ -1,8 +1,6 @@
 @extends('layouts.app')
-
 @section('title', 'Suivi des Étudiants')
 @section('page-title', 'Suivi de la Progression des Étudiants')
-
 @section('extra-styles')
 <style>
     .btn {
@@ -15,31 +13,10 @@
         display: inline-block;
         transition: opacity 0.15s;
     }
-<<<<<<< HEAD
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
-    }
-    .btn-info {
-        background-color: #4f46e5;
-        color: white;
-    }
-    .btn-small {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-    }
-    .btn:hover {
-        opacity: 0.95;
-    }
-
-    /* ── Filter bar ── */
-=======
     .btn:hover { opacity: 0.9; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
     .btn-info  { background: var(--tp-accent); color: white; }
     .btn-small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-
->>>>>>> 29f2233 (fifth update)
     .course-filter {
         display: flex;
         align-items: center;
@@ -49,39 +26,22 @@
     }
     .course-filter label {
         font-size: 0.9rem;
-<<<<<<< HEAD
-        color: #94a3b8;
-=======
         color: var(--tp-text-muted);
->>>>>>> 29f2233 (fifth update)
         white-space: nowrap;
         font-weight: bold;
     }
     .course-filter select {
-<<<<<<< HEAD
-        background: #1e293b;
-        border: 1px solid #334155;
-        color: #e2e8f0;
-=======
         background: var(--tp-input-bg);
         border: 1px solid var(--tp-border);
         color: var(--tp-text-primary);
->>>>>>> 29f2233 (fifth update)
         padding: 0.5rem 1rem;
         border-radius: 0.75rem;
         font-size: 0.9rem;
         cursor: pointer;
         outline: none;
     }
-<<<<<<< HEAD
-    .course-filter select:focus {
-        border-color: #6366f1;
-    }
-=======
-    .course-filter select:focus { border-color: #6366f1; }
+    .course-filter select:focus { border-color:
     .course-filter select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
->>>>>>> 29f2233 (fifth update)
-
     .class-section {
         background: var(--tp-bg-raised);
         padding: 2rem;
@@ -109,8 +69,6 @@
         color: var(--tp-text-primary);
     }
     .students-table tr:hover { background: var(--tp-table-row-hover); }
-
-    #no-results {
         display: none;
         text-align: center;
         padding: 3rem;
@@ -119,25 +77,17 @@
         border: 1px solid var(--tp-border);
         border-radius: 1rem;
     }
-
-    #no-results {
         display: none;
         text-align: center;
         padding: 3rem;
-        color: #64748b;
-        background: #0f172a;
-        border: 1px solid #334155;
+        color:
+        background:
+        border: 1px solid
         border-radius: 1rem;
     }
 </style>
 @endsection
-
 @section('content')
-
-<<<<<<< HEAD
-    {{-- Filter bar --}}
-=======
->>>>>>> 29f2233 (fifth update)
     <div class="course-filter">
         <label for="class-filter">Filtrer par classe :</label>
         <select id="class-filter" onchange="filterClass(this.value)">
@@ -147,12 +97,10 @@
             @endforeach
         </select>
     </div>
-
     {{-- Class sections --}}
     @forelse($classes as $class)
         <div class="class-section" id="class-{{ $class->id }}">
             <h2>{{ $class->name }}</h2>
-
             @if($class->students->count() > 0)
                 <table class="students-table">
                     <thead>
@@ -190,17 +138,13 @@
             <p style="color: var(--tp-text-faint);">Vous n'avez aucune classe assignée</p>
         </div>
     @endforelse
-
     <div id="no-results">Aucune classe trouvée.</div>
-
 @endsection
-
 @section('extra-scripts')
 <script>
     function filterClass(value) {
         const sections = document.querySelectorAll('.class-section');
         let anyVisible = false;
-
         sections.forEach(section => {
             if (!value || section.id === value) {
                 section.style.display = 'block';
@@ -209,12 +153,7 @@
                 section.style.display = 'none';
             }
         });
-
         document.getElementById('no-results').style.display = anyVisible ? 'none' : 'block';
     }
 </script>
-<<<<<<< HEAD
 @endsection
-=======
-@endsection
->>>>>>> 29f2233 (fifth update)

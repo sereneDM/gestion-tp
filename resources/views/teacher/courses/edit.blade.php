@@ -1,8 +1,6 @@
 @extends('layouts.app')
-
 @section('title', 'Modifier le Cours')
 @section('page-title', 'Modifier le Cours')
-
 @section('extra-styles')
 <style>
     .form-container {
@@ -26,10 +24,10 @@
     }
     textarea { min-height: 120px; resize: vertical; }
     input::placeholder, textarea::placeholder { color: var(--tp-text-faint); }
-    input:focus, textarea:focus, select:focus { outline: none; border-color: #6366f1; }
+    input:focus, textarea:focus, select:focus { outline: none; border-color:
     select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
-    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.25rem; }
-    [data-theme="dark"] .error { color: #fca5a5; }
+    .error { color:
+    [data-theme="dark"] .error { color:
     .button-group { display: flex; gap: 1rem; margin-top: 2rem; }
     .btn {
         padding: 0.75rem 1.5rem;
@@ -43,26 +41,18 @@
         text-align: center;
         transition: opacity 0.15s;
     }
-<<<<<<< HEAD
-    .char-counter { text-align: right; font-size: 0.78rem; margin-top: 0.25rem; color: #64748b; transition: color 0.2s; }
-    .char-counter.warning { color: #f59e0b; }
-    .char-counter.danger  { color: #ef4444; }
-=======
     .btn:hover { opacity: 0.9; }
     .btn-primary  { background: var(--tp-accent); color: white; }
     .btn-primary:hover  { background: var(--tp-accent-hover); opacity: 1; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
->>>>>>> 29f2233 (fifth update)
 </style>
 @endsection
-
 @section('content')
     <div class="form-container">
         <form method="POST" action="{{ route('teacher.courses.update', $course->id) }}">
             @csrf
             @method('PUT')
             <input type="hidden" name="from" value="{{ request()->query('from', 'info') }}">
-
             <div class="form-group">
                 <label for="name">Nom du cours *</label>
                 <input type="text"
@@ -76,7 +66,6 @@
                     <div class="error">{{ $message }}</div>
                 @enderror
             </div>
-
             <div class="form-group">
                 <label for="description">Description</label>
                 <textarea id="description"
@@ -85,7 +74,6 @@
                     <div class="error">{{ $message }}</div>
                 @enderror
             </div>
-
             <div class="form-group">
                 <label for="status">Statut *</label>
                 <select id="status" name="status" required>
@@ -100,7 +88,6 @@
                     <div class="error">{{ $message }}</div>
                 @enderror
             </div>
-
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">
                     ✓ Enregistrer les modifications
@@ -111,12 +98,10 @@
             </div>
         </form>
     </div>
-
     <script>
         const nameInput   = document.getElementById('name');
         const nameCounter = document.getElementById('name-counter');
         const maxLength   = 50;
-
         function updateCounter() {
             const len = nameInput.value.length;
             nameCounter.textContent = len + ' / ' + maxLength;
@@ -127,8 +112,4 @@
         nameInput.addEventListener('input', updateCounter);
         updateCounter();
     </script>
-<<<<<<< HEAD
 @endsection
-=======
-@endsection
->>>>>>> 29f2233 (fifth update)

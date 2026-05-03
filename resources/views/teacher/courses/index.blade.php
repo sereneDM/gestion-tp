@@ -1,8 +1,6 @@
 @extends('layouts.app')
-
 @section('title', 'Mes Cours')
 @section('page-title', 'Mes Cours')
-
 @section('extra-styles')
 <style>
     .btn {
@@ -18,10 +16,9 @@
     .btn-primary  { background: var(--tp-accent); color: white; }
     .btn-primary:hover  { background: var(--tp-accent-hover); opacity: 1; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
-    .btn-info  { background: #2563eb; color: white; }
+    .btn-info  { background:
     .btn-small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
     .btn:hover { opacity: 0.9; }
-
     .header-actions {
         display: flex;
         justify-content: flex-end;
@@ -38,7 +35,7 @@
         border-radius: 1rem;
         padding: 1.5rem;
         transition: transform 0.2s, border-color 0.2s;
-        border-left: 4px solid #6366f1;
+        border-left: 4px solid
         border: 1px solid var(--tp-border);
         cursor: pointer;
     }
@@ -63,7 +60,7 @@
         color: var(--tp-text-primary);
     }
     .course-code {
-        background: #4338ca;
+        background:
         color: white;
         padding: 0.3rem 0.8rem;
         border-radius: 0.75rem;
@@ -98,15 +95,14 @@
     }
     .status-active {
         background: rgba(34,197,94,0.15);
-        color: #16a34a;
+        color:
     }
-    [data-theme="dark"] .status-active { color: #86efac; }
+    [data-theme="dark"] .status-active { color:
     .status-archived {
         background: rgba(248,113,113,0.15);
-        color: #dc2626;
+        color:
     }
-    [data-theme="dark"] .status-archived { color: #fca5a5; }
-
+    [data-theme="dark"] .status-archived { color:
     .empty-state {
         text-align: center;
         padding: 3rem;
@@ -118,16 +114,12 @@
     .empty-state p { color: var(--tp-text-muted); margin: 1rem 0; }
 </style>
 @endsection
-
-
 @section('content')
-
     <div class="header-actions">
         <a href="{{ route('teacher.courses.create') }}" class="btn btn-primary">
             ➕ Créer un cours
         </a>
     </div>
-
     @if($courses->count() > 0)
         <div class="courses-grid">
             @foreach($courses as $course)
@@ -136,19 +128,11 @@
                     <div class="course-header">
                         <div class="course-name">{{ $course->name }}</div>
                         <div class="course-code"
-<<<<<<< HEAD
-     title="Cliquer pour copier"
-     onclick="event.stopPropagation(); copyCode(this, '{{ $course->join_code }}')">
-    {{ $course->join_code }}
-</div>
-=======
                              title="Cliquer pour copier"
                              onclick="event.stopPropagation(); copyCode(this, '{{ $course->join_code }}')">
                             {{ $course->join_code }}
                         </div>
->>>>>>> 29f2233 (fifth update)
                     </div>
-
                     <div class="course-description">
                         @if($course->description)
                             {{ $course->description }}
@@ -156,7 +140,6 @@
                             <span class="no-desc">Aucune description</span>
                         @endif
                     </div>
-
                     <div class="course-meta">
                         <span>👥 {{ $course->students_count }} étudiant(s)</span>
                         <span>
@@ -171,20 +154,11 @@
     @else
         <div class="empty-state">
             <h2>Aucun cours créé</h2>
-<<<<<<< HEAD
-            <p style="color: #666; margin: 1rem 0;">Créez votre premier cours pour commencer!</p>
-           
-        </div>
-    @endif
-@endsection
-=======
             <p>Créez votre premier cours pour commencer!</p>
             <a href="{{ route('teacher.courses.create') }}" class="btn btn-primary">➕ Créer un cours</a>
         </div>
     @endif
 @endsection
-
->>>>>>> 29f2233 (fifth update)
 @section('extra-scripts')
 <script>
     function copyCode(el, code) {
@@ -193,8 +167,4 @@
         });
     }
 </script>
-<<<<<<< HEAD
 @endsection
-=======
-@endsection
->>>>>>> 29f2233 (fifth update)

@@ -1,8 +1,6 @@
 @extends('layouts.app')
-
 @section('title', $course->name)
 @section('page-title', $course->name)
-
 @section('extra-styles')
 <style>
     .tabs {
@@ -21,15 +19,14 @@
         border-bottom: 3px solid transparent;
         transition: all 0.3s;
     }
-    .tab:hover { color: #a5b4fc; }
+    .tab:hover { color:
     .tab.active {
         color: var(--tp-accent-text);
-        border-bottom-color: #8b5cf6;
+        border-bottom-color:
         font-weight: bold;
     }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
-
     .join-code-box {
         background: var(--tp-bg-raised);
         color: var(--tp-text-secondary);
@@ -63,15 +60,13 @@
     .info-number {
         font-size: 2rem;
         font-weight: bold;
-        color: #818cf8;
+        color:
     }
     .info-label {
         color: var(--tp-text-muted);
         margin-top: 0.5rem;
         font-size: 0.9rem;
     }
-
-    /* ── TP cards ── */
     .tps-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -122,13 +117,12 @@
         white-space: nowrap;
         flex-shrink: 0;
     }
-    .status-published { background: rgba(34,197,94,0.15);  color: #16a34a; }
-    .status-draft     { background: rgba(251,191,36,0.15); color: #d97706; }
-    .status-closed    { background: rgba(239,68,68,0.15);  color: #dc2626; }
-    [data-theme="dark"] .status-published { color: #86efac; }
-    [data-theme="dark"] .status-draft     { color: #facc15; }
-    [data-theme="dark"] .status-closed    { color: #fca5a5; }
-
+    .status-published { background: rgba(34,197,94,0.15);  color:
+    .status-draft     { background: rgba(251,191,36,0.15); color:
+    .status-closed    { background: rgba(239,68,68,0.15);  color:
+    [data-theme="dark"] .status-published { color:
+    [data-theme="dark"] .status-draft     { color:
+    [data-theme="dark"] .status-closed    { color:
     .tp-description {
         color: var(--tp-text-muted);
         font-size: 0.9rem;
@@ -154,8 +148,6 @@
         margin-top: 1rem;
         position: relative;
     }
-
-    /* ── TP dropdown menu ── */
     .tp-menu-btn {
         background: var(--tp-bg-surface);
         border: 1px solid var(--tp-border);
@@ -194,12 +186,10 @@
         transition: background 0.15s;
     }
     .tp-menu-dropdown a         { color: var(--tp-text-secondary); border-radius: 0.75rem 0.75rem 0 0; }
-    .tp-menu-dropdown button    { color: #f87171; border-radius: 0 0 0.75rem 0.75rem; }
-    [data-theme="dark"] .tp-menu-dropdown button { color: #fca5a5; }
+    .tp-menu-dropdown button    { color:
+    [data-theme="dark"] .tp-menu-dropdown button { color:
     .tp-menu-dropdown a:hover,
     .tp-menu-dropdown button:hover { background: var(--tp-hover-bg); }
-
-    /* ── buttons ── */
     .btn {
         padding: 0.6rem 1.2rem;
         border: none;
@@ -214,12 +204,10 @@
     .btn:hover { opacity: 0.9; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
     .btn-primary   { background: var(--tp-accent); color: white; }
-    .btn-warning   { background: #f59e0b; color: #1f2937; }
-    .btn-danger    { background: #dc2626; color: white; }
-    .btn-success   { background: #10b981; color: white; }
+    .btn-warning   { background:
+    .btn-danger    { background:
+    .btn-success   { background:
     .btn-small     { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-
-    /* ── students table ── */
     .students-table {
         width: 100%;
         border-collapse: collapse;
@@ -236,14 +224,11 @@
         color: var(--tp-text-secondary);
     }
     .students-table tbody tr:hover { background: var(--tp-table-row-hover); }
-
     .empty-state {
         text-align: center;
         padding: 3rem;
         color: var(--tp-text-muted);
     }
-
-    /* ── course-level menu ── */
     .course-menu-btn {
         background: var(--tp-bg-surface);
         border: 1px solid var(--tp-border);
@@ -280,31 +265,20 @@
         transition: background 0.15s;
         color: var(--tp-text-secondary);
     }
-    .course-menu-dropdown .danger-item { color: #f87171; }
-    [data-theme="dark"] .course-menu-dropdown .danger-item { color: #fca5a5; }
+    .course-menu-dropdown .danger-item { color:
+    [data-theme="dark"] .course-menu-dropdown .danger-item { color:
     .course-menu-dropdown a:hover,
     .course-menu-dropdown button:hover { background: var(--tp-hover-bg); }
 </style>
 @endsection
-
 @section('content')
-
     <!-- Course Actions -->
     <div style="display:flex; justify-content:flex-end; margin-bottom:2rem; position:relative;">
-<<<<<<< HEAD
-        <button onclick="toggleMenu('course-menu')" style="background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:0.5rem 0.75rem; border-radius:0.5rem; cursor:pointer; font-size:1.2rem;">⋮</button>
-        <div id="course-menu" style="display:none; position:absolute; top:2.5rem; right:0; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; min-width:180px; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
-            <a href="{{ route('teacher.courses.edit', $course->id) }}?from=tps"
-   style="display:block; padding:0.75rem 1rem; color:#e2e8f0; text-decoration:none; border-radius:0.75rem 0.75rem 0 0;">
-    ✏️ Modifier le cours
-</a>
-=======
         <button onclick="toggleMenu('course-menu')" class="course-menu-btn">⋮</button>
         <div id="course-menu" class="course-menu-dropdown">
             <a href="{{ route('teacher.courses.edit', $course->id) }}?from=tps">
                 ✏️ Modifier le cours
             </a>
->>>>>>> 29f2233 (fifth update)
             <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
                 @csrf
                 <button type="submit"
@@ -323,14 +297,12 @@
             </form>
         </div>
     </div>
-
     <!-- Tabs -->
     <div class="tabs">
         <button class="tab active" onclick="switchTab('info', event)">📋 Informations</button>
         <button class="tab" onclick="switchTab('tps', event)">📝 Travaux Pratiques</button>
         <button class="tab" onclick="switchTab('students', event)">👥 Étudiants</button>
     </div>
-
     <!-- Tab: Course Info -->
     <div class="tab-content active" id="tab-info">
         <div class="join-code-box">
@@ -340,7 +312,6 @@
                 📋 Copier le code
             </button>
         </div>
-
         <div class="info-grid">
             <div class="info-card">
                 <div class="info-number">{{ $course->students->count() }}</div>
@@ -355,7 +326,6 @@
                 <div class="info-label">TP publiés</div>
             </div>
         </div>
-
         @if($course->description)
             <div style="background: var(--tp-bg-raised); border: 1px solid var(--tp-border); border-radius: 1rem; padding: 1.5rem; margin-top: 1.5rem;">
                 <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--tp-text-faint); margin-bottom: 0.5rem;">Description</div>
@@ -363,30 +333,25 @@
             </div>
         @endif
     </div>
-
     <!-- Tab: TPs -->
     <div class="tab-content" id="tab-tps">
-
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
             <h3 style="margin:0; font-size:1.5rem; color: var(--tp-text-primary);">📝 Travaux Pratiques ({{ $course->tps->count() }})</h3>
             <a href="{{ route('teacher.courses.tps.create', $course->id) }}" class="btn btn-success" style="display:inline-block; width:auto;">
                 ➕ Créer un TP
             </a>
         </div>
-
         @if($course->tps->count() > 0)
             <div class="tps-grid">
                 @foreach($course->tps->sortBy('created_at') as $tp)
                     <div class="tp-card"
                          onclick="window.location.href='{{ route('teacher.tps.show', $tp->id) }}'">
-
                         <div class="tp-header">
                             <div class="tp-title">{{ $tp->title }}</div>
                             <span class="status-badge status-{{ $tp->status }}">
                                 {{ ucfirst($tp->status) }}
                             </span>
                         </div>
-
                         <div class="tp-description">
                             @if(filled($tp->description))
                                 {{ $tp->description }}
@@ -394,12 +359,9 @@
                                 <span style="font-style:italic; color: var(--tp-text-faint);">Aucune description</span>
                             @endif
                         </div>
-
                         <div class="tp-meta">📅 {{ $tp->due_date ? 'Échéance: ' . $tp->due_date->format('d/m/Y à H:i') : 'Pas d\'échéance' }}</div>
                         <div class="tp-meta">📊 {{ $tp->submissions->count() }} soumission(s)</div>
-
                         <div class="tp-spacer"></div>
-
                         <div class="tp-footer">
                             <button class="tp-menu-btn"
                                     onclick="event.stopPropagation(); toggleTpMenu('tp-menu-{{ $tp->id }}')">⋮</button>
@@ -419,7 +381,6 @@
                                 </form>
                             </div>
                         </div>
-
                     </div>
                 @endforeach
             </div>
@@ -431,17 +392,11 @@
             </div>
         @endif
     </div>
-
     <!-- Tab: Students -->
     <div class="tab-content" id="tab-students">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-<<<<<<< HEAD
-            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">👥 Étudiants Inscrits ({{ $course->students->count() }})</h3>
-=======
             <h3 style="margin:0; font-size:1.5rem; color: var(--tp-text-primary);">👥 Étudiants Inscrits ({{ $course->students->count() }})</h3>
->>>>>>> 29f2233 (fifth update)
         </div>
-
         @if($course->students->count() > 0)
             <table class="students-table">
                 <thead>
@@ -480,9 +435,7 @@
             </div>
         @endif
     </div>
-
 @endsection
-
 @section('extra-scripts')
 <script>
     function toggleMenu(id) {
@@ -492,24 +445,16 @@
         closeAllMenus();
         menu.style.display = isOpen ? 'none' : 'block';
     }
-
-<<<<<<< HEAD
-    /* ── TP-level menus ── */
-=======
->>>>>>> 29f2233 (fifth update)
     function toggleTpMenu(id) {
         const menu = document.getElementById(id);
         const isOpen = menu.style.display === 'block';
         document.querySelectorAll('[id^="tp-menu-"]').forEach(m => m.style.display = 'none');
         menu.style.display = isOpen ? 'none' : 'block';
     }
-
     function closeAllMenus() {
         document.querySelectorAll('.tp-menu-dropdown, .course-menu-dropdown').forEach(m => m.style.display = 'none');
     }
-
     document.addEventListener('click', closeAllMenus);
-
     function switchTab(tabName, event) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -517,31 +462,10 @@
         document.getElementById('tab-' + tabName).classList.add('active');
         history.replaceState(null, null, '?tab=' + tabName);
     }
-
     function copyJoinCode() {
-<<<<<<< HEAD
-    const code = document.getElementById('joinCode').textContent.trim();
-    navigator.clipboard.writeText(code).then(() => showToast('✓ Code copié : ' + code));
-}
-
-    /* ── Activate correct tab from ?tab= param, no flash ── */
-    const tabParam = new URLSearchParams(window.location.search).get('tab');
-    const validTabs = ['info', 'tps', 'students'];
-    if (tabParam && validTabs.includes(tabParam)) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById('tab-' + tabParam).classList.add('active');
-        document.querySelectorAll('.tab').forEach(tab => {
-            if (tab.getAttribute('onclick')?.includes("'" + tabParam + "'")) {
-                tab.classList.add('active');
-            }
-        });
-    }
-=======
         const code = document.getElementById('joinCode').textContent.trim();
         navigator.clipboard.writeText(code).then(() => showToast('✓ Code copié : ' + code));
     }
-
     const tabParam = new URLSearchParams(window.location.search).get('tab');
     const validTabs = ['info', 'tps', 'students'];
     if (tabParam && validTabs.includes(tabParam)) {
@@ -554,6 +478,5 @@
             }
         });
     }
->>>>>>> 29f2233 (fifth update)
 </script>
 @endsection

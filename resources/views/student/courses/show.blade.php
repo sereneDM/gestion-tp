@@ -1,181 +1,239 @@
 @extends('layouts.app')
-@section('title', $course->name)
-
+@section('title', Str::limit($tp->title, 50))
 @section('content')
-
-{{-- Header: teacher + leave menu --}}
-<div class="flex justify-between items-center mb-6">
-    <div>
-        <div class="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-1">Enseignant</div>
-        <div class="text-slate-700 dark:text-slate-300 text-sm">👨‍🏫 {{ $course->teacher->name }}</div>
+{{-- TP Details --}}
+<div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-6 mb-6">
+    <h2 class="text-base font-bold text-blue-600 dark:text-blue-400 pb-3 mb-4
+               border-b border-slate-200 dark:border-slate-600">
+        📝 Détails du TP
+    </h2>
+    @foreach([
+        ['Cours',        $tp->class->name],
+        ['Enseignant',   $tp->teacher->name],
+        ['Titre',        $tp->title],
+        ['Description',  $tp->description ?? '—'],
+    ] as [$label, $value])
+        <div class="grid grid-cols-[160px_1fr] py-3 border-b border-slate-200 dark:border-slate-600 last:border-0">
+            <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">{{ $label }}:</div>
+            <div class="text-sm text-slate-800 dark:text-slate-200 break-words">{{ $value }}</div>
+        </div>
+    @endforeach
+    <div class="grid grid-cols-[160px_1fr] py-3 border-b border-slate-200 dark:border-slate-600">
+        <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Date limite:</div>
+        <div class="text-sm text-slate-800 dark:text-slate-200">
+            @if($tp->due_date)
+                {{ $tp->due_date->format('d/m/Y à H:i') }}
+                @if(now()->gt($tp->due_date))
+                    <span class="text-red-500 dark:text-red-400 font-bold ml-2">(Échéance dépassée)</span>
+                @endif
+            @else
+                Pas d'échéance définie
+            @endif
+        </div>
     </div>
-    <div class="relative">
-        <button onclick="toggleCourseMenu()"
-                class="w-8 h-8 flex items-center justify-center rounded-lg border
-                       border-slate-300 dark:border-slate-600 text-slate-500 dark:text-slate-400
-                       hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-lg">⋮</button>
-        <div id="course-menu"
-             class="hidden absolute top-9 right-0 z-50 min-w-[150px] rounded-xl shadow-xl
-                    bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-slate-700">
-            <form method="POST" action="{{ route('student.leave-course', $course->id) }}" class="block w-full">
-                @csrf @method('DELETE')
+    @if($tp->attachments)
+        <div class="grid grid-cols-[160px_1fr] py-3">
+            <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Énoncé PDF:</div>
+            <div>
+                <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank"
+                   class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    📎 Télécharger l'énoncé
+                </a>
+            </div>
+        </div>
+    @endif
+</div>
+{{-- Countdown sticky note (preserved as-is, it's purely cosmetic/JS) --}}
+@if($tp->due_date && now()->lt($tp->due_date))
+<div id="sticky-countdown" style="
+    position:fixed; bottom:2rem; right:2rem;
+    background:#fef08a; border-radius:4px 4px 4px 0;
+    padding:1.25rem 1.5rem;
+    box-shadow:3px 3px 10px rgba(0,0,0,0.15),-1px -1px 0 #e9d835 inset;
+    max-width:200px; z-index:99;
+    font-family:'Comic Sans MS',cursive,sans-serif;
+    transform:rotate(2deg); cursor:grab; user-select:none;">
+    <div id="sticky-hide" style="position:absolute;top:4px;right:6px;font-size:0.75rem;color:#92400e;cursor:pointer;font-weight:bold;padding:2px 4px;border-radius:3px;" title="Masquer">✕</div>
+    <div style="width:14px;height:14px;background:radial-gradient(circle at 40% 35%,#ff6b6b,#c0392b);border-radius:50%;position:absolute;top:-7px;left:50%;transform:translateX(-50%);box-shadow:0 2px 4px rgba(0,0,0,0.3);pointer-events:none;"></div>
+    <div style="font-size:0.75rem;color:#92400e;font-weight:bold;margin-bottom:0.5rem;text-align:center;">⏰ Temps restant</div>
+    <div id="countdown-display" style="text-align:center;color:#1e3a5f;">
+        <div style="font-size:1.4rem;font-weight:bold;" id="cd-days">--</div>
+        <div style="font-size:0.65rem;color:#555;margin-bottom:0.5rem;">jours</div>
+        <div style="display:flex;justify-content:center;gap:0.4rem;font-size:1.1rem;font-weight:bold;">
+            <span id="cd-hours">--</span><span style="color:#aaa">:</span>
+            <span id="cd-mins">--</span><span style="color:#aaa">:</span>
+            <span id="cd-secs">--</span>
+        </div>
+        <div style="display:flex;justify-content:center;gap:0.75rem;font-size:0.6rem;color:#555;margin-top:0.2rem;">
+            <span>h</span><span>min</span><span>sec</span>
+        </div>
+    </div>
+    <div style="font-size:0.7rem;color:#92400e;text-align:center;margin-top:0.75rem;border-top:1px dashed #d97706;padding-top:0.5rem;">
+        📅 {{ $tp->due_date->format('d/m/Y à H:i') }}
+    </div>
+</div>
+<div id="sticky-show" style="display:none;position:fixed;bottom:2rem;right:2rem;background:#fef08a;border-radius:50%;width:44px;height:44px;box-shadow:3px 3px 10px rgba(0,0,0,0.2);z-index:99;cursor:pointer;font-size:1.2rem;text-align:center;line-height:44px;border:2px solid #e9d835;" title="Afficher">⏰</div>
+@endif
+{{-- Submit form (not yet submitted + deadline not passed) --}}
+@if(!$submission && (!$tp->due_date || now()->lt($tp->due_date)))
+    <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-6 mb-6">
+        <h2 class="text-base font-bold text-blue-600 dark:text-blue-400 pb-3 mb-5
+                   border-b border-slate-200 dark:border-slate-600">
+            📤 Soumettre votre travail
+        </h2>
+        <form method="POST" action="{{ route('student.tps.submit', $tp->id) }}" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-5">
+                <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                    Commentaires / Réponse
+                </label>
+                <div class="rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden">
+                    <textarea id="comments" name="comments" required rows="5"
+                              placeholder="Rédigez votre réponse..."
+                              class="w-full px-3 py-2.5 bg-white dark:bg-slate-700
+                                     text-slate-900 dark:text-slate-100
+                                     placeholder-slate-400 dark:placeholder-slate-500
+                                     focus:outline-none resize-y border-0 border-b border-slate-300 dark:border-slate-600">{{ old('comments') }}</textarea>
+                    <div class="bg-slate-100 dark:bg-slate-800 px-3 py-3">
+                        <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-2">📎 Joindre un fichier (optionnel)</span>
+                        <x-file-upload id="submission_file" name="submission_file"
+                                       accept=".pdf,.zip,.doc,.docx"
+                                       hint="PDF, ZIP, DOC, DOCX uniquement · max 10 Mo" />
+                    </div>
+                </div>
+                @error('comments')
+                    <div class="text-red-500 dark:text-red-400 text-sm mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <button type="submit"
+                    class="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg
+                           font-bold text-base transition-colors">
+                📤 Soumettre mon travail
+            </button>
+        </form>
+    </div>
+@endif
+{{-- Submitted --}}
+@if($submission)
+    <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-6 mb-6">
+        <h2 class="text-base font-bold text-green-600 dark:text-green-400 pb-3 mb-5
+                   border-b border-slate-200 dark:border-slate-600">
+            ✅ Votre Soumission
+        </h2>
+        @if($submission->grade)
+            <div class="bg-violet-600 text-white rounded-xl p-6 text-center mb-5">
+                <div class="text-sm mb-1 opacity-90">Votre note</div>
+                <div class="text-5xl font-bold">{{ $submission->grade }}/20</div>
+            </div>
+            @if($submission->teacher_comment)
+                <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500
+                            px-4 py-3 rounded-lg mb-4">
+                    <strong class="text-sm text-blue-700 dark:text-blue-300">💬 Commentaire de l'enseignant:</strong>
+                    <p class="text-sm text-slate-700 dark:text-slate-300 mt-1 mb-0">{{ $submission->teacher_comment }}</p>
+                </div>
+            @endif
+        @else
+            <div class="bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500
+                        px-4 py-3 rounded-lg text-sm text-green-700 dark:text-green-300 mb-4">
+                ✓ Votre travail a été soumis avec succès le {{ $submission->submitted_at->format('d/m/Y à H:i') }}
+            </div>
+        @endif
+        @if($submission->attachments)
+            <div class="grid grid-cols-[160px_1fr] py-3 border-b border-slate-200 dark:border-slate-600">
+                <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Fichier soumis:</div>
+                <div>
+                    <a href="{{ asset('storage/' . $submission->attachments) }}" target="_blank"
+                       class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                        📥 Télécharger mon fichier
+                    </a>
+                </div>
+            </div>
+        @endif
+        @if($submission->content)
+            <div class="grid grid-cols-[160px_1fr] py-3 border-b border-slate-200 dark:border-slate-600">
+                <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Vos commentaires:</div>
+                <div class="text-sm text-slate-700 dark:text-slate-300">{{ $submission->content }}</div>
+            </div>
+        @endif
+        <div class="grid grid-cols-[160px_1fr] py-3 {{ $submission->status === 'late' ? 'border-b border-slate-200 dark:border-slate-600' : '' }}">
+            <div class="text-sm font-semibold text-slate-500 dark:text-slate-400">Date de soumission:</div>
+            <div class="text-sm text-slate-700 dark:text-slate-300">{{ $submission->submitted_at->format('d/m/Y à H:i') }}</div>
+        </div>
+        @if($submission->status === 'late')
+            <div class="bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-500
+                        px-4 py-3 rounded-lg text-sm text-amber-700 dark:text-amber-300 mt-3">
+                ⚠️ Soumission en retard
+            </div>
+        @endif
+        @if(!$submission->grade && (!$tp->due_date || now()->lt($tp->due_date)))
+            <button onclick="document.getElementById('edit-form').classList.remove('hidden'); this.classList.add('hidden')"
+                    class="mt-4 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg
+                           font-bold text-sm transition-colors">
+                ✏️ Modifier ma soumission
+            </button>
+        @endif
+    </div>
+    @if(!$submission->grade && (!$tp->due_date || now()->lt($tp->due_date)))
+        <div id="edit-form" class="hidden bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 p-6">
+            <h2 class="text-base font-bold text-blue-600 dark:text-blue-400 pb-3 mb-5
+                       border-b border-slate-200 dark:border-slate-600">
+                ✏️ Modifier votre Soumission
+            </h2>
+            <form method="POST" action="{{ route('student.tps.update-submission', $tp->id) }}" enctype="multipart/form-data">
+                @csrf @method('PUT')
+                <div class="mb-5">
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1.5">
+                        Commentaires / Réponse
+                    </label>
+                    <div class="rounded-lg border border-slate-300 dark:border-slate-600 overflow-hidden">
+                        <textarea name="comments" rows="5"
+                                  placeholder="Rédigez votre réponse..."
+                                  class="w-full px-3 py-2.5 bg-white dark:bg-slate-700
+                                         text-slate-900 dark:text-slate-100
+                                         placeholder-slate-400 dark:placeholder-slate-500
+                                         focus:outline-none resize-y border-0 border-b border-slate-300 dark:border-slate-600">{{ old('comments', $submission->content) }}</textarea>
+                        <div class="bg-slate-100 dark:bg-slate-800 px-3 py-3">
+                            <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 block mb-2">📎 Remplacer le fichier (optionnel)</span>
+                            <x-file-upload id="submission_file_edit" name="submission_file"
+                                           accept=".pdf,.zip,.doc,.docx"
+                                           hint="PDF, ZIP, DOC, DOCX uniquement · max 10 Mo" />
+                        </div>
+                    </div>
+                </div>
                 <button type="submit"
-                        class="w-full text-left px-4 py-3 text-sm text-red-600 dark:text-red-400
-                               hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">
-                    🚪 Quitter le cours
+                        class="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg
+                               font-bold text-base transition-colors">
+                    ✓ Enregistrer les modifications
                 </button>
             </form>
         </div>
-    </div>
-</div>
-
-{{-- Tabs --}}
-<div class="flex gap-1 mb-6 border-b-2 border-slate-200 dark:border-slate-700">
-    <button class="tab-btn active-tab px-6 py-3 text-sm font-medium border-b-[3px] transition-colors"
-            onclick="switchTab('info', event)">📋 Informations</button>
-    <button class="tab-btn px-6 py-3 text-sm font-medium border-b-[3px] border-transparent
-                   text-slate-500 dark:text-slate-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
-            onclick="switchTab('tps', event)">📝 Travaux Pratiques</button>
-</div>
-
-{{-- Tab: Info --}}
-<div class="tab-content" id="tab-info">
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
-            <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $course->tps->count() }}</div>
-            <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">Travaux pratiques</div>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
-            <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $submissions->count() }}</div>
-            <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">Mes soumissions</div>
-        </div>
-        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-5 text-center border border-slate-200 dark:border-slate-600">
-            <div class="text-2xl font-bold text-violet-600 dark:text-violet-400">{{ $submissions->filter(fn($s) => $s->grade !== null)->count() }}</div>
-            <div class="text-sm text-slate-500 dark:text-slate-400 mt-1">TP notés</div>
-        </div>
-    </div>
-
-    @if($course->description)
-        <div class="bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600 p-5">
-            <div class="text-xs uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">Description</div>
-            <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed m-0">{{ $course->description }}</p>
-        </div>
     @endif
-</div>
-
-{{-- Tab: TPs --}}
-<div class="tab-content hidden" id="tab-tps">
-    <h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-5">
-        📝 Travaux Pratiques ({{ $course->tps->count() }})
-    </h3>
-
-    @if($course->tps->count() > 0)
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            @foreach($course->tps as $tp)
-                @php
-                    $submission   = $submissions->get($tp->id);
-                    $hasSubmitted = $submission !== null;
-                    $isGraded     = $hasSubmitted && $submission->grade !== null;
-                @endphp
-                <div class="bg-white dark:bg-[#0f172a] rounded-xl border border-slate-200 dark:border-slate-700
-                            p-5 cursor-pointer flex flex-col min-h-[200px]
-                            hover:-translate-y-1 hover:border-violet-400 dark:hover:border-violet-500 transition-all shadow-sm"
-                     onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'">
-
-                    <div class="flex justify-between items-start gap-3 mb-3">
-                        <div class="font-bold text-slate-900 dark:text-slate-100 truncate flex-1">{{ $tp->title }}</div>
-                        @if($isGraded)
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300 shrink-0">✓ Noté</span>
-                        @elseif($hasSubmitted)
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 shrink-0">✓ Soumis</span>
-                        @else
-                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 shrink-0">À faire</span>
-                        @endif
-                    </div>
-
-                    <p class="text-slate-500 dark:text-slate-400 text-sm line-clamp-2 mb-3 min-h-[2.5rem]">
-                        {{ filled($tp->description) ? $tp->description : 'Aucune description' }}
-                    </p>
-
-                    <div class="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                        📅 {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Pas d\'échéance' }}
-                    </div>
-                    @if($hasSubmitted)
-                        <div class="text-xs text-slate-400 dark:text-slate-500 mb-1">
-                            📤 Soumis le {{ $submission->submitted_at->format('d/m/Y à H:i') }}
-                        </div>
-                    @endif
-                    @if($isGraded)
-                        <div class="inline-block font-mono text-sm font-bold px-3 py-1 rounded-lg mb-3
-                                    bg-cyan-100 dark:bg-cyan-900/30 text-cyan-700 dark:text-cyan-300">
-                            🎯 {{ $submission->grade }}/20
-                        </div>
-                    @endif
-
-                    <div class="mt-auto pt-3">
-                        <a href="{{ route('student.tps.show', $tp->id) }}"
-                           onclick="event.stopPropagation()"
-                           class="block w-full text-center py-2.5 rounded-lg text-sm font-bold text-white transition-colors
-                               {{ $isGraded ? 'bg-cyan-600 hover:bg-cyan-700' : ($hasSubmitted ? 'bg-green-600 hover:bg-green-700' : 'bg-violet-600 hover:bg-violet-700') }}">
-                            @if($isGraded) Voir ma note &amp; commentaires
-                            @elseif($hasSubmitted) Voir ma soumission
-                            @else Voir et soumettre @endif
-                        </a>
-                    </div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        <div class="text-center py-16 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
-            <div class="text-6xl mb-4">📝</div>
-            <h2 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">Aucun TP disponible</h2>
-            <p class="text-slate-500 dark:text-slate-400">Votre enseignant n'a pas encore publié de travaux pratiques.</p>
-        </div>
-    @endif
-</div>
-
-<style>
-.active-tab {
-    color: #7c3aed;
-    border-bottom-color: #7c3aed;
-    font-weight: 600;
-}
-.dark .active-tab {
-    color: #c4b5fd;
-    border-bottom-color: #7c3aed;
-}
-</style>
-
+@endif
 @endsection
-
 @section('extra-scripts')
+@if($tp->due_date && now()->lt($tp->due_date))
 <script>
-function toggleCourseMenu() {
-    const menu = document.getElementById('course-menu');
-    menu.classList.toggle('hidden');
+const note    = document.getElementById('sticky-countdown');
+const hideBtn = document.getElementById('sticky-hide');
+const showBtn = document.getElementById('sticky-show');
+hideBtn.addEventListener('click', (e) => { e.stopPropagation(); note.style.display='none'; showBtn.style.display='block'; });
+showBtn.addEventListener('click', () => { note.style.display='block'; showBtn.style.display='none'; });
+let isDragging=false, offsetX=0, offsetY=0;
+note.addEventListener('mousedown',(e)=>{ if(e.target===hideBtn) return; isDragging=true; offsetX=e.clientX-note.getBoundingClientRect().left; offsetY=e.clientY-note.getBoundingClientRect().top; note.style.cursor='grabbing'; note.style.transform='rotate(0deg) scale(1.02)'; note.style.right='auto'; note.style.bottom='auto'; });
+document.addEventListener('mousemove',(e)=>{ if(!isDragging) return; note.style.left=(e.clientX-offsetX)+'px'; note.style.top=(e.clientY-offsetY)+'px'; });
+document.addEventListener('mouseup',()=>{ if(!isDragging) return; isDragging=false; note.style.cursor='grab'; note.style.transform='rotate(2deg)'; });
+const deadline = new Date("{{ $tp->due_date->toIso8601String() }}");
+function updateCountdown() {
+    const diff = deadline - new Date();
+    if (diff <= 0) { document.getElementById('countdown-display').innerHTML='<div style="color:#dc2626;font-weight:bold;font-size:0.9rem;">⚠️ Échéance dépassée !</div>'; return; }
+    const days=Math.floor(diff/86400000), hours=Math.floor((diff%86400000)/3600000), mins=Math.floor((diff%3600000)/60000), secs=Math.floor((diff%60000)/1000);
+    document.getElementById('cd-days').textContent=days;
+    document.getElementById('cd-hours').textContent=String(hours).padStart(2,'0');
+    document.getElementById('cd-mins').textContent=String(mins).padStart(2,'0');
+    document.getElementById('cd-secs').textContent=String(secs).padStart(2,'0');
+    if (diff < 86400000) { note.style.background='#fecaca'; note.style.boxShadow='3px 3px 10px rgba(0,0,0,0.15),-1px -1px 0 #f87171 inset'; }
 }
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.relative')) {
-        const menu = document.getElementById('course-menu');
-        if (menu) menu.classList.add('hidden');
-    }
-});
-function switchTab(tabName, event) {
-    document.querySelectorAll('.tab-btn').forEach(t => {
-        t.classList.remove('active-tab');
-        t.classList.add('text-slate-500', 'dark:text-slate-400', 'border-transparent');
-    });
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-    event.target.classList.add('active-tab');
-    event.target.classList.remove('text-slate-500', 'border-transparent');
-    document.getElementById('tab-' + tabName).classList.remove('hidden');
-    history.replaceState(null, null, '#' + tabName);
-}
-document.addEventListener('DOMContentLoaded', function() {
-    const fragment = window.location.hash.replace('#', '');
-    if (['info','tps'].includes(fragment)) {
-        document.querySelectorAll('.tab-btn')[fragment === 'tps' ? 1 : 0].click();
-    }
-});
+updateCountdown(); setInterval(updateCountdown, 1000);
 </script>
+@endif
 @endsection

@@ -1,12 +1,9 @@
 @extends('layouts.app')
-
 @section('breadcrumbs')
     {{ Breadcrumbs::render('teacher.courses.create') }}
 @endsection
-
 @section('title', 'Créer un Cours')
 @section('page-title', 'Créer un Nouveau Cours')
-
 @section('extra-styles')
 <style>
     .form-container {
@@ -30,9 +27,9 @@
     }
     textarea { min-height: 120px; resize: vertical; }
     input::placeholder, textarea::placeholder { color: var(--tp-text-faint); }
-    input:focus, textarea:focus { outline: none; border-color: #6366f1; }
-    .error { color: #f87171; font-size: 0.875rem; margin-top: 0.25rem; }
-    [data-theme="dark"] .error { color: #fca5a5; }
+    input:focus, textarea:focus { outline: none; border-color:
+    .error { color:
+    [data-theme="dark"] .error { color:
     .info-box {
         background: var(--tp-bg-raised);
         border-left: 4px solid var(--tp-accent);
@@ -54,28 +51,19 @@
         text-align: center;
         transition: opacity 0.15s;
     }
-<<<<<<< HEAD
-    .char-counter { text-align: right; font-size: 0.78rem; margin-top: 0.25rem; color: #64748b; transition: color 0.2s; }
-.char-counter.warning { color: #f59e0b; }
-.char-counter.danger  { color: #ef4444; }
-=======
     .btn:hover { opacity: 0.9; }
     .btn-primary  { background: var(--tp-accent); color: white; }
     .btn-primary:hover  { background: var(--tp-accent-hover); opacity: 1; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
->>>>>>> 29f2233 (fifth update)
 </style>
 @endsection
-
 @section('content')
     <div class="form-container">
         <div class="info-box">
             ℹ️ Un code unique sera automatiquement généré pour permettre à vos étudiants de rejoindre ce cours.
         </div>
-
         <form method="POST" action="{{ route('teacher.courses.store') }}">
             @csrf
-
             <div class="form-group">
                 <label for="name">Nom du cours *</label>
                 <input type="text"
@@ -85,16 +73,11 @@
                        placeholder="Ex: Programmation Web Avancée"
                        maxlength="50"
                        required>
-<<<<<<< HEAD
-                       <div class="char-counter" id="name-counter">0 / 50</div>
-=======
                 <div class="char-counter" id="name-counter">0 / 50</div>
->>>>>>> 29f2233 (fifth update)
                 @error('name')
                     <div class="error">{{ $message }}</div>
                 @enderror
             </div>
-
             <div class="form-group">
                 <label for="description">Description</label>
                 <textarea id="description"
@@ -104,40 +87,20 @@
                     <div class="error">{{ $message }}</div>
                 @enderror
             </div>
-
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">
                     ✓ Créer le cours
                 </button>
-                <<a href="{{ route('teacher.courses.index') }}" class="btn btn-secondary">
-    ✗ Annuler
-</a>
+                <a href="{{ route('teacher.courses.index') }}" class="btn btn-secondary">
+                    ✗ Annuler
+                </a>
             </div>
         </form>
     </div>
-<<<<<<< HEAD
-<script>
-    const nameInput   = document.getElementById('name');
-    const nameCounter = document.getElementById('name-counter');
-    const maxLength   = 50;
-
-    function updateCounter() {
-        const len = nameInput.value.length;
-        nameCounter.textContent = len + ' / ' + maxLength;
-        nameCounter.classList.remove('warning', 'danger');
-        if (len >= maxLength)             nameCounter.classList.add('danger');
-        else if (len >= maxLength * 0.8)  nameCounter.classList.add('warning');
-    }
-    nameInput.addEventListener('input', updateCounter);
-    updateCounter();
-</script>
-=======
-
     <script>
         const nameInput   = document.getElementById('name');
         const nameCounter = document.getElementById('name-counter');
         const maxLength   = 50;
-
         function updateCounter() {
             const len = nameInput.value.length;
             nameCounter.textContent = len + ' / ' + maxLength;
@@ -148,5 +111,4 @@
         nameInput.addEventListener('input', updateCounter);
         updateCounter();
     </script>
->>>>>>> 29f2233 (fifth update)
 @endsection

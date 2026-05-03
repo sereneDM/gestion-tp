@@ -14,16 +14,9 @@
 <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
 @yield('extra-styles')
 </head>
-
 <body class="tp-body min-h-screen">
-
 {{-- TOP NAVBAR --}}
-<<<<<<< HEAD
-<nav class="fixed top-0 left-0 right-0 h-[72px] bg-[#0f172a] border-b border-slate-800 flex items-center px-6 gap-4 z-50">
-=======
 <nav class="tp-navbar fixed top-0 left-0 right-0 h-[72px] flex items-center px-6 gap-4 z-50">
->>>>>>> 29f2233 (fifth update)
-
     {{-- Logo --}}
     <div class="flex items-center gap-2 min-w-[44px]">
         <div class="w-9 h-9 rounded-lg bg-violet-600 flex items-center justify-center flex-shrink-0">
@@ -36,14 +29,8 @@
         </div>
         <span class="font-semibold text-sm hidden md:block" style="color: var(--tp-nav-text-hover)">Plateforme TP</span>
     </div>
-
     {{-- Divider --}}
-<<<<<<< HEAD
-    <div class="w-px h-7 bg-slate-700"></div>
-=======
     <div class="w-px h-7" style="background: var(--tp-border)"></div>
->>>>>>> 29f2233 (fifth update)
-
     {{-- Nav links --}}
     <div class="flex items-center gap-1 flex-1 overflow-x-auto hide-scrollbar">
         @if(Auth::user()->isTeacher())
@@ -111,10 +98,8 @@
             </a>
         @endif
     </div>
-
     {{-- Right side --}}
     <div class="flex items-center gap-3 flex-shrink-0">
-
         {{-- Theme toggle --}}
         <button id="theme-toggle" onclick="toggleTheme()"
                 class="p-2 rounded-lg transition-colors"
@@ -122,18 +107,12 @@
                 title="Changer le thème">
             <span id="theme-icon" class="text-lg">☀️</span>
         </button>
-
         {{-- Notifications bell --}}
         @php
             $unreadNotifs = \App\Models\Notification::where('user_id', Auth::id())->where('is_read', false)->count();
         @endphp
-<<<<<<< HEAD
-        <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg hover:bg-slate-800 transition-colors">
-            <svg width="20" height="20" viewBox="0 0 18 18" fill="none" class="text-slate-200">
-=======
         <a href="{{ route('notifications.index') }}" class="relative p-2 rounded-lg transition-colors" style="color: var(--tp-text-secondary);">
             <svg width="20" height="20" viewBox="0 0 18 18" fill="none">
->>>>>>> 29f2233 (fifth update)
                 <path d="M9 1a5 5 0 0 0-5 5v3l-1.5 2.5h13L14 9V6a5 5 0 0 0-5-5z" stroke="currentColor" stroke-width="1.5"/>
                 <path d="M7 14a2 2 0 0 0 4 0" stroke="currentColor" stroke-width="1.5"/>
             </svg>
@@ -143,7 +122,6 @@
                 </span>
             @endif
         </a>
-
         {{-- User dropdown --}}
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="flex items-center gap-2 cursor-pointer p-1.5 rounded-lg transition-colors tp-hover-bg">
@@ -153,13 +131,8 @@
                      style="background: transparent;"
                      onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY2N2VlYSIvPjx0ZXh0IHg9IjUwIiB5PSI1MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjQyIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9ImNlbnRyYWwiPj88L3RleHQ+PC9zdmc+'">
                 <div class="hidden md:block text-left">
-<<<<<<< HEAD
-                    <div class="text-xs font-medium text-white leading-tight">{{ Auth::user()->name }}</div>
-                    <div class="text-[10px] text-slate-400 leading-tight">
-=======
                     <div class="text-xs font-medium leading-tight" style="color: var(--tp-nav-text-hover)">{{ Auth::user()->name }}</div>
                     <div class="text-[10px] leading-tight" style="color: var(--tp-nav-text)">
->>>>>>> 29f2233 (fifth update)
                         @if(Auth::user()->isAdmin()) Administrateur
                         @elseif(Auth::user()->isTeacher()) Enseignant
                         @else Étudiant @endif
@@ -169,19 +142,6 @@
                     <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                 </svg>
             </div>
-<<<<<<< HEAD
-            <ul tabindex="0" class="dropdown-content bg-[#1e293b] border border-slate-700 rounded-xl shadow-xl mt-2 w-48 p-1 z-50">
-                <li>
-                    <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 text-slate-200 hover:text-white hover:bg-slate-700 rounded-lg px-3 py-2 text-sm">
-                        Mon profil
-                    </a>
-                </li>
-                <div class="border-t border-slate-700 my-1"></div>
-                <li>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="flex items-center gap-2 text-red-400 hover:text-red-300 hover:bg-slate-700 rounded-lg px-3 py-2 text-sm w-full text-left cursor-pointer">
-=======
             <ul tabindex="0" class="dropdown-content tp-dropdown rounded-xl shadow-xl mt-2 w-48 p-1 z-50">
                 <li>
                     <a href="{{ route('profile.edit') }}" class="tp-dropdown-item flex items-center gap-2 rounded-lg px-3 py-2 text-sm">
@@ -193,7 +153,6 @@
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="tp-dropdown-item-danger flex items-center gap-2 rounded-lg px-3 py-2 text-sm w-full text-left cursor-pointer">
->>>>>>> 29f2233 (fifth update)
                             Déconnexion
                         </button>
                     </form>
@@ -202,23 +161,16 @@
         </div>
     </div>
 </nav>
-
 {{-- MAIN CONTENT --}}
 <main class="pt-[72px] min-h-screen">
     <div class="max-w-7xl mx-auto px-4 py-6">
-
-<<<<<<< HEAD
-        {{-- Session toasts (rendered into the fixed toast container via JS) --}}
-=======
         {{-- Session toasts --}}
->>>>>>> 29f2233 (fifth update)
         @if(session('success'))
             <div class="toast-bar toast-success" data-toast>✓ {{ session('success') }}</div>
         @endif
         @if(session('error'))
             <div class="toast-bar toast-error" data-toast>✗ {{ session('error') }}</div>
         @endif
-
         {{-- Page header / breadcrumbs --}}
         <div class="mb-6">
             @hasSection('breadcrumbs')
@@ -231,22 +183,14 @@
                 @endif
             @endif
         </div>
-
         {{-- Content --}}
         <div class="tp-content-card rounded-2xl p-6">
             @yield('content')
         </div>
-
     </div>
 </main>
-
-<<<<<<< HEAD
-{{-- Toast container (fixed, bottom-right, always visible regardless of scroll) --}}
-=======
 {{-- Toast container --}}
->>>>>>> 29f2233 (fifth update)
 <div id="toast-container" style="position:fixed; bottom:2rem; right:2rem; z-index:9999; display:flex; flex-direction:column; gap:0.75rem; align-items:flex-end; pointer-events:none;"></div>
-
 {{-- Custom Confirm Modal --}}
 <div id="confirm-modal" class="hidden fixed inset-0 bg-black/60 z-[9999] items-center justify-center">
     <div class="tp-modal rounded-2xl p-8 max-w-sm w-[90%] text-center shadow-2xl" style="animation: popIn 0.2s ease;">
@@ -258,40 +202,30 @@
         </div>
     </div>
 </div>
-
 <style>
-/* ═══════════════════════════════════════════
-   CSS CUSTOM PROPERTIES — Theme variables
-   NOTE: both themes defined explicitly on
-   [data-theme] so the inline <script> in
-   <head> sets the attribute before CSS loads,
-   giving zero flash on either theme.
-   ═══════════════════════════════════════════ */
 [data-theme="dark"] {
     --tp-bg-base:        #0f172a;
     --tp-bg-surface:     #1e293b;
-    --tp-bg-raised:      #0f172a;
+    --tp-bg-raised:      #1e293b;
     --tp-border:         #334155;
     --tp-border-hover:   #475569;
     --tp-text-primary:   #f1f5f9;
     --tp-text-secondary: #cbd5e1;
     --tp-text-muted:     #94a3b8;
     --tp-text-faint:     #64748b;
-    --tp-input-bg:       #1e293b;
-    --tp-input-border:   #475569;
+    --tp-input-bg:       #0f172a;
+    --tp-input-border:   #334155;
     --tp-hover-bg:       rgba(255,255,255,0.05);
-    --tp-table-header:   #334155;
-    --tp-table-row-hover:#1e293b;
-    --tp-accent:         #4f46e5;
-    --tp-accent-hover:   #4338ca;
+    --tp-table-header:   #1e293b;
+    --tp-table-row-hover: rgba(255,255,255,0.03);
+    --tp-accent:         #7c3aed;
+    --tp-accent-hover:   #6d28d9;
     --tp-accent-text:    #a78bfa;
     --tp-code-bg:        #0f172a;
-    /* Nav & title specific */
-    --tp-nav-text:       #cbd5e1;
+    --tp-nav-text:       #94a3b8;
     --tp-nav-text-hover: #f1f5f9;
     --tp-page-title:     #f1f5f9;
 }
-
 [data-theme="light"] {
     --tp-bg-base:        #f1f5f9;
     --tp-bg-surface:     #ffffff;
@@ -299,50 +233,38 @@
     --tp-border:         #e2e8f0;
     --tp-border-hover:   #cbd5e1;
     --tp-text-primary:   #0f172a;
-    --tp-text-secondary: #334155;
-    --tp-text-muted:     #64748b;
+    --tp-text-secondary: #1e293b;
+    --tp-text-muted:     #475569;
     --tp-text-faint:     #94a3b8;
     --tp-input-bg:       #ffffff;
     --tp-input-border:   #cbd5e1;
     --tp-hover-bg:       rgba(0,0,0,0.06);
     --tp-table-header:   #f1f5f9;
-    --tp-table-row-hover:#f8fafc;
-    --tp-accent:         #4f46e5;
-    --tp-accent-hover:   #4338ca;
-    --tp-accent-text:    #4f46e5;
+    --tp-table-row-hover: rgba(0,0,0,0.03);
+    --tp-accent:         #7c3aed;
+    --tp-accent-hover:   #6d28d9;
+    --tp-accent-text:    #7c3aed;
     --tp-code-bg:        #f1f5f9;
-    /* Nav & title specific — must be dark enough on white navbar */
-    --tp-nav-text:       #1e293b;
+    --tp-nav-text:       #475569;
     --tp-nav-text-hover: #0f172a;
     --tp-page-title:     #0f172a;
 }
-
-/* ═══════════════════════════════════════════
-   Base layout
-   ═══════════════════════════════════════════ */
 .tp-body {
     background: var(--tp-bg-base);
     color: var(--tp-text-secondary);
     transition: background 0.2s, color 0.2s;
 }
-
 .tp-navbar {
     background: var(--tp-bg-base);
     border-bottom: 1px solid var(--tp-border);
 }
-
 .tp-content-card {
     background: var(--tp-bg-surface);
     border: 1px solid var(--tp-border);
 }
-
 .tp-hover-bg:hover {
     background: var(--tp-hover-bg);
 }
-
-/* ═══════════════════════════════════════════
-   Nav links
-   ═══════════════════════════════════════════ */
 .nav-link {
     display: flex;
     align-items: center;
@@ -350,11 +272,7 @@
     padding: 8px 12px;
     border-radius: 8px;
     font-size: 13px;
-<<<<<<< HEAD
-    color: #cbd5e1;
-=======
     color: var(--tp-nav-text);
->>>>>>> 29f2233 (fifth update)
     text-decoration: none;
     white-space: nowrap;
     transition: all 0.15s;
@@ -369,13 +287,9 @@
 }
 [data-theme="light"] .nav-link-active {
     background: rgba(79,70,229,0.1);
-    color: #4338ca;
+    color: #4f46e5;
     font-weight: 600;
 }
-
-/* ═══════════════════════════════════════════
-   Dropdown
-   ═══════════════════════════════════════════ */
 .tp-dropdown {
     background: var(--tp-bg-surface);
     border: 1px solid var(--tp-border);
@@ -386,28 +300,6 @@
     display: block;
     transition: background 0.15s, color 0.15s;
 }
-<<<<<<< HEAD
-
-/* ── Unified toast styles ── */
-.toast-bar {
-    max-width: 320px;
-    padding: 0.75rem 1rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: auto;
-}
-.toast-success {
-    background: rgba(34,197,94,0.1);
-    border: 1px solid rgba(34,197,94,0.3);
-    color: #86efac;
-}
-.toast-error {
-    background: rgba(239,68,68,0.1);
-    border: 1px solid rgba(239,68,68,0.3);
-    color: #fca5a5;
-=======
 .tp-dropdown-item:hover {
     background: var(--tp-hover-bg);
     color: var(--tp-text-primary);
@@ -426,10 +318,6 @@
     border-top: 1px solid var(--tp-border);
 }
 .dropdown-content li form { display: block; width: 100%; }
-
-/* ═══════════════════════════════════════════
-   Toast
-   ═══════════════════════════════════════════ */
 .toast-bar {
     max-width: 320px;
     padding: 0.75rem 1rem;
@@ -442,19 +330,15 @@
 .toast-success {
     background: rgba(34,197,94,0.12);
     border: 1px solid rgba(34,197,94,0.3);
-    color: #16a34a;
+    color: #166534;
 }
-[data-theme="dark"] .toast-success { color: #86efac; }
+[data-theme="dark"] .toast-success { color: #86efac;
 .toast-error {
     background: rgba(239,68,68,0.12);
     border: 1px solid rgba(239,68,68,0.3);
-    color: #dc2626;
+    color: #991b1b;
 }
-[data-theme="dark"] .toast-error { color: #fca5a5; }
-
-/* ═══════════════════════════════════════════
-   Modal
-   ═══════════════════════════════════════════ */
+[data-theme="dark"] .toast-error { color: #fca5a5;
 .tp-modal {
     background: var(--tp-bg-surface);
     border: 1px solid var(--tp-border);
@@ -466,10 +350,6 @@
     cursor: pointer;
 }
 .tp-btn-cancel:hover { background: var(--tp-hover-bg); }
-
-/* ═══════════════════════════════════════════
-   Shared form elements — used across all pages
-   ═══════════════════════════════════════════ */
 .tp-card {
     background: var(--tp-bg-raised);
     border: 1px solid var(--tp-border);
@@ -479,18 +359,13 @@
     background: var(--tp-bg-surface);
     border: 1px solid var(--tp-border);
     border-radius: 1rem;
->>>>>>> 29f2233 (fifth update)
 }
-
-/* Labels */
 .tp-label {
     display: block;
     margin-bottom: 0.5rem;
     color: var(--tp-text-secondary);
     font-weight: bold;
 }
-
-/* Inputs / Textarea / Select */
 .tp-input,
 .tp-textarea,
 .tp-select {
@@ -510,12 +385,10 @@
 .tp-textarea:focus,
 .tp-select:focus {
     outline: none;
-    border-color: #6366f1;
+    border-color: var(--tp-accent);
 }
 .tp-textarea { min-height: 120px; resize: vertical; }
 .tp-select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
-
-/* Buttons */
 .tp-btn {
     padding: 0.6rem 1.2rem;
     border: none;
@@ -531,18 +404,14 @@
 .tp-btn-primary:hover { background: var(--tp-accent-hover); opacity: 1; }
 .tp-btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
 .tp-btn-secondary:hover { background: var(--tp-border-hover); opacity: 1; }
-.tp-btn-info { background: #2563eb; color: white; }
+.tp-btn-info { background: #0ea5e9; color: white; }
 .tp-btn-warning { background: #f59e0b; color: #1f2937; }
 .tp-btn-danger { background: #dc2626; color: white; }
 .tp-btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
 .tp-btn-lg { padding: 0.75rem 1.5rem; font-size: 1rem; }
 .tp-btn-full { width: 100%; text-align: center; }
-
-/* Error text */
-.tp-error { color: #f87171; font-size: 0.875rem; margin-top: 0.25rem; }
+.tp-error { color: #dc2626; }
 [data-theme="dark"] .tp-error { color: #fca5a5; }
-
-/* Info box */
 .tp-info-box {
     background: var(--tp-bg-raised);
     border-left: 4px solid var(--tp-accent);
@@ -551,8 +420,6 @@
     border-radius: 0.75rem;
     color: var(--tp-text-secondary);
 }
-
-/* Tables */
 .tp-table { width: 100%; border-collapse: collapse; }
 .tp-table th,
 .tp-table td {
@@ -567,16 +434,12 @@
     color: var(--tp-text-primary);
 }
 .tp-table tbody tr:hover { background: var(--tp-table-row-hover); }
-
-/* Section headings inside cards */
 .tp-section-title {
     color: var(--tp-accent-text);
     margin-bottom: 1.5rem;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--tp-border);
 }
-
-/* Stat cards */
 .tp-stat-card {
     background: var(--tp-bg-raised);
     padding: 1.5rem;
@@ -584,23 +447,19 @@
     text-align: center;
     border: 1px solid var(--tp-border);
 }
-.tp-stat-number { font-size: 2rem; font-weight: bold; color: #818cf8; }
+.tp-stat-number { font-size: 2rem; font-weight: bold; color: var(--tp-accent-text); }
 .tp-stat-label { color: var(--tp-text-muted); margin-top: 0.5rem; font-size: 0.9rem; }
-
-/* Status badges */
 .tp-badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 9999px; font-size: 0.8rem; font-weight: bold; }
-.tp-badge-green  { background: rgba(34,197,94,0.15);  color: #16a34a; }
-.tp-badge-red    { background: rgba(239,68,68,0.15);  color: #dc2626; }
-.tp-badge-yellow { background: rgba(251,191,36,0.15); color: #d97706; }
-.tp-badge-blue   { background: rgba(59,130,246,0.15); color: #2563eb; }
-.tp-badge-purple { background: rgba(139,92,246,0.15); color: #7c3aed; }
+.tp-badge-green  { background: rgba(34,197,94,0.15);  color: #166534; }
+.tp-badge-red    { background: rgba(239,68,68,0.15);  color: #991b1b; }
+.tp-badge-yellow { background: rgba(251,191,36,0.15); color: #92400e; }
+.tp-badge-blue   { background: rgba(59,130,246,0.15); color: #1e40af; }
+.tp-badge-purple { background: rgba(139,92,246,0.15); color: #5b21b6; }
 [data-theme="dark"] .tp-badge-green  { color: #86efac; }
 [data-theme="dark"] .tp-badge-red    { color: #fca5a5; }
-[data-theme="dark"] .tp-badge-yellow { color: #facc15; }
-[data-theme="dark"] .tp-badge-blue   { color: #5eead4; }
-[data-theme="dark"] .tp-badge-purple { color: #a78bfa; }
-
-/* File upload */
+[data-theme="dark"] .tp-badge-yellow { color: #fde68a; }
+[data-theme="dark"] .tp-badge-blue   { color: #93c5fd; }
+[data-theme="dark"] .tp-badge-purple { color: #c4b5fd; }
 .file-upload {
     border: 2px dashed var(--tp-input-border);
     padding: 1rem;
@@ -614,8 +473,8 @@
     display: block;
 }
 .file-upload:hover {
-    border-color: #6366f1;
-    color: #818cf8;
+    border-color: var(--tp-accent);
+    color: var(--tp-accent-text);
 }
 .file-hint { font-size: 0.8rem; margin-top: 0.25rem; color: var(--tp-text-faint); }
 .selected-file {
@@ -625,26 +484,16 @@
     border-left: 3px solid #22c55e;
     border-radius: 0.75rem;
     font-size: 0.85rem;
-    color: #16a34a;
+    color: #166534;
 }
-[data-theme="dark"] .selected-file { color: #a7f3d0; }
+[data-theme="dark"] .selected-file { color: #86efac; }
 input[type="file"] { display: none; }
-
-/* Char counter */
 .char-counter { text-align: right; font-size: 0.78rem; margin-top: 0.25rem; color: var(--tp-text-faint); transition: color 0.2s; }
 .char-counter.warning { color: #f59e0b; }
 .char-counter.danger  { color: #ef4444; }
-
-/* Scrollbar */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-/* Animations */
 @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-/* ═══════════════════════════════════════════
-   Pagination
-   ═══════════════════════════════════════════ */
 .pagination { display: flex; justify-content: center; margin-top: 1.5rem; gap: 0.25rem; }
 .page-link {
     color: var(--tp-text-secondary);
@@ -659,12 +508,7 @@ input[type="file"] { display: none; }
 .page-item.active .page-link { background: var(--tp-accent); color: white; border-color: var(--tp-accent); }
 .page-item.disabled .page-link { color: var(--tp-text-faint); cursor: not-allowed; }
 </style>
-
 <script>
-<<<<<<< HEAD
-/* ── Unified toast function — use this everywhere ── */
-=======
-/* ── Theme toggle ── */
 function toggleTheme() {
     const current = document.documentElement.getAttribute('data-theme');
     const next    = current === 'dark' ? 'light' : 'dark';
@@ -672,9 +516,6 @@ function toggleTheme() {
     localStorage.setItem('tp-theme', next);
     document.getElementById('theme-icon').textContent = next === 'dark' ? '☀️' : '🌙';
 }
-
-/* ── Toast ── */
->>>>>>> 29f2233 (fifth update)
 function showToast(message, type = 'success') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
@@ -687,7 +528,6 @@ function showToast(message, type = 'success') {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
-
 document.addEventListener('keydown', function(e){
     if(e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file'){
         const form = e.target.closest('form');
@@ -698,7 +538,6 @@ document.addEventListener('keydown', function(e){
         if(form){ e.preventDefault(); form.submit(); }
     }
 });
-
 function customConfirm(message, icon){
     return new Promise((resolve) => {
         const modal     = document.getElementById('confirm-modal');
@@ -715,7 +554,6 @@ function customConfirm(message, icon){
         modal.onclick     = (e) => { if(e.target === modal){ cleanup(); resolve(false); } };
     });
 }
-
 function pickIcon(msg){
     const m = msg.toLowerCase();
     if(m.includes('supprimer') || m.includes('irréversible')) return '🗑️';
@@ -725,23 +563,18 @@ function pickIcon(msg){
     if(m.includes('rôle') || m.includes('role')) return '👤';
     return '⚠️';
 }
-
 async function handleRoleChange(select){
     const confirmed = await customConfirm('Changer le rôle de cet utilisateur?', '👤');
     if(confirmed){ select.closest('form').submit(); }
     else { select.value = select.dataset.original; }
 }
-
 document.addEventListener('DOMContentLoaded', function(){
-    /* Apply saved theme icon */
     const saved = localStorage.getItem('tp-theme') || 'dark';
     const icon  = document.getElementById('theme-icon');
     if(icon) icon.textContent = saved === 'dark' ? '☀️' : '🌙';
-
     document.querySelectorAll('select[name="role"]').forEach(select => {
         select.dataset.original = select.value;
     });
-
     document.querySelectorAll('[onclick]').forEach(el => {
         const original = el.getAttribute('onclick');
         if(!original.includes('confirm(')) return;
@@ -760,7 +593,6 @@ document.addEventListener('DOMContentLoaded', function(){
             }
         });
     });
-
     document.querySelectorAll('form[onsubmit]').forEach(form => {
         const original = form.getAttribute('onsubmit');
         if(!original.includes('confirm(')) return;
@@ -774,7 +606,6 @@ document.addEventListener('DOMContentLoaded', function(){
             if(confirmed) form.submit();
         });
     });
-
     document.querySelectorAll('input[type="email"]').forEach(input => {
         const feedback = document.createElement('div');
         feedback.style.cssText = 'font-size:0.8rem; margin-top:0.4rem; display:none;';
@@ -790,15 +621,8 @@ document.addEventListener('DOMContentLoaded', function(){
         input.addEventListener('input', validate);
         input.addEventListener('blur', validate);
     });
-
-<<<<<<< HEAD
-    // Move session toasts into the fixed container and animate them
-    document.querySelectorAll('[data-toast]').forEach(toast => {
-        toast.remove(); // remove from page flow
-=======
     document.querySelectorAll('[data-toast]').forEach(toast => {
         toast.remove();
->>>>>>> 29f2233 (fifth update)
         document.getElementById('toast-container').appendChild(toast);
         requestAnimationFrame(() => toast.style.opacity = '1');
         setTimeout(() => {
@@ -807,7 +631,6 @@ document.addEventListener('DOMContentLoaded', function(){
         }, 3000);
     });
 });
-
 function showFileName(input, id) {
     const preview = document.getElementById(id + '-preview');
     if (input.files.length > 0) {
@@ -818,19 +641,13 @@ function showFileName(input, id) {
     }
 }
 </script>
-
 <script>
-<<<<<<< HEAD
-    // Clear flash messages on back/forward navigation
-=======
->>>>>>> 29f2233 (fifth update)
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
             document.querySelectorAll('[data-toast]').forEach(el => el.remove());
         }
     });
 </script>
-
 @yield('extra-scripts')
 </body>
 </html>
