@@ -13,12 +13,12 @@
         display: inline-block;
         transition: opacity 0.15s;
     }
-    .btn-primary  { background: var(--tp-accent); color: white; }
-    .btn-primary:hover  { background: var(--tp-accent-hover); opacity: 1; }
+    .btn-primary   { background: var(--tp-accent); color: white; }
+    .btn-primary:hover { background: var(--tp-accent-hover); opacity: 1; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
-    .btn-info  { background:
-    .btn-small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-    .btn:hover { opacity: 0.9; }
+    .btn-info      { background: #0ea5e9; color: white; }
+    .btn-small     { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+    .btn:hover     { opacity: 0.9; }
     .header-actions {
         display: flex;
         justify-content: flex-end;
@@ -34,9 +34,11 @@
         background: var(--tp-bg-raised);
         border-radius: 1rem;
         padding: 1.5rem;
-        transition: transform 0.2s, border-color 0.2s;
-        border-left: 4px solid
-        border: 1px solid var(--tp-border);
+        transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        border-left: 4px solid var(--tp-accent);
+        border-top: 1px solid var(--tp-border);
+        border-right: 1px solid var(--tp-border);
+        border-bottom: 1px solid var(--tp-border);
         cursor: pointer;
     }
     .course-card.archived {
@@ -46,6 +48,7 @@
     .course-card:hover {
         transform: translateY(-4px);
         border-color: var(--tp-border-hover);
+        border-left-color: var(--tp-accent);
         box-shadow: 0 12px 24px rgba(0,0,0,0.12);
     }
     .course-header {
@@ -60,7 +63,7 @@
         color: var(--tp-text-primary);
     }
     .course-code {
-        background:
+        background: var(--tp-accent);
         color: white;
         padding: 0.3rem 0.8rem;
         border-radius: 0.75rem;
@@ -68,7 +71,10 @@
         font-size: 0.9rem;
         font-weight: bold;
         cursor: pointer;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
+    .course-code:hover { background: var(--tp-accent-hover); }
     .course-description {
         color: var(--tp-text-secondary);
         font-size: 0.9rem;
@@ -93,16 +99,10 @@
         font-size: 0.8rem;
         font-weight: bold;
     }
-    .status-active {
-        background: rgba(34,197,94,0.15);
-        color:
-    }
-    [data-theme="dark"] .status-active { color:
-    .status-archived {
-        background: rgba(248,113,113,0.15);
-        color:
-    }
-    [data-theme="dark"] .status-archived { color:
+    .status-active   { background: rgba(34,197,94,0.15);  color: #166534; }
+    .status-archived { background: rgba(248,113,113,0.15); color: #991b1b; }
+    [data-theme="dark"] .status-active   { color: #86efac; }
+    [data-theme="dark"] .status-archived { color: #fca5a5; }
     .empty-state {
         text-align: center;
         padding: 3rem;

@@ -27,6 +27,7 @@
         font-size: 1rem;
         background: var(--tp-input-bg);
         color: var(--tp-text-primary);
+        box-sizing: border-box;
     }
     input[type="text"]::placeholder,
     textarea::placeholder { color: var(--tp-text-faint); }
@@ -34,7 +35,54 @@
     textarea { min-height: 120px; resize: vertical; }
     input:focus, textarea:focus, select:focus {
         outline: none;
-        border-color:
+        border-color: var(--tp-accent);
+        box-shadow: 0 0 0 2px rgba(124,58,237,0.15);
+    }
+    .char-counter {
+        text-align: right;
+        font-size: 0.8rem;
+        color: var(--tp-text-faint);
+        margin-top: 0.25rem;
+    }
+    .course-checkboxes {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: var(--tp-input-bg);
+        border: 1px solid var(--tp-input-border);
+        border-radius: 6px;
+    }
+    .course-checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--tp-border);
+        background: var(--tp-bg-surface);
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+        font-size: 0.875rem;
+        color: var(--tp-text-secondary);
+        user-select: none;
+    }
+    .course-checkbox-item:has(input:checked) {
+        border-color: var(--tp-accent);
+        background: rgba(124,58,237,0.08);
+        color: var(--tp-text-primary);
+    }
+    .course-checkbox-item input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+        accent-color: var(--tp-accent);
+        cursor: pointer;
+    }
+    .general-note {
+        margin-top: 0.5rem;
+        font-size: 0.82rem;
+        color: var(--tp-text-faint);
+        font-style: italic;
     }
     .btn-post {
         background: var(--tp-accent);
@@ -48,8 +96,12 @@
         transition: background 0.2s;
     }
     .btn-post:hover { background: var(--tp-accent-hover); }
-    .error { color:
-    [data-theme="dark"] .error { color:
+    .error {
+        color: #dc2626;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    [data-theme="dark"] .error { color: #fca5a5; }
     .breadcrumb { background: transparent; margin-bottom: 1rem; padding: 0; }
     .breadcrumb-item { color: var(--tp-text-muted); }
     .breadcrumb-item a { color: var(--tp-text-secondary); text-decoration: none; }
@@ -76,9 +128,9 @@
         font-size: 0.85rem;
         transition: color 0.15s;
     }
-    .like-btn:hover { color:
+    .like-btn:hover { color: #e11d48; }
     .like-btn:hover .like-icon { transform: scale(1.3); }
-    .like-btn.liked { color:
+    .like-btn.liked { color: #e11d48; }
     .like-btn.liked .like-icon { transform: scale(1.15); }
     .like-icon { transition: transform 0.15s; display: inline-block; }
     .comment-count-link {
@@ -90,7 +142,7 @@
         text-decoration: none;
         transition: color 0.15s;
     }
-    .comment-count-link:hover { color:
+    .comment-count-link:hover { color: var(--tp-text-primary); }
     .feed-section h2 { color: var(--tp-text-primary); }
 </style>
 @endsection
@@ -102,42 +154,60 @@
         <div class="form-group">
             <label for="type">Type de publication *</label>
             <select id="type" name="type" required>
-                <option value="announcement">📢 Annonce importante</option>
-                <option value="reminder">⏰ Rappel</option>
-                <option value="general">📌 Publication générale</option>
+                <option value="announcement" {{ old('type') === 'announcement' ? 'selected' : '' }}>📢 Annonce importante</option>
+                <option value="reminder"     {{ old('type') === 'reminder'     ? 'selected' : '' }}>⏰ Rappel</option>
+                <option value="general"      {{ old('type') === 'general'      ? 'selected' : '' }}>📌 Publication générale</option>
             </select>
             @error('type')<div class="error">{{ $message }}</div>@enderror
         </div>
+
         <div class="form-group">
-            <label for="class_id">Cours (optionnel - laissez vide pour publication générale)</label>
-            <select id="class_id" name="class_id">
-                <option value="">Tous mes étudiants (publication générale)</option>
+            <label>Cours *</label>
+            <div class="course-checkboxes">
+                <label class="course-checkbox-item">
+                    <input type="checkbox" name="class_ids[]" value="all" id="course_all"
+                           {{ !old('class_ids') ? 'checked' : '' }}>
+                    🌍 Tous mes étudiants (publication générale)
+                </label>
                 @foreach($courses as $course)
-                    <option value="{{ $course->id }}">{{ $course->name }} ({{ $course->students->count() }} étudiants)</option>
+                    <label class="course-checkbox-item">
+                        <input type="checkbox" name="class_ids[]" value="{{ $course->id }}"
+                               {{ in_array($course->id, old('class_ids', [])) ? 'checked' : '' }}>
+                        📚 {{ $course->name }} ({{ $course->students->count() }} étudiants)
+                    </label>
                 @endforeach
-            </select>
-            @error('class_id')<div class="error">{{ $message }}</div>@enderror
+            </div>
+            <div class="general-note">Publication générale — visible par tous vos étudiants</div>
+            @error('class_ids')<div class="error">{{ $message }}</div>@enderror
         </div>
+
         <div class="form-group">
             <label for="title">Titre *</label>
             <input type="text" id="title" name="title" value="{{ old('title') }}"
-                   placeholder="Ex: Rappel - TP à rendre vendredi" required>
+                   placeholder="Ex: Rappel - TP à rendre vendredi"
+                   maxlength="50" required
+                   oninput="document.getElementById('title-count').textContent = this.value.length">
+            <div class="char-counter"><span id="title-count">{{ strlen(old('title', '')) }}</span> / 50</div>
             @error('title')<div class="error">{{ $message }}</div>@enderror
         </div>
+
         <div class="form-group">
             <label for="content">Contenu *</label>
             <textarea id="content" name="content" required
                       placeholder="Écrivez votre message...">{{ old('content') }}</textarea>
             @error('content')<div class="error">{{ $message }}</div>@enderror
         </div>
+
         <div class="form-group">
             <label>Pièce jointe (optionnel)</label>
             <x-file-upload id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.zip" hint="PDF, JPG, PNG, ZIP · max 10 Mo" />
             @error('attachment')<div class="error">{{ $message }}</div>@enderror
         </div>
+
         <button type="submit" class="btn-post">📤 Publier</button>
     </form>
 </div>
+
 <div class="feed-section">
     <h2 style="margin-bottom: 1.5rem;">📰 Mes publications</h2>
     @forelse($posts as $post)
@@ -214,12 +284,25 @@
 @endsection
 @section('extra-scripts')
 <script>
+// Mutual exclusion: "Tous mes étudiants" unchecks others and vice versa
+const allCheckbox = document.getElementById('course_all');
+const courseCheckboxes = document.querySelectorAll('input[name="class_ids[]"]:not(#course_all)');
+
+allCheckbox.addEventListener('change', () => {
+    if (allCheckbox.checked) {
+        courseCheckboxes.forEach(cb => cb.checked = false);
+    }
+});
+courseCheckboxes.forEach(cb => {
+    cb.addEventListener('change', () => {
+        if (cb.checked) allCheckbox.checked = false;
+    });
+});
+
 document.querySelectorAll('.like-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-        const type = btn.dataset.type;
-        const id   = btn.dataset.id;
-        const url  = `/posts/${id}/like`;
-        const res = await fetch(url, {
+        const id  = btn.dataset.id;
+        const res = await fetch(`/posts/${id}/like`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,

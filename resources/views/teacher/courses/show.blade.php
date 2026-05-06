@@ -17,12 +17,13 @@
         font-size: 1rem;
         color: var(--tp-text-muted);
         border-bottom: 3px solid transparent;
-        transition: all 0.3s;
+        margin-bottom: -2px;
+        transition: all 0.2s;
     }
-    .tab:hover { color:
+    .tab:hover { color: var(--tp-accent-text); }
     .tab.active {
         color: var(--tp-accent-text);
-        border-bottom-color:
+        border-bottom-color: var(--tp-accent);
         font-weight: bold;
     }
     .tab-content { display: none; }
@@ -57,16 +58,8 @@
         text-align: center;
         border: 1px solid var(--tp-border);
     }
-    .info-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color:
-    }
-    .info-label {
-        color: var(--tp-text-muted);
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-    }
+    .info-number { font-size: 2rem; font-weight: bold; color: var(--tp-accent-text); }
+    .info-label  { color: var(--tp-text-muted); margin-top: 0.5rem; font-size: 0.9rem; }
     .tps-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -117,12 +110,12 @@
         white-space: nowrap;
         flex-shrink: 0;
     }
-    .status-published { background: rgba(34,197,94,0.15);  color:
-    .status-draft     { background: rgba(251,191,36,0.15); color:
-    .status-closed    { background: rgba(239,68,68,0.15);  color:
-    [data-theme="dark"] .status-published { color:
-    [data-theme="dark"] .status-draft     { color:
-    [data-theme="dark"] .status-closed    { color:
+    .status-published { background: rgba(34,197,94,0.15);  color: #166534; }
+    .status-draft     { background: rgba(251,191,36,0.15); color: #92400e; }
+    .status-closed    { background: rgba(239,68,68,0.15);  color: #991b1b; }
+    [data-theme="dark"] .status-published { color: #86efac; }
+    [data-theme="dark"] .status-draft     { color: #fde68a; }
+    [data-theme="dark"] .status-closed    { color: #fca5a5; }
     .tp-description {
         color: var(--tp-text-muted);
         font-size: 0.9rem;
@@ -132,15 +125,9 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        text-overflow: ellipsis;
         min-height: 2.88rem;
-        max-height: 2.88rem;
     }
-    .tp-meta {
-        font-size: 0.85rem;
-        color: var(--tp-text-faint);
-        margin-bottom: 0.4rem;
-    }
+    .tp-meta   { font-size: 0.85rem; color: var(--tp-text-faint); margin-bottom: 0.4rem; }
     .tp-spacer { flex: 1; }
     .tp-footer {
         display: flex;
@@ -184,10 +171,10 @@
         text-decoration: none;
         box-sizing: border-box;
         transition: background 0.15s;
+        color: var(--tp-text-secondary);
     }
-    .tp-menu-dropdown a         { color: var(--tp-text-secondary); border-radius: 0.75rem 0.75rem 0 0; }
-    .tp-menu-dropdown button    { color:
-    [data-theme="dark"] .tp-menu-dropdown button { color:
+    .tp-menu-dropdown button { color: #ef4444; }
+    [data-theme="dark"] .tp-menu-dropdown button { color: #fca5a5; }
     .tp-menu-dropdown a:hover,
     .tp-menu-dropdown button:hover { background: var(--tp-hover-bg); }
     .btn {
@@ -201,21 +188,15 @@
         text-align: center;
         transition: opacity 0.15s;
     }
-    .btn:hover { opacity: 0.9; }
+    .btn:hover    { opacity: 0.9; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
-    .btn-primary   { background: var(--tp-accent); color: white; }
-    .btn-warning   { background:
-    .btn-danger    { background:
-    .btn-success   { background:
-    .btn-small     { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-    .students-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    .students-table thead {
-        background: var(--tp-table-header);
-        color: var(--tp-text-primary);
-    }
+    .btn-primary  { background: var(--tp-accent); color: white; }
+    .btn-warning  { background: #f59e0b; color: #1f2937; }
+    .btn-danger   { background: #dc2626; color: white; }
+    .btn-success  { background: #16a34a; color: white; }
+    .btn-small    { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+    .students-table { width: 100%; border-collapse: collapse; }
+    .students-table thead { background: var(--tp-table-header); color: var(--tp-text-primary); }
     .students-table th,
     .students-table td {
         padding: 1rem;
@@ -224,57 +205,66 @@
         color: var(--tp-text-secondary);
     }
     .students-table tbody tr:hover { background: var(--tp-table-row-hover); }
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        color: var(--tp-text-muted);
-    }
+    .empty-state { text-align: center; padding: 3rem; color: var(--tp-text-muted); }
+    /* Course actions dropdown — clean, structured */
+    .course-actions-wrap { display: flex; justify-content: flex-end; margin-bottom: 2rem; position: relative; }
     .course-menu-btn {
         background: var(--tp-bg-surface);
         border: 1px solid var(--tp-border);
         color: var(--tp-text-secondary);
-        padding: 0.5rem 0.75rem;
-        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
         cursor: pointer;
-        font-size: 1.2rem;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: background 0.15s;
     }
+    .course-menu-btn:hover { background: var(--tp-hover-bg); }
     .course-menu-dropdown {
         display: none;
         position: absolute;
-        top: 2.5rem;
+        top: 2.8rem;
         right: 0;
         background: var(--tp-bg-surface);
         border: 1px solid var(--tp-border);
         border-radius: 0.75rem;
-        min-width: 180px;
+        min-width: 200px;
         z-index: 100;
         box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        overflow: hidden;
     }
     .course-menu-dropdown a,
     .course-menu-dropdown button {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
         width: 100%;
         text-align: left;
-        padding: 0.75rem 1rem;
+        padding: 0.8rem 1.1rem;
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 0.875rem;
+        font-size: 0.9rem;
         text-decoration: none;
         box-sizing: border-box;
         transition: background 0.15s;
         color: var(--tp-text-secondary);
+        border-bottom: 1px solid var(--tp-border);
     }
-    .course-menu-dropdown .danger-item { color:
-    [data-theme="dark"] .course-menu-dropdown .danger-item { color:
+    .course-menu-dropdown a:last-child,
+    .course-menu-dropdown button:last-child { border-bottom: none; }
     .course-menu-dropdown a:hover,
     .course-menu-dropdown button:hover { background: var(--tp-hover-bg); }
+    .course-menu-dropdown .danger-item { color: #ef4444; }
+    [data-theme="dark"] .course-menu-dropdown .danger-item { color: #fca5a5; }
 </style>
 @endsection
 @section('content')
     <!-- Course Actions -->
-    <div style="display:flex; justify-content:flex-end; margin-bottom:2rem; position:relative;">
-        <button onclick="toggleMenu('course-menu')" class="course-menu-btn">⋮</button>
+    <div class="course-actions-wrap">
+        <button onclick="toggleMenu('course-menu')" class="course-menu-btn">⚙️ Actions ▾</button>
         <div id="course-menu" class="course-menu-dropdown">
             <a href="{{ route('teacher.courses.edit', $course->id) }}?from=tps">
                 ✏️ Modifier le cours
@@ -389,6 +379,9 @@
                 <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
                 <h3>Aucun TP créé</h3>
                 <p style="color: var(--tp-text-faint);">Créez votre premier TP pour ce cours</p>
+                <a href="{{ route('teacher.courses.tps.create', $course->id) }}" class="btn btn-success" style="margin-top:1rem;">
+                    ➕ Créer un TP
+                </a>
             </div>
         @endif
     </div>

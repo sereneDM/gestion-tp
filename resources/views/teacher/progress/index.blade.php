@@ -13,24 +13,28 @@
         display: inline-block;
         transition: opacity 0.15s;
     }
-    .btn:hover { opacity: 0.9; }
+    .btn:hover     { opacity: 0.9; }
     .btn-secondary { background: var(--tp-table-header); color: var(--tp-text-secondary); }
-    .btn-info  { background: var(--tp-accent); color: white; }
-    .btn-small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-    .course-filter {
+    .btn-info      { background: var(--tp-accent); color: white; }
+    .btn-small     { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+    .filter-bar {
+        background: var(--tp-bg-raised);
+        border: 1px solid var(--tp-border);
+        border-radius: 1rem;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
         gap: 1rem;
-        margin-bottom: 1.5rem;
         flex-wrap: wrap;
     }
-    .course-filter label {
+    .filter-bar label {
         font-size: 0.9rem;
         color: var(--tp-text-muted);
         white-space: nowrap;
         font-weight: bold;
     }
-    .course-filter select {
+    .filter-bar select {
         background: var(--tp-input-bg);
         border: 1px solid var(--tp-border);
         color: var(--tp-text-primary);
@@ -39,9 +43,11 @@
         font-size: 0.9rem;
         cursor: pointer;
         outline: none;
+        min-width: 220px;
+        transition: border-color 0.15s;
     }
-    .course-filter select:focus { border-color:
-    .course-filter select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
+    .filter-bar select:focus { border-color: var(--tp-accent); }
+    .filter-bar select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
     .class-section {
         background: var(--tp-bg-raised);
         padding: 2rem;
@@ -69,6 +75,7 @@
         color: var(--tp-text-primary);
     }
     .students-table tr:hover { background: var(--tp-table-row-hover); }
+    #no-results {
         display: none;
         text-align: center;
         padding: 3rem;
@@ -77,19 +84,11 @@
         border: 1px solid var(--tp-border);
         border-radius: 1rem;
     }
-        display: none;
-        text-align: center;
-        padding: 3rem;
-        color:
-        background:
-        border: 1px solid
-        border-radius: 1rem;
-    }
 </style>
 @endsection
 @section('content')
-    <div class="course-filter">
-        <label for="class-filter">Filtrer par classe :</label>
+    <div class="filter-bar">
+        <label for="class-filter">🔍 Filtrer par classe :</label>
         <select id="class-filter" onchange="filterClass(this.value)">
             <option value="">— Toutes les classes —</option>
             @foreach($classes as $class)
@@ -97,7 +96,7 @@
             @endforeach
         </select>
     </div>
-    {{-- Class sections --}}
+
     @forelse($classes as $class)
         <div class="class-section" id="class-{{ $class->id }}">
             <h2>{{ $class->name }}</h2>
@@ -138,6 +137,7 @@
             <p style="color: var(--tp-text-faint);">Vous n'avez aucune classe assignée</p>
         </div>
     @endforelse
+
     <div id="no-results">Aucune classe trouvée.</div>
 @endsection
 @section('extra-scripts')

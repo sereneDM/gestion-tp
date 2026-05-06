@@ -12,7 +12,12 @@
     }
     .form-group { margin-bottom: 1.5rem; }
     label { display: block; margin-bottom: 0.5rem; color: var(--tp-text-secondary); font-weight: bold; }
-    input, textarea, select {
+    input[type="text"],
+    input[type="date"],
+    input[type="email"],
+    input[type="number"],
+    textarea,
+    select {
         width: 100%;
         padding: 0.75rem;
         border: 1px solid var(--tp-input-border);
@@ -24,10 +29,18 @@
     }
     textarea { min-height: 120px; resize: vertical; }
     input::placeholder, textarea::placeholder { color: var(--tp-text-faint); }
-    input:focus, textarea:focus, select:focus { outline: none; border-color:
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        border-color: var(--tp-accent);
+        box-shadow: 0 0 0 2px rgba(124,58,237,0.15);
+    }
     select option { background: var(--tp-input-bg); color: var(--tp-text-primary); }
-    .error { color:
-    [data-theme="dark"] .error { color:
+    .error {
+        color: #dc2626;
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+    }
+    [data-theme="dark"] .error { color: #fca5a5; }
     .button-group { display: flex; gap: 1rem; margin-top: 2rem; }
     .btn {
         padding: 0.75rem 1.5rem;

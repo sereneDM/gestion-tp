@@ -1,8 +1,6 @@
 @extends('layouts.app')
-
 @section('title', 'Prendre les Présences')
 @section('page-title', 'Présence - ' . $class->name)
-
 @section('extra-styles')
 <style>
     .btn {
@@ -13,38 +11,38 @@
         text-decoration: none;
         font-size: 1rem;
         display: inline-block;
-        color: #e2e8f0;
+        color: var(--tp-text-secondary);
     }
     .btn-primary {
-        background-color: #4f46e5;
+        background-color: var(--tp-accent);
         color: white;
         width: 100%;
     }
     .btn:hover { opacity: 0.95; }
     .date-info {
-        color: #cbd5e1;
+        color: var(--tp-text-muted);
         margin-bottom: 1.5rem;
     }
     .form-container {
-        background: #0f172a;
+        background: var(--tp-bg-surface);
         padding: 2rem;
         border-radius: 1rem;
-        border: 1px solid #334155;
+        border: 1px solid var(--tp-border);
     }
     .student-row {
         display: grid;
         grid-template-columns: 2fr 1fr 2fr;
         gap: 1rem;
         padding: 1rem;
-        border-bottom: 1px solid #334155;
+        border-bottom: 1px solid var(--tp-border);
         align-items: center;
     }
     .student-row:hover {
-        background-color: #1e293b;
+        background-color: var(--tp-hover-bg);
     }
     .student-name {
         font-weight: bold;
-        color: #e2e8f0;
+        color: var(--tp-text-primary);
     }
     .status-buttons {
         display: flex;
@@ -52,13 +50,13 @@
     }
     .status-btn {
         padding: 0.5rem 1rem;
-        border: 2px solid #475569;
+        border: 2px solid var(--tp-border);
         border-radius: 0.75rem;
-        background: #1e293b;
+        background: var(--tp-bg-raised);
         cursor: pointer;
         font-size: 0.9rem;
         transition: all 0.2s;
-        color: #cbd5e1;
+        color: var(--tp-text-secondary);
     }
     .status-btn.active {
         font-weight: bold;
@@ -86,36 +84,31 @@
     input[type="text"] {
         width: 100%;
         padding: 0.5rem;
-        border: 1px solid #475569;
+        border: 1px solid var(--tp-input-border);
         border-radius: 0.75rem;
-        background: #1e293b;
-        color: #e2e8f0;
+        background: var(--tp-input-bg);
+        color: var(--tp-text-primary);
     }
-    input[type="text"]::placeholder { color: #64748b; }
+    input[type="text"]::placeholder { color: var(--tp-text-faint); }
     input[type="radio"] {
         display: none;
     }
 </style>
 @endsection
-
 @section('content')
     <p class="date-info">Date: {{ \Carbon\Carbon::parse($date)->format('d/m/Y') }}</p>
-
     <div class="form-container">
         <form method="POST" action="{{ route('teacher.attendance.save') }}">
             @csrf
             <input type="hidden" name="class_id" value="{{ $class->id }}">
             <input type="hidden" name="date" value="{{ $date }}">
-
             @foreach($class->students as $student)
                 @php
                     $existing = $existingAttendances->get($student->id);
                     $currentStatus = $existing ? $existing->status : 'present';
                 @endphp
-
                 <div class="student-row">
                     <div class="student-name">{{ $student->name }}</div>
-
                     <div class="status-buttons">
                         <input type="radio"
                                name="attendance[{{ $student->id }}]"
@@ -128,7 +121,6 @@
                                onclick="selectStatus({{ $student->id }}, 'present')">
                             ✓
                         </label>
-
                         <input type="radio"
                                name="attendance[{{ $student->id }}]"
                                value="absent"
@@ -140,7 +132,6 @@
                                onclick="selectStatus({{ $student->id }}, 'absent')">
                             ✗
                         </label>
-
                         <input type="radio"
                                name="attendance[{{ $student->id }}]"
                                value="late"
@@ -152,7 +143,6 @@
                                onclick="selectStatus({{ $student->id }}, 'late')">
                             ⏰
                         </label>
-
                         <input type="radio"
                                name="attendance[{{ $student->id }}]"
                                value="excused"
@@ -165,7 +155,6 @@
                             📝
                         </label>
                     </div>
-
                     <div>
                         <input type="text"
                                name="notes[{{ $student->id }}]"
@@ -174,7 +163,6 @@
                     </div>
                 </div>
             @endforeach
-
             <div style="margin-top: 2rem;">
                 <button type="submit" class="btn btn-primary">
                     ✓ Enregistrer les présences
@@ -183,7 +171,6 @@
         </form>
     </div>
 @endsection
-
 @section('extra-scripts')
 <script>
     function selectStatus(studentId, status) {

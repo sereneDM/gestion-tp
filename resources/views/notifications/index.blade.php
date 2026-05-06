@@ -1,8 +1,6 @@
 @extends('layouts.app')
-
 @section('title', 'Notifications')
 @section('page-title', 'Mes Notifications')
-
 @section('extra-styles')
 <style>
     .notifications-header {
@@ -13,7 +11,7 @@
     }
     .unread-count {
         font-size: 1rem;
-        color: #94a3b8;
+        color: var(--tp-text-muted);
     }
     .unread-count span {
         color: #a5b4fc;
@@ -35,13 +33,12 @@
     }
     .btn-primary:hover { background: #4338ca; }
     .btn-secondary {
-        background: #1e293b;
-        color: #e2e8f0;
-        border: 1px solid #334155;
+        background: var(--tp-bg-raised);
+        color: var(--tp-text-secondary);
+        border: 1px solid var(--tp-border);
         margin-left: 0.5rem;
     }
-    .btn-secondary:hover { background: #334155; }
-
+    .btn-secondary:hover { background: var(--tp-hover-bg); }
     .notification-card {
         padding: 1.25rem 1.5rem;
         border-radius: 0.75rem;
@@ -54,15 +51,14 @@
         transform: translateX(4px);
     }
     .notification-card.unread {
-        background: #1e293b;
-        border-left-color: #6366f1;
-        border: 1px solid #334155;
+        background: var(--tp-bg-raised);
+        border: 1px solid var(--tp-border);
         border-left: 4px solid #6366f1;
     }
     .notification-card.read {
-        background: #0f172a;
-        border: 1px solid #1e293b;
-        border-left: 4px solid #334155;
+        background: var(--tp-bg-surface);
+        border: 1px solid var(--tp-border);
+        border-left: 4px solid var(--tp-border);
         opacity: 0.7;
     }
     .notification-header {
@@ -73,19 +69,19 @@
     }
     .notification-title {
         font-weight: bold;
-        color: #f1f5f9;
+        color: var(--tp-text-primary);
         margin-bottom: 0.4rem;
         font-size: 1rem;
     }
     .notification-message {
-        color: #94a3b8;
+        color: var(--tp-text-muted);
         margin-bottom: 0.25rem;
         line-height: 1.5;
         font-size: 0.9rem;
     }
     .notification-time {
         font-size: 0.8rem;
-        color: #475569;
+        color: var(--tp-text-faint);
         white-space: nowrap;
         margin-left: 1rem;
     }
@@ -102,27 +98,25 @@
     .type-new_submission    { background: rgba(251,191,36,0.15);  color: #fde68a; }
     .type-new_post          { background: rgba(239,68,68,0.15);   color: #fca5a5; }
     .type-student_joined    { background: rgba(16,185,129,0.15);  color: #6ee7b7; }
-
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        color: #475569;
+        color: var(--tp-text-faint);
     }
     .empty-state .icon {
         font-size: 4rem;
         margin-bottom: 1rem;
     }
     .empty-state h2 {
-        color: #64748b;
+        color: var(--tp-text-muted);
         margin-bottom: 0.5rem;
     }
     .empty-state p {
-        color: #475569;
+        color: var(--tp-text-faint);
         font-size: 0.9rem;
     }
 </style>
 @endsection
-
 @section('content')
     <div class="notifications-header">
         <div class="unread-count">
@@ -142,7 +136,6 @@
             </a>
         </div>
     </div>
-
     @forelse($notifications as $notification)
         <form method="POST"
               action="{{ route('notifications.mark-read', $notification->id) }}"
@@ -178,15 +171,12 @@
             <p>Vous n'avez pas encore de notifications</p>
         </div>
     @endforelse
-
     @if($notifications->hasPages())
         <div style="margin-top: 1.5rem;">
             {{ $notifications->links() }}
         </div>
     @endif
-
 @endsection
-
 @section('extra-scripts')
 <script>
 function markRead(id) {
@@ -194,7 +184,6 @@ function markRead(id) {
     if (card && card.classList.contains('unread')) {
         card.classList.remove('unread');
         card.classList.add('read');
-
         const countEl = document.querySelector('.unread-count span');
         if (countEl) {
             const current = parseInt(countEl.textContent);
@@ -202,7 +191,6 @@ function markRead(id) {
                 countEl.textContent = current - 1;
             }
         }
-
         const badge = document.querySelector('a[href="{{ route('notifications.index') }}"] span');
         if (badge) {
             const badgeCount = parseInt(badge.textContent) - 1;
@@ -210,7 +198,6 @@ function markRead(id) {
             else badge.textContent = badgeCount;
         }
     }
-
     document.getElementById('form-' + id).submit();
 }
 </script>

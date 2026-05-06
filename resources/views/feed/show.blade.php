@@ -1,233 +1,210 @@
 @extends('layouts.app')
-@section('title', 'Accueil')
-@section('page-title', 'Fil d\'actualité')
+@section('title', Str::limit($post->title, 50))
+@section('page-title', 'Publication')
 @section('extra-styles')
 <style>
-.post-title {
-    @apply text-3xl font-bold text-slate-900 dark:text-white;
-}
-.post-content {
-    @apply text-base text-slate-700 dark:text-slate-300;
-}
-.replies {
-    @apply mt-4 ml-4 pl-4 border-l-4 border-slate-300 dark:border-slate-600;
-}
-.reply {
-    @apply flex gap-3 mb-4;
-}
-.reply-form { @apply hidden mt-3; }
-.reply-form.active { @apply block; }
-.add-comment-form {
-    @apply mt-6 pt-4 border-t border-slate-300 dark:border-slate-600;
-}
+.post-content { color: var(--tp-text-secondary); line-height: 1.7; margin: 1.5rem 0; white-space: pre-line; }
+.replies { margin-top: 1rem; margin-left: 1rem; padding-left: 1rem; border-left: 4px solid var(--tp-border); }
+.reply { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+.reply-form { display: none; margin-top: 0.75rem; }
+.reply-form.active { display: block; }
+.add-comment-form { margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--tp-border); }
 .comment-input {
-    @apply w-full px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-violet-400 resize-vertical font-inherit text-sm;
+    width: 100%; padding: 0.6rem 0.75rem;
+    border: 1px solid var(--tp-input-border); border-radius: 0.5rem;
+    background: var(--tp-input-bg); color: var(--tp-text-primary);
+    font-size: 0.9rem; resize: vertical; font-family: inherit; min-height: 80px; box-sizing: border-box;
 }
-.comment-input::placeholder { @apply text-slate-500 dark:text-slate-400; }
+.comment-input:focus { outline: none; border-color: var(--tp-accent); }
 .submit-comment-btn {
-    @apply mt-2 px-4 py-2 bg-violet-600 dark:bg-violet-600 hover:bg-violet-700 dark:hover:bg-violet-700 text-white rounded-lg cursor-pointer text-sm font-medium transition-colors duration-200;
+    margin-top: 0.5rem; padding: 0.5rem 1rem; background: var(--tp-accent);
+    color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem; font-weight: 500; transition: background 0.2s;
 }
+.submit-comment-btn:hover { background: var(--tp-accent-hover); }
 .cancel-reply-btn {
-    @apply ml-2 px-3 py-2 bg-slate-300 dark:bg-slate-600 hover:bg-slate-400 dark:hover:bg-slate-500 text-slate-900 dark:text-slate-100 rounded-lg cursor-pointer text-sm transition-colors duration-200;
+    margin-left: 0.5rem; padding: 0.5rem 0.75rem; background: var(--tp-table-header);
+    color: var(--tp-text-secondary); border: none; border-radius: 0.5rem; cursor: pointer; font-size: 0.875rem;
 }
 .post-menu-btn {
-    @apply bg-transparent border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-400 w-8 h-8 rounded-lg cursor-pointer text-lg flex items-center justify-center transition-all duration-150;
+    background: transparent; border: 1px solid var(--tp-border); color: var(--tp-text-muted);
+    width: 2rem; height: 2rem; border-radius: 0.5rem; cursor: pointer; font-size: 1.1rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.15s;
 }
-.post-menu-btn:hover {
-    @apply bg-slate-200 dark:bg-slate-700 border-slate-400 dark:border-slate-500 text-slate-900 dark:text-slate-200;
-}
+.post-menu-btn:hover { background: var(--tp-hover-bg); color: var(--tp-text-primary); }
 .post-menu-dropdown {
-    @apply hidden absolute top-10 right-0 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg min-w-[150px] z-100 shadow-lg;
+    display: none; position: absolute; top: 2.5rem; right: 0;
+    background: var(--tp-bg-surface); border: 1px solid var(--tp-border);
+    border-radius: 0.5rem; min-width: 150px; z-index: 100; box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
 .post-menu-dropdown button {
-    @apply w-full text-left px-4 py-2 bg-transparent border-none text-red-600 dark:text-red-400 cursor-pointer rounded-lg text-sm transition-colors duration-150;
+    width: 100%; text-align: left; padding: 0.6rem 1rem; background: transparent;
+    border: none; color: #ef4444; cursor: pointer; border-radius: 0.5rem; font-size: 0.875rem; transition: background 0.15s;
 }
-.post-menu-dropdown button:hover {
-    @apply bg-red-50 dark:bg-slate-700;
-}
-.post-card {
-    @apply relative;
-}
+.post-menu-dropdown button:hover { background: var(--tp-hover-bg); }
+.post-actions { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--tp-border); }
+.like-btn { background: none; border: none; padding: 0.25rem 0.4rem; cursor: pointer; color: var(--tp-text-muted); display: inline-flex; align-items: center; gap: 5px; font-size: 0.85rem; transition: color 0.15s; }
+.like-btn:hover { color: #ef4444; }
+.like-btn.liked { color: #ef4444; }
+.like-icon { transition: transform 0.15s; display: inline-block; }
+.like-btn:hover .like-icon, .like-btn.liked .like-icon { transform: scale(1.2); }
 </style>
 @endsection
 @section('content')
-<div class="create-post-card">
-    <h2>✍️ Créer une publication</h2>
-    <form method="POST" action="{{ route('posts.store') }}" enctype="multipart/form-data">
-        @csrf
-        <div class="form-group">
-            <label for="type">Type de publication *</label>
-            <select id="type" name="type" required>
-                <option value="announcement">📢 Annonce importante</option>
-                <option value="reminder">⏰ Rappel</option>
-                <option value="general">📌 Publication générale</option>
-            </select>
-            @error('type')<div class="error">{{ $message }}</div>@enderror
-        </div>
-        <div class="form-group">
-            <label>Cours *</label>
-            <div class="courses-checkboxes">
-                {{-- "All students" option --}}
-                <label class="course-checkbox-item all-option">
-                    <input type="checkbox" name="class_ids[]" value="" id="course-all">
-                    <span>🌍 Tous mes étudiants (publication générale)</span>
-                </label>
-                @foreach($courses as $course)
-                    <label class="course-checkbox-item">
-                        <input type="checkbox" name="class_ids[]" value="{{ $course->id }}"
-                               class="course-specific"
-                               {{ is_array(old('class_ids')) && in_array($course->id, old('class_ids')) ? 'checked' : '' }}>
-                        <span>📚 {{ $course->name }} ({{ $course->students->count() }} étudiants)</span>
-                    </label>
-                @endforeach
+<div style="position:relative; background: var(--tp-bg-raised); border: 1px solid var(--tp-border); border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:1rem; padding-bottom:1rem; border-bottom:1px solid var(--tp-border);">
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+            <img src="{{ $post->user->profile_picture_url }}" alt="{{ $post->user->name }}"
+                 style="width:2.75rem; height:2.75rem; border-radius:50%; object-fit:cover;">
+            <div>
+                <div style="font-weight:bold; color:var(--tp-text-primary);">{{ $post->user->name }}</div>
+                <div style="font-size:0.85rem; color:var(--tp-text-muted);">{{ $post->created_at->diffForHumans() }}</div>
             </div>
-            <div class="selected-courses-hint" id="courses-hint">Aucun cours sélectionné — publication générale par défaut</div>
-            @error('class_ids')<div class="error">{{ $message }}</div>@enderror
         </div>
-        <div class="form-group">
-            <label for="title">Titre *</label>
-            <input type="text" id="title" name="title" value="{{ old('title') }}"
-                   placeholder="Ex: Rappel - TP à rendre vendredi"
-                   maxlength="50" required>
-            <div class="char-counter" id="title-counter">0 / 50</div>
-            @error('title')<div class="error">{{ $message }}</div>@enderror
-        </div>
-        <div class="form-group">
-            <label for="content">Contenu *</label>
-            <textarea id="content" name="content" required
-                      placeholder="Écrivez votre message...">{{ old('content') }}</textarea>
-            @error('content')<div class="error">{{ $message }}</div>@enderror
-        </div>
-        <div class="form-group">
-            <label>Pièce jointe (optionnel)</label>
-            <x-file-upload id="attachment" name="attachment" accept=".pdf,.jpg,.jpeg,.png,.zip" hint="PDF, JPG, PNG, ZIP · max 10 Mo" />
-            @error('attachment')<div class="error">{{ $message }}</div>@enderror
-        </div>
-        <button type="submit" class="btn-post">📤 Publier</button>
-    </form>
-</div>
-<div class="feed-section">
-    <h2 style="margin-bottom: 1.5rem; color: #f1f5f9;">📰 Mes publications</h2>
-    @forelse($posts as $post)
-        <div class="post-card"
-             style="cursor:pointer;"
-             onclick="if(event.target.closest('form, a, button')) return; window.location='{{ route('posts.show', $post->id) }}'">
-            <div class="post-header">
-                <div style="display:flex; gap:1rem; align-items:flex-start; flex:1;">
-                    <img src="{{ $post->user->profile_picture_url }}"
-                         alt="{{ $post->user->name }}"
-                         style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;">
-                    <div class="post-info">
-                        <span class="post-type-badge type-{{ $post->type }}">
-                            @if($post->type === 'announcement') 📢 Annonce
-                            @elseif($post->type === 'tp_posted') 📝 TP
-                            @elseif($post->type === 'reminder') ⏰ Rappel
-                            @else 📌 Général
-                            @endif
-                        </span>
-                        <div class="post-title">{{ $post->title }}</div>
-                        <div class="post-meta">Publié {{ $post->created_at->diffForHumans() }}</div>
+        <div style="display:flex; align-items:center; gap:0.5rem;">
+            <span style="padding:0.3rem 0.8rem; border-radius:9999px; font-size:0.8rem; font-weight:bold;
+                background:{{ $post->type==='announcement'?'rgba(251,191,36,0.15)':($post->type==='reminder'?'rgba(239,68,68,0.15)':'rgba(99,102,241,0.15)') }};
+                color:{{ $post->type==='announcement'?'#92400e':($post->type==='reminder'?'#991b1b':'#4f46e5') }};">
+                @if($post->type==='announcement') 📢 Annonce
+                @elseif($post->type==='reminder') ⏰ Rappel
+                @else 📌 Général @endif
+            </span>
+            @if(Auth::id() === $post->user_id)
+                <div style="position:relative;">
+                    <button class="post-menu-btn" onclick="togglePostMenu()">⋮</button>
+                    <div class="post-menu-dropdown" id="post-menu">
+                        <form method="POST" action="{{ route('posts.destroy', $post->id) }}">
+                            @csrf @method('DELETE')
+                            <button type="submit">🗑️ Supprimer</button>
+                        </form>
                     </div>
                 </div>
-            </div>
-            <div class="post-content" style="white-space: pre-line;">{{ $post->content }}</div>
-            @if($post->tp && $post->tp->due_date)
-                <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #334155; color: #cbd5e1; font-size: 0.9rem;">
-                    📅 Échéance: {{ $post->tp->due_date->format('d/m/Y à H:i') }}
+            @endif
+        </div>
+    </div>
+    <div style="font-size:1.3rem; font-weight:bold; color:var(--tp-text-primary); margin-bottom:0.5rem;">{{ $post->title }}</div>
+    <div class="post-content">{{ $post->content }}</div>
+    @if($post->class)
+        <div style="margin-top:0.75rem; display:inline-block; padding:0.4rem 0.9rem; background:rgba(99,102,241,0.1); border-left:3px solid var(--tp-accent); border-radius:0.5rem; font-size:0.875rem; color:var(--tp-accent-text);">
+            📚 {{ $post->class->name }}
+        </div>
+    @endif
+    @if($post->attachment)
+        <div style="margin-top:0.75rem;">
+            <a href="{{ asset('storage/' . $post->attachment) }}" target="_blank"
+               style="display:inline-block; padding:0.5rem 1rem; background:var(--tp-accent); color:white; border-radius:0.5rem; text-decoration:none; font-size:0.875rem;">
+                📎 Télécharger la pièce jointe
+            </a>
+        </div>
+    @endif
+    <div class="post-actions">
+        <button class="like-btn {{ $post->isLikedBy(auth()->id()) ? 'liked' : '' }}" data-id="{{ $post->id }}">
+            <span class="like-icon">{{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}</span>
+            <span class="like-count">{{ $post->likes()->count() }}</span>
+        </button>
+        <span style="font-size:0.875rem; color:var(--tp-text-muted);">
+            💬 {{ $post->comments->reduce(fn($c,$r)=>$c+1+$r->replies->count(),0) }} commentaire(s)
+        </span>
+    </div>
+</div>
+
+<div style="background: var(--tp-bg-raised); border: 1px solid var(--tp-border); border-radius: 1rem; padding: 1.5rem;" id="comments">
+    <h3 style="font-size:1.1rem; font-weight:600; color:var(--tp-text-primary); margin-bottom:1.5rem;">
+        💬 Commentaires ({{ $post->comments->reduce(fn($c,$r)=>$c+1+$r->replies->count(),0) }})
+    </h3>
+    @forelse($post->comments as $comment)
+        <div style="display:flex; gap:0.75rem; margin-bottom:1.5rem;" id="comment-{{ $comment->id }}">
+            <img src="{{ $comment->user->profile_picture_url }}" alt="{{ $comment->user->name }}"
+                 style="width:2.25rem; height:2.25rem; border-radius:50%; object-fit:cover; flex-shrink:0;">
+            <div style="flex:1;">
+                <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                    <span style="font-weight:bold; font-size:0.9rem; color:var(--tp-text-primary);">{{ $comment->user->name }}</span>
+                    @if($comment->user->isTeacher())
+                        <span style="font-size:0.75rem; padding:0.15rem 0.5rem; border-radius:9999px; background:rgba(236,72,153,0.15); color:#be185d;">Enseignant</span>
+                    @endif
+                    <span style="font-size:0.78rem; color:var(--tp-text-faint); margin-left:auto;">{{ $comment->created_at->diffForHumans() }}</span>
                 </div>
-            @endif
-            @if($post->class)
-                <div class="post-course">📚 {{ $post->class->name }} ({{ $post->class->students->count() }} étudiants)</div>
-            @else
-                <div class="post-course">🌍 Publication générale</div>
-            @endif
-            @if($post->tp)
-                <div style="margin-top: 1rem;">
-                    <a href="{{ route('teacher.tps.show', $post->tp->id) }}" class="attachment-btn">👁️ Voir le TP</a>
+                <div style="font-size:0.9rem; color:var(--tp-text-secondary); margin-bottom:0.5rem;">{{ $comment->content }}</div>
+                <div style="display:flex; gap:0.75rem; font-size:0.8rem;">
+                    <button style="background:none; border:none; color:var(--tp-accent-text); cursor:pointer; padding:0;" onclick="toggleReplyForm('reply-{{ $comment->id }}')">↩️ Répondre</button>
+                    @if(Auth::id() === $comment->user_id)
+                        <form method="POST" action="{{ route('posts.comments.destroy', $comment->id) }}" style="display:inline;">
+                            @csrf @method('DELETE')
+                            <button type="submit" style="background:none; border:none; color:#ef4444; cursor:pointer; padding:0; font-size:0.8rem;">🗑️ Supprimer</button>
+                        </form>
+                    @endif
                 </div>
-            @endif
-            @if($post->attachment)
-                <div class="post-attachment">
-                    <a href="{{ asset('storage/' . $post->attachment) }}" target="_blank" class="attachment-btn">
-                        📎 Télécharger la pièce jointe
-                    </a>
+                <div class="reply-form" id="reply-{{ $comment->id }}">
+                    <form method="POST" action="{{ route('posts.comments.store', $post->id) }}" style="margin-top:0.75rem;">
+                        @csrf
+                        <input type="hidden" name="parent_id" value="{{ $comment->id }}">
+                        <textarea name="content" class="comment-input" placeholder="Votre réponse..." rows="2" required></textarea>
+                        <div>
+                            <button type="submit" class="submit-comment-btn">↩️ Répondre</button>
+                            <button type="button" class="cancel-reply-btn" onclick="toggleReplyForm('reply-{{ $comment->id }}')">Annuler</button>
+                        </div>
+                    </form>
                 </div>
-            @endif
-            <div class="post-actions">
-                <button
-                    class="like-btn {{ $post->isLikedBy(auth()->id()) ? 'liked' : '' }}"
-                    data-type="post"
-                    data-id="{{ $post->id }}">
-                    <span class="like-icon">{{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}</span>
-                    <span class="like-count">{{ $post->likes()->count() }}</span>
-                </button>
-                <a href="{{ route('posts.show', $post->id) }}#comments" class="comment-count-link">
-                    💬 {{ $post->comments->reduce(fn($carry, $c) => $carry + 1 + $c->replies->count(), 0) }}
-                </a>
+                @if($comment->replies->count() > 0)
+                    <div class="replies">
+                        @foreach($comment->replies as $reply)
+                            <div class="reply" id="comment-{{ $reply->id }}">
+                                <img src="{{ $reply->user->profile_picture_url }}" alt="{{ $reply->user->name }}"
+                                     style="width:2rem; height:2rem; border-radius:50%; object-fit:cover; flex-shrink:0;">
+                                <div style="flex:1;">
+                                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                                        <span style="font-weight:bold; font-size:0.85rem; color:var(--tp-text-primary);">{{ $reply->user->name }}</span>
+                                        <span style="font-size:0.78rem; color:var(--tp-text-faint); margin-left:auto;">{{ $reply->created_at->diffForHumans() }}</span>
+                                    </div>
+                                    <div style="font-size:0.875rem; color:var(--tp-text-secondary);">{{ $reply->content }}</div>
+                                    @if(Auth::id() === $reply->user_id)
+                                        <form method="POST" action="{{ route('posts.comments.destroy', $reply->id) }}" style="display:inline;">
+                                            @csrf @method('DELETE')
+                                            <button type="submit" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:0.78rem; margin-top:0.25rem;">🗑️ Supprimer</button>
+                                        </form>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     @empty
-        <div class="no-posts">
-            <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
-            <h3 style="color: #94a3b8;">Aucune publication</h3>
-            <p style="margin-top: 0.5rem;">Créez votre première publication pour communiquer avec vos étudiants</p>
-        </div>
+        <p style="text-align:center; color:var(--tp-text-muted); padding:2rem 0;">Aucun commentaire pour l'instant.</p>
     @endforelse
-    @if($posts->hasPages())
-        <div style="margin-top: 1.5rem;">
-            {{ $posts->links() }}
-        </div>
-    @endif
+
+    <div class="add-comment-form">
+        <h4 style="font-size:0.9rem; font-weight:600; color:var(--tp-text-secondary); margin-bottom:0.75rem;">Ajouter un commentaire</h4>
+        <form method="POST" action="{{ route('posts.comments.store', $post->id) }}">
+            @csrf
+            <textarea name="content" class="comment-input" placeholder="Rédigez votre commentaire..." rows="3" required></textarea>
+            @error('content')<div style="color:#ef4444; font-size:0.8rem; margin-top:0.25rem;">{{ $message }}</div>@enderror
+            <button type="submit" class="submit-comment-btn">💬 Commenter</button>
+        </form>
+    </div>
 </div>
 @endsection
 @section('extra-scripts')
 <script>
-const titleInput   = document.getElementById('title');
-const titleCounter = document.getElementById('title-counter');
-function updateTitleCounter() {
-    const len = titleInput.value.length;
-    titleCounter.textContent = len + ' / 50';
-    titleCounter.classList.remove('warning', 'danger');
-    if (len >= 50)       titleCounter.classList.add('danger');
-    else if (len >= 40)  titleCounter.classList.add('warning');
+function togglePostMenu() {
+    const menu = document.getElementById('post-menu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
 }
-titleInput.addEventListener('input', updateTitleCounter);
-updateTitleCounter();
-const allCheckbox      = document.getElementById('course-all');
-const specificBoxes    = document.querySelectorAll('.course-specific');
-const hint             = document.getElementById('courses-hint');
-function updateHint() {
-    const checked = [...specificBoxes].filter(cb => cb.checked);
-    if (allCheckbox.checked || checked.length === 0) {
-        hint.textContent = 'Publication générale — visible par tous vos étudiants';
-    } else if (checked.length === 1) {
-        hint.textContent = '1 cours sélectionné';
-    } else {
-        hint.textContent = checked.length + ' cours sélectionnés';
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.post-menu-btn') && !e.target.closest('.post-menu-dropdown')) {
+        const menu = document.getElementById('post-menu');
+        if (menu) menu.style.display = 'none';
     }
+});
+function toggleReplyForm(id) {
+    document.getElementById(id).classList.toggle('active');
 }
-allCheckbox.addEventListener('change', () => {
-    if (allCheckbox.checked) {
-        specificBoxes.forEach(cb => cb.checked = false);
-    }
-    updateHint();
-});
-specificBoxes.forEach(cb => {
-    cb.addEventListener('change', () => {
-        if (cb.checked) allCheckbox.checked = false;
-        updateHint();
-    });
-});
-updateHint();
 document.querySelectorAll('.like-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-        const id  = btn.dataset.id;
+        const id = btn.dataset.id;
         const res = await fetch(`/posts/${id}/like`, {
             method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json',
-            }
+            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content, 'Accept': 'application/json' }
         });
         const data = await res.json();
         btn.querySelector('.like-icon').textContent = data.liked ? '❤️' : '🤍';
@@ -235,5 +212,16 @@ document.querySelectorAll('.like-btn').forEach(btn => {
         btn.classList.toggle('liked', data.liked);
     });
 });
+const params = new URLSearchParams(window.location.search);
+const highlight = params.get('highlight');
+if (highlight) {
+    const el = document.getElementById('comment-' + highlight);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.style.transition = 'background 0.5s';
+        el.style.background = 'rgba(124,58,237,0.1)';
+        setTimeout(() => el.style.background = '', 2500);
+    }
+}
 </script>
 @endsection

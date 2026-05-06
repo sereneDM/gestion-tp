@@ -18,11 +18,19 @@ class FeedController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $post = Post::with(['user', 'class', 'tp', 'comments.user', 'comments.replies.user'])
-                    ->findOrFail($id);
 
+        $post = Post::with([
+            'user',
+            'class',
+            'tp',
+            'comments.user',
+            'comments.replies.user'
+        ])->findOrFail($id);
+
+        // Authorization
         if ($user->isStudent()) {
             $enrolledClassIds = $user->enrolledClasses()->pluck('classes.id');
+
             if ($post->class_id && !$enrolledClassIds->contains($post->class_id)) {
                 abort(403);
             }
@@ -32,7 +40,22 @@ class FeedController extends Controller
             }
         }
 
-        return view('feed.show', compact('post'));
+        // ✅ FIXED: courses + paginated posts
+        $courses = [];
+        $posts   = [];
+
+        if ($user->isTeacher()) {
+            $courses = ClassModel::where('teacher_id', $user->id)
+                ->with('students')
+                ->get();
+
+            $posts = Post::where('user_id', $user->id)
+                ->with(['class.students', 'tp', 'comments.replies'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10); // ✅ IMPORTANT FIX
+        }
+
+        return view('feed.show', compact('post', 'courses', 'posts'));
     }
 
     public function storeComment(Request $request, $id)
@@ -52,10 +75,9 @@ class FeedController extends Controller
             'content'   => $request->content,
         ]);
 
-        // Link anchors directly to the new comment
         $commentAnchor = route('posts.show', $post->id) . '?highlight=' . $comment->id;
 
-        // Notify post author (if not self)
+        // Notify post author
         if ($user->id !== $post->user_id) {
             if (NotificationSetting::shouldNotify($post->user_id, $post->class_id, 'comment')) {
                 Notification::createFor(
@@ -69,9 +91,10 @@ class FeedController extends Controller
             }
         }
 
-        // Notify parent comment author if this is a reply (if not self)
+        // Notify parent comment author
         if ($request->parent_id) {
             $parentComment = Comment::find($request->parent_id);
+
             if ($parentComment && $parentComment->user_id !== $user->id) {
                 if (NotificationSetting::shouldNotify($parentComment->user_id, $post->class_id, 'comment')) {
                     Notification::createFor(
@@ -91,9 +114,9 @@ class FeedController extends Controller
             : 'comment-' . $comment->id;
 
         return redirect()->route('posts.show', $post->id)
-                         ->with('success', 'Commentaire ajouté!')
-                         ->with('new_comment_id', $comment->id)
-                         ->with('scroll_to', $scrollTo);
+            ->with('success', 'Commentaire ajouté!')
+            ->with('new_comment_id', $comment->id)
+            ->with('scroll_to', $scrollTo);
     }
 
     public function destroyComment($id)
@@ -106,13 +129,14 @@ class FeedController extends Controller
 
         $postId   = $comment->post_id;
         $parentId = $comment->parent_id;
+
         $comment->delete();
 
         $scrollTo = $parentId ? 'comment-' . $parentId : 'comments';
 
         return redirect()->route('posts.show', $postId)
-                         ->with('success', 'Commentaire supprimé!')
-                         ->with('scroll_to', $scrollTo);
+            ->with('success', 'Commentaire supprimé!')
+            ->with('scroll_to', $scrollTo);
     }
 
     public function index()
@@ -121,28 +145,38 @@ class FeedController extends Controller
 
         if ($user->isStudent()) {
             $posts = Post::visibleToStudent($user->id)
-                         ->with(['comments.replies'])
-                         ->paginate(10);
+                ->with(['comments.replies'])
+                ->paginate(10);
 
             $enrolledCoursesCount = $user->enrolledClasses()->count();
+
             $availableTPs = \App\Models\TP::whereHas('class', function($query) use ($user) {
                 $query->whereHas('students', function($q) use ($user) {
                     $q->where('users.id', $user->id);
                 });
             })->where('status', 'published')->count();
+
             $submittedCount = \App\Models\Submission::where('student_id', $user->id)->count();
-            $gradedCount    = \App\Models\Submission::where('student_id', $user->id)->whereNotNull('grade')->count();
+            $gradedCount    = \App\Models\Submission::where('student_id', $user->id)
+                ->whereNotNull('grade')
+                ->count();
 
             return view('student.dashboard', compact(
-                'posts', 'enrolledCoursesCount', 'availableTPs', 'submittedCount', 'gradedCount'
+                'posts',
+                'enrolledCoursesCount',
+                'availableTPs',
+                'submittedCount',
+                'gradedCount'
             ));
         } else {
             $posts = Post::where('user_id', $user->id)
-                         ->with(['class.students', 'tp', 'comments.replies'])
-                         ->orderBy('created_at', 'desc')
-                         ->paginate(10);
+                ->with(['class.students', 'tp', 'comments.replies'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-            $courses = ClassModel::where('teacher_id', $user->id)->with('students')->get();
+            $courses = ClassModel::where('teacher_id', $user->id)
+                ->with('students')
+                ->get();
 
             return view('teacher.feed.teacher', compact('posts', 'courses'));
         }
@@ -166,13 +200,15 @@ class FeedController extends Controller
 
         if ($request->class_id) {
             ClassModel::where('id', $request->class_id)
-                      ->where('teacher_id', $user->id)
-                      ->firstOrFail();
+                ->where('teacher_id', $user->id)
+                ->firstOrFail();
         }
 
         $attachmentPath = null;
+
         if ($request->hasFile('attachment')) {
             $file = $request->file('attachment');
+
             $attachmentPath = $file->storeAs(
                 'post_attachments',
                 time() . '_' . $file->getClientOriginalName(),
@@ -191,7 +227,8 @@ class FeedController extends Controller
 
         $this->notifyStudents($post);
 
-        return redirect()->route('feed.index')->with('success', 'Post publié avec succès!');
+        return redirect()->route('feed.index')
+            ->with('success', 'Post publié avec succès!');
     }
 
     public function destroy($id)
@@ -208,7 +245,8 @@ class FeedController extends Controller
 
         $post->delete();
 
-        return redirect()->route('feed.index')->with('success', 'Post supprimé avec succès!');
+        return redirect()->route('feed.index')
+            ->with('success', 'Post supprimé avec succès!');
     }
 
     private function notifyStudents($post)
@@ -219,6 +257,7 @@ class FeedController extends Controller
             $students = ClassModel::with('students')->find($post->class_id)->students;
         } else {
             $teacherClassIds = ClassModel::where('teacher_id', $teacher->id)->pluck('id');
+
             $students = User::whereHas('classes', function($q) use ($teacherClassIds) {
                 $q->whereIn('classes.id', $teacherClassIds);
             })->get();
