@@ -6,11 +6,12 @@
 @section('extra-styles')
 <style>
     .form-container {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        border: 1px solid #334155;
         max-width: 600px;
+        margin: 0 auto;
     }
     .form-group {
         margin-bottom: 1.5rem;
@@ -18,32 +19,37 @@
     label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: #cbd5e1;
         font-weight: bold;
     }
     input, select {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
         font-size: 1rem;
+        background: #1e293b;
+        color: #e2e8f0;
+        box-sizing: border-box;
     }
     input:focus, select:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: #6366f1;
+        background: #334155;
     }
     .error {
-        color: #dc3545;
+        color: #fca5a5;
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
     .info {
-        background-color: #e7f3ff;
+        background-color: rgba(99, 102, 241, 0.1);
         padding: 0.75rem;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         font-size: 0.9rem;
-        color: #0056b3;
+        color: #c7d2fe;
         margin-bottom: 1rem;
+        border-left: 4px solid #6366f1;
     }
     .button-group {
         display: flex;
@@ -52,28 +58,36 @@
     }
     .btn {
         padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 4px;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 1rem;
         display: inline-block;
         flex: 1;
         text-align: center;
+        background: #1e293b;
+        color: #e2e8f0;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
     }
     .btn-primary {
-        background-color: #ffc107;
-        color: #333;
+        background-color: #1e293b;
+        color: #e2e8f0;
     }
     .btn-primary:hover {
-        background-color: #e0a800;
+        background-color: #334155;
     }
     .btn-secondary {
-        background-color: #6c757d;
-        color: white;
+        background-color: #1e293b;
+        color: #e2e8f0;
     }
     .btn-secondary:hover {
-        background-color: #545b62;
+        background-color: #334155;
     }
 </style>
 @endsection

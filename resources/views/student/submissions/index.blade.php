@@ -179,7 +179,9 @@
             </thead>
             <tbody id="submissions-body">
                 @foreach($submissions as $submission)
-                   
+                    @php
+                        $statusKey = $submission->grade ? 'graded' : 'submitted';
+                    @endphp
                     <tr data-course="{{ $submission->tp->class->name }}"
                         data-status="{{ $statusKey }}">
                         <td>

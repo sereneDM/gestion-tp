@@ -7,6 +7,7 @@
 <style>
     .form-container {
         max-width: 800px;
+        margin: 0 auto;
         background: #0f172a;
         border: 1px solid #334155;
         border-radius: 1rem;
@@ -130,7 +131,7 @@
     }
     .btn {
         padding: 0.75rem 1.5rem;
-        border: none;
+        border: 1px solid #334155;
         border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
@@ -139,17 +140,28 @@
         flex: 1;
         text-align: center;
         color: #e2e8f0;
+        background: #1e293b;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
     }
     .btn-primary {
-        background-color: #4f46e5;
-        color: white;
+        background: #1e293b;
+        color: #e2e8f0;
     }
-    .btn-primary:hover { background-color: #4338ca; }
+    .btn-primary:hover {
+        background: #334155;
+    }
     .btn-secondary {
-        background-color: #475569;
-        color: white;
+        background: #1e293b;
+        color: #e2e8f0;
     }
-    .btn-secondary:hover { background-color: #334155; }
+    .btn-secondary:hover {
+        background: #334155;
+    }
     .course-info {
         background: #0f172a;
         border-left: 4px solid #4f46e5;

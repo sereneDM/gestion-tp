@@ -7,29 +7,40 @@
 <style>
     .btn {
         padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        background: #1e293b;
+        color: #e2e8f0;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
     }
     .btn-secondary {
-        background-color: #6c757d;
-        color: white;
+        background-color: #1e293b;
+        color: #e2e8f0;
+    }
+    .btn-secondary:hover {
+        background: #334155;
     }
     .section {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
+        border-radius: 1rem;
         margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
     }
     .section h2 {
-        color: #007bff;
+        color: #c7d2fe;
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid #334155;
     }
     .info-row {
         display: flex;
@@ -39,37 +50,47 @@
     .info-label {
         font-weight: bold;
         min-width: 200px;
-        color: #555;
+        color: #cbd5e1;
     }
     .info-value {
-        color: #333;
+        color: #e2e8f0;
     }
     .join-code {
         font-family: monospace;
-        background: #007bff;
-        color: white;
+        background: #1e293b;
+        color: #818cf8;
         padding: 0.5rem 1rem;
-        border-radius: 4px;
+        border-radius: 0.75rem;
         font-size: 1.2rem;
         font-weight: bold;
+        border: 1px solid #334155;
     }
     table {
         width: 100%;
         border-collapse: collapse;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        overflow: hidden;
     }
     thead {
-        background-color: #007bff;
-        color: white;
+        background-color: #1e293b;
+        border-bottom: 2px solid #334155;
     }
-    th, td {
+    th {
         padding: 1rem;
         text-align: left;
+        color: #cbd5e1;
+        font-weight: bold;
     }
-    tbody tr {
-        border-bottom: 1px solid #ddd;
+    td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #334155;
+        color: #e2e8f0;
     }
     tbody tr:hover {
-        background-color: #f8f9fa;
+        background-color: #1e293b;
     }
 </style>
 @endsection

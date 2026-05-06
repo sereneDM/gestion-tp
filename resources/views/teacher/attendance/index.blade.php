@@ -6,24 +6,36 @@
 @section('extra-styles')
 <style>
     .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
+        padding: 0.65rem 1.5rem;
+        border: 1px solid #334155;
         border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
         color: #e2e8f0;
+        background: #1e293b;
+        font-weight: 500;
+        transition: all 0.2s;
     }
-    .btn-secondary {
-        background-color: #475569;
-        color: white;
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
     }
     .btn-primary {
-        background-color: #4f46e5;
-        color: white;
-        font-size: 1rem;
+        background: #1e293b;
+        color: #e2e8f0;
         width: 100%;
+    }
+    .btn-primary:hover {
+        background: #334155;
+    }
+    .btn-secondary {
+        background: #1e293b;
+        color: #e2e8f0;
+    }
+    .btn-secondary:hover {
+        background: #334155;
     }
     .header-actions {
         margin-bottom: 1.5rem;
@@ -34,7 +46,8 @@
         padding: 2rem;
         border-radius: 1rem;
         box-shadow: 0 12px 24px rgba(15,23,42,0.25);
-        max-width: 800px;
+        max-width: 600px;
+        margin: 0 auto;
         border: 1px solid #334155;
     }
     .form-group {

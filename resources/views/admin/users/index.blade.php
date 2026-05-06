@@ -7,33 +7,43 @@
 <style>
     .btn {
         padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        background: #1e293b;
+        color: #e2e8f0;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
     }
     .btn-primary {
-        background-color: #007bff;
-        color: white;
+        background-color: #1e293b;
+        color: #e2e8f0;
     }
     .btn-primary:hover {
-        background-color: #0056b3;
+        background-color: #334155;
     }
     .btn-warning {
-        background-color: #ffc107;
-        color: #333;
+        background-color: #1e293b;
+        color: #fbbf24;
+        border-color: #92400e;
     }
     .btn-warning:hover {
-        background-color: #e0a800;
+        background-color: #92400e;
     }
     .btn-danger {
-        background-color: #dc3545;
-        color: white;
+        background-color: #1e293b;
+        color: #fca5a5;
+        border-color: #7f1d1d;
     }
     .btn-danger:hover {
-        background-color: #c82333;
+        background-color: #7f1d1d;
     }
     .btn-small {
         padding: 0.4rem 0.8rem;
@@ -46,38 +56,48 @@
     table {
         width: 100%;
         border-collapse: collapse;
-        background: white;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        overflow: hidden;
     }
     thead {
-        background-color: #007bff;
-        color: white;
+        background-color: #1e293b;
+        border-bottom: 2px solid #334155;
     }
-    th, td {
+    th {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        color: #cbd5e1;
+        font-weight: bold;
+    }
+    td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #334155;
+        color: #e2e8f0;
     }
     tbody tr:hover {
-        background-color: #f8f9fa;
+        background-color: #1e293b;
     }
     .role-badge {
         padding: 0.3rem 0.8rem;
-        border-radius: 20px;
+        border-radius: 9999px;
         font-size: 0.85rem;
         font-weight: bold;
         display: inline-block;
     }
     .role-student {
-        background-color: #e3f2fd;
-        color: #1976d2;
+        background-color: rgba(99, 102, 241, 0.15);
+        color: #c7d2fe;
     }
     .role-teacher {
-        background-color: #fff3e0;
-        color: #f57c00;
+        background-color: rgba(251, 191, 36, 0.15);
+        color: #fef08a;
     }
     .role-admin {
-        background-color: #ffebee;
-        color: #c62828;
+        background-color: rgba(244, 63, 94, 0.15);
+        color: #ff6b9d;
     }
     .action-buttons {
         display: flex;
@@ -88,14 +108,28 @@
     }
     select {
         padding: 0.5rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
         font-size: 0.9rem;
-        background: white;
+        background: #1e293b;
+        color: #e2e8f0;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    select:hover {
+        border-color: #6366f1;
+        background: #334155;
     }
     select:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: #6366f1;
+        background: #334155;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+    /* Option styling for dropdown items */
+    select option {
+        background: #1e293b;
+        color: #e2e8f0;
     }
 </style>
 @endsection
