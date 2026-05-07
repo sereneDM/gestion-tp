@@ -1,0 +1,250 @@
+/* ════════════════════════════════════════════════════════════
+   SHARED POST STYLES - Used across all views
+   ════════════════════════════════════════════════════════════ */
+
+/* 🎨 POST CARD - Main container */
+.post-card {
+    background: #0f172a;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    margin-bottom: 2rem;
+    transition: border-color 0.2s;
+}
+
+.post-card:hover {
+    border-color: #475569;
+}
+
+/* 📌 POST HEADER - Title + Meta info */
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #334155;
+}
+
+.post-info {
+    flex: 1;
+}
+
+.post-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.author-info {
+    flex: 1;
+}
+
+.author-name {
+    font-weight: bold;
+    color: #f1f5f9;
+    margin-bottom: 0.25rem;
+}
+
+.post-meta {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+/* 🏷️ TYPE BADGE */
+.post-type-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    display: inline-block;
+}
+
+.type-announcement {
+    background: rgba(251, 191, 36, 0.15);
+    color: #fbbf24;
+}
+
+.type-tp_posted {
+    background: rgba(34, 197, 94, 0.15);
+    color: #86efac;
+}
+
+.type-reminder {
+    background: rgba(239, 68, 68, 0.15);
+    color: #fca5a5;
+}
+
+.type-general {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+}
+
+/* ✍️ POST CONTENT */
+.post-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #f1f5f9;
+    margin: 0.5rem 0;
+}
+
+.post-content {
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin: 1.5rem 0;
+    white-space: pre-line;
+}
+
+/* 📚 POST COURSE INFO */
+.post-course {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 4px solid #6366f1;
+    border-radius: 4px;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #a5b4fc;
+}
+
+/* 📎 ATTACHMENTS */
+.post-attachment {
+    margin-top: 1rem;
+}
+
+.attachment-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #4f46e5;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.attachment-btn:hover {
+    background: #4338ca;
+}
+
+/* 📭 EMPTY STATE */
+.no-posts {
+    background: #1e293b;
+    padding: 3rem;
+    text-align: center;
+    color: #64748b;
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FEED LAYOUT STYLES
+   ════════════════════════════════════════════════════════════ */
+
+.feed-section {
+    margin-top: 2rem;
+}
+
+.feed-header {
+    background: #0f172a;
+    padding: 1.5rem;
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #334155;
+    border-bottom: 2px solid #334155;
+}
+
+.feed-header h2 {
+    margin: 0;
+    color: #f1f5f9;
+}
+
+/* ════════════════════════════════════════════════════════════
+   COMMENTS SECTION
+   ════════════════════════════════════════════════════════════ */
+
+.comments-section {
+    background: #1e293b;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid #334155;
+}
+
+.comment {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.comment-body {
+    flex: 1;
+}
+
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #e2e8f0;
+    font-size: 0.95rem;
+}
+
+.comment-role {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    background: #334155;
+    color: #94a3b8;
+}
+
+.comment-role.teacher {
+    background: rgba(236, 72, 153, 0.15);
+    color: #f9a8d4;
+}
+
+.comment-time {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-left: auto;
+}
+
+.comment-content {
+    color: #cbd5e1;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+
+.reply-btn,
+.delete-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.reply-btn {
+    color: #818cf8;
+}
+
+.delete-btn {
+    color: #f87171;
+}
+
+.reply-btn:hover {
+    color: #a5b4fc;
+}
+
+.delete-btn:hover {
+    color: #fca5a5;
+}

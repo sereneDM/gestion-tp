@@ -6,25 +6,47 @@
 @section('extra-styles')
 <style>
     .btn {
-        display: block;
-        width: 100%;
-        padding: 0.65rem;
+        display: inline-block;
+        padding: 0.65rem 1.5rem;
         text-align: center;
         text-decoration: none;
         border-radius: 0.75rem;
-        font-weight: bold;
+        font-weight: 500;
         font-size: 0.9rem;
         transition: all 0.2s;
-        border: none;
+        border: 1px solid #334155;
         cursor: pointer;
-        color: white;
+        background: #1e293b;
+        color: #e2e8f0;
     }
-    .btn-primary        { background: #4f46e5; }
-    .btn-primary:hover  { background: #4338ca; }
-    .btn-success        { background: #22c55e; }
-    .btn-success:hover  { background: #16a34a; }
-    .btn-info           { background: #0891b2; }
-    .btn-info:hover     { background: #0e7490; }
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
+    }
+    .btn-primary        { background: #1e293b; color: #e2e8f0; }
+    .btn-primary:hover  { background: #334155; }
+    .btn-success        { background: #1e293b; color: #e2e8f0; }
+    .btn-success:hover  { background: #334155; }
+    .btn-info           { background: #1e293b; color: #e2e8f0; }
+    .btn-info:hover     { background: #334155; }
+
+    /* ── Form Centering ── */
+    .form-centered {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+        background: #0f172a;
+        border-radius: 1rem;
+        border: 1px solid #334155;
+    }
+    .form-centered form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .form-centered .btn {
+        width: 100%;
+    }
 
     /* ── Tabs (matches teacher) ── */
     .tabs {
@@ -388,36 +410,7 @@
         }
     });
 </script>
-@endsection@extends('layouts.app')
-
-@section('title', $course->name)
-@section('page-title', $course->name)
-
-@section('extra-styles')
-<style>
-    .btn {
-        display: block;
-        width: 100%;
-        padding: 0.65rem;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 0.75rem;
-        font-weight: bold;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        border: none;
-        cursor: pointer;
-        color: white;
-    }
-    .btn-primary        { background: #4f46e5; }
-    .btn-primary:hover  { background: #4338ca; }
-    .btn-success        { background: #22c55e; }
-    .btn-success:hover  { background: #16a34a; }
-    .btn-info           { background: #0891b2; }
-    .btn-info:hover     { background: #0e7490; }
-
-    /* ── Tabs (matches teacher) ── */
-    .tabs {
+@endsection
         display: flex;
         gap: 0.5rem;
         margin-bottom: 2rem;

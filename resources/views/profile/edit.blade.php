@@ -306,11 +306,11 @@ input:focus { outline: none; border-color: #3b82f6; }
         </form>
     @endif
 </div>
-
-<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <script>
+// ✅ Remove the import lines — Cropper is already global via CDN
 let cropper;
 
 function previewImage(event) {
@@ -366,32 +366,5 @@ function checkStrength(password) {
     else if (score <= 4) { bar.style.background = '#ffc107'; }
     else                 { bar.style.background = '#28a745'; }
 }
-</script>
-@endsection
-
-@section('extra-scripts')
-<script>
-const originalName = {{ Js::from(old('name', $user->name)) }};
-
-function checkChanges() {
-    const nameField = document.querySelector('input[name="name"]');
-    const fileInput = document.getElementById('profile_picture');
-    const submitBtn = document.getElementById('profile-submit');
-
-    const nameChanged = nameField.value.trim() !== originalName.trim();
-    const photoSelected = fileInput.files && fileInput.files.length > 0;
-    const hasChanged = nameChanged || photoSelected;
-
-    submitBtn.disabled = !hasChanged;
-    submitBtn.style.opacity = hasChanged ? '1' : '0.4';
-    submitBtn.style.cursor = hasChanged ? 'pointer' : 'not-allowed';
-    submitBtn.style.pointerEvents = hasChanged ? 'auto' : 'none';
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    checkChanges();
-    document.querySelector('input[name="name"]').addEventListener('input', checkChanges);
-    document.getElementById('profile_picture').addEventListener('change', checkChanges);
-});
 </script>
 @endsection

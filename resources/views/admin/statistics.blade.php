@@ -7,16 +7,27 @@
 <style>
     .btn {
         padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        background: #1e293b;
+        color: #e2e8f0;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
     }
     .btn-secondary {
-        background-color: #6c757d;
-        color: white;
+        background-color: #1e293b;
+        color: #e2e8f0;
+    }
+    .btn-secondary:hover {
+        background: #334155;
     }
     .stats-grid {
         display: grid;
@@ -25,37 +36,37 @@
         margin-bottom: 2rem;
     }
     .stat-card {
-        background: white;
+        background: #0f172a;
         padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        border: 1px solid #334155;
         text-align: center;
     }
     .stat-number {
         font-size: 2.5rem;
         font-weight: bold;
-        color: #007bff;
+        color: #818cf8;
     }
     .stat-label {
-        color: #666;
+        color: #94a3b8;
         margin-top: 0.5rem;
         font-size: 0.9rem;
     }
     .section {
-        background: white;
+        background: #0f172a;
         padding: 2rem;
-        border-radius: 8px;
+        border-radius: 1rem;
         margin-bottom: 2rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
     }
     .section h2 {
-        color: #007bff;
+        color: #c7d2fe;
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid #334155;
     }
     .section-heading {
-        color: #333;
+        color: #cbd5e1;
         margin-bottom: 1rem;
         margin-top: 2rem;
     }
@@ -67,16 +78,23 @@
     table {
         width: 100%;
         border-collapse: collapse;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
+        overflow: hidden;
     }
     th, td {
         padding: 1rem;
         text-align: left;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid #334155;
     }
     th {
-        background-color: #f8f9fa;
+        background-color: #1e293b;
         font-weight: bold;
-        color: #555;
+        color: #cbd5e1;
+    }
+    td {
+        color: #e2e8f0;
     }
     tr:hover {
         background-color: #f8f9fa;

@@ -6,36 +6,48 @@
 @section('extra-styles')
 <style>
     .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 4px;
+        padding: 0.65rem 1.5rem;
+        border: 1px solid #334155;
+        border-radius: 0.75rem;
         cursor: pointer;
         text-decoration: none;
         font-size: 0.9rem;
         display: inline-block;
+        background: #1e293b;
+        color: #e2e8f0;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    .btn:hover {
+        background: #334155;
+        border-color: #475569;
     }
     .btn-secondary {
-        background-color: #6c757d;
-        color: white;
+        background-color: #1e293b;
+        color: #e2e8f0;
     }
     .btn-secondary:hover {
-        background-color: #545b62;
+        background-color: #334155;
+        border-color: #475569;
     }
     .btn-danger {
-        background-color: #dc3545;
-        color: white;
+        background-color: #1e293b;
+        color: #fca5a5;
+        border-color: #7f1d1d;
     }
     .btn-danger:hover {
-        background-color: #c82333;
+        background-color: #7f1d1d;
+        border-color: #991b1b;
     }
     .btn-primary {
-        background-color: #007bff;
-        color: white;
+        background-color: #1e293b;
+        color: #e2e8f0;
         font-size: 1rem;
         padding: 0.75rem 2rem;
     }
     .btn-primary:hover {
-        background-color: #0056b3;
+        background-color: #334155;
+        border-color: #475569;
     }
     .header-buttons {
         display: flex;
@@ -44,26 +56,27 @@
         justify-content: flex-end;
     }
     .info-text {
-        background-color: #e7f3ff;
+        background-color: rgba(99, 102, 241, 0.1);
         padding: 1rem;
-        border-radius: 4px;
-        color: #0056b3;
+        border-radius: 0.75rem;
+        color: #c7d2fe;
+        border-left: 4px solid #6366f1;
         font-size: 0.9rem;
         margin-bottom: 1.5rem;
     }
     .settings-section {
-        background: white;
-        border-radius: 8px;
+        background: #0f172a;
+        border-radius: 1rem;
         padding: 2rem;
         margin-bottom: 1.5rem;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border: 1px solid #334155;
     }
     .section-title {
         font-size: 1.3rem;
-        color: #007bff;
+        color: #c7d2fe;
         margin-bottom: 1.5rem;
         padding-bottom: 0.5rem;
-        border-bottom: 2px solid #f0f0f0;
+        border-bottom: 2px solid #334155;
     }
     .form-group {
         margin-bottom: 1.5rem;
@@ -71,7 +84,7 @@
     label {
         display: block;
         margin-bottom: 0.5rem;
-        color: #333;
+        color: #cbd5e1;
         font-weight: bold;
     }
     input[type="text"],
@@ -81,9 +94,12 @@
     textarea {
         width: 100%;
         padding: 0.75rem;
-        border: 1px solid #ddd;
-        border-radius: 4px;
+        border: 1px solid #475569;
+        border-radius: 0.75rem;
         font-size: 1rem;
+        background: #1e293b;
+        color: #e2e8f0;
+        box-sizing: border-box;
         font-family: Arial, sans-serif;
     }
     textarea {
@@ -92,7 +108,8 @@
     }
     input:focus, textarea:focus {
         outline: none;
-        border-color: #007bff;
+        border-color: #6366f1;
+        background: #334155;
     }
     .checkbox-group {
         display: flex;
@@ -103,17 +120,19 @@
         height: 20px;
         width: 20px;
         cursor: pointer;
+        accent-color: #6366f1;
     }
     .checkbox-group label {
         margin: 0;
         font-weight: normal;
         cursor: pointer;
+        color: #cbd5e1;
     }
     .save-button-container {
-        background: white;
+        background: #0f172a;
         padding: 1.5rem;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        border-radius: 1rem;
+        border: 1px solid #334155;
         display: flex;
         justify-content: center;
         gap: 1rem;
