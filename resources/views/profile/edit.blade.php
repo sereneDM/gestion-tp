@@ -4,6 +4,7 @@
 @section('page-title', 'Paramètres de Mon Profil')
 
 @section('extra-styles')
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
 <style>
 .profile-grid {
     display: grid;
@@ -306,11 +307,9 @@ input:focus { outline: none; border-color: #3b82f6; }
         </form>
     @endif
 </div>
-<link href=https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 <script>
-// ✅ Remove the import lines — Cropper is already global via CDN
 let cropper;
 
 function previewImage(event) {
@@ -322,7 +321,6 @@ function previewImage(event) {
     container.style.display = 'block';
     if (cropper) cropper.destroy();
     cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1, autoCropArea: 1 });
-    checkChanges();
 }
 
 function cancelImage() {
@@ -331,7 +329,6 @@ function cancelImage() {
     container.style.display = 'none';
     if (cropper) { cropper.destroy(); cropper = null; }
     fileInput.value = '';
-    checkChanges();
 }
 
 document.getElementById('profile-form').addEventListener('submit', function () {

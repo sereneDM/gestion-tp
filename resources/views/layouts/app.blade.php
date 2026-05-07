@@ -291,6 +291,10 @@
 input[type="file"] {
     display: none;
 }
+/* Override layout's file input hiding */
+#profile_picture {
+    display: block !important;
+}
 </style>
 
 <script>
