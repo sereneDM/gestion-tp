@@ -12,6 +12,33 @@
 .post-title { font-size: 1.8rem; word-break: break-word; }
 .post-content { font-size: 1.05rem; }
 
+.post-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #334155;
+}
+.like-btn {
+    background: none;
+    border: none;
+    padding: 0.25rem 0.4rem;
+    cursor: pointer;
+    color: #94a3b8;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+}
+.like-btn:hover { color: #e2137a; }
+.like-btn:hover .like-icon { transform: scale(1.3); }
+.like-btn.liked { color: #e2137a; }
+.like-btn.liked .like-icon { transform: scale(1.15); }
+.like-btn:active { transform: scale(0.9); }
+.like-icon { transition: transform 0.15s; display: inline-block; }
+
 .replies {
     margin-top: 1rem;
     margin-left: 1rem;
@@ -319,6 +346,18 @@
             📎 Télécharger la pièce jointe
         </a>
     @endif
+
+    <div class="post-actions" style="margin-top: 1rem;">
+        <button
+            class="like-btn {{ $post->is_liked ? 'liked' : '' }}"
+            data-type="post"
+            data-id="{{ $post->id }}">
+            
+            <span class="like-icon">{{ $post->is_liked ? '❤️' : '🤍' }}</span>
+
+            <span class="like-count">{{ $post->likes_count }}</span>
+        </button>
+    </div>
 </div>
 
 {{-- Edit Modal --}}
@@ -551,6 +590,26 @@ document.querySelectorAll('.comment-input').forEach(textarea => {
             e.preventDefault();
             this.closest('form').submit();
         }
+    });
+});
+
+document.querySelectorAll('.like-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const id = btn.dataset.id;
+
+        const res = await fetch(`/posts/${id}/like`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        });
+
+        const data = await res.json();
+
+        btn.querySelector('.like-icon').textContent = data.liked ? '❤️' : '🤍';
+        btn.querySelector('.like-count').textContent = data.count;
+        btn.classList.toggle('liked', data.liked);
     });
 });
 </script>

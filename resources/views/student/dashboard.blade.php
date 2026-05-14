@@ -80,6 +80,7 @@
     .like-btn:hover .like-icon { transform: scale(1.3); }
     .like-btn.liked { color: #e2137a; }
     .like-btn.liked .like-icon { transform: scale(1.15); }
+    .like-btn:active { transform: scale(0.9); }
     .like-icon { transition: transform 0.15s; display: inline-block; }
 
     .comment-count-link {
@@ -187,11 +188,11 @@
             {{-- Like + comment count --}}
             <div class="post-actions">
                 <button
-                    class="like-btn {{ $post->isLikedBy(auth()->id()) ? 'liked' : '' }}"
+                    class="like-btn {{ $post->is_liked ? 'liked' : '' }}"
                     data-type="post"
                     data-id="{{ $post->id }}">
-                    <span class="like-icon">{{ $post->isLikedBy(auth()->id()) ? '❤️' : '🤍' }}</span>
-                    <span class="like-count">{{ $post->likes()->count() }}</span>
+                    <span class="like-icon">{{ $post->is_liked ? '❤️' : '🤍' }}</span>
+                    <span class="like-count">{{ $post->likes_count }}</span>
                 </button>
 
                 <a href="{{ route('posts.show', $post->id) }}#comments" class="comment-count-link">

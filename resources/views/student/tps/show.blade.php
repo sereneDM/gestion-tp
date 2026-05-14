@@ -92,10 +92,12 @@
         @if($tp->attachments)
             <div class="info-row">
                 <div class="info-label">Énoncé PDF:</div>
-                <div class="info-value">
-                    <a href="{{ asset('storage/' . $tp->attachments) }}" target="_blank" style="color: #3b82f6;">
-                        📎 Télécharger l'énoncé
-                    </a>
+                <div class="info-value" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    @foreach((array)$tp->attachments as $attachment)
+                        <a href="{{ asset('storage/' . $attachment) }}" target="_blank" style="color: #3b82f6;">
+                            📎 Télécharger {{ basename($attachment) }}
+                        </a>
+                    @endforeach
                 </div>
             </div>
         @endif
@@ -237,11 +239,13 @@
 
             @if($submission->attachments)
                 <div class="info-row">
-                    <div class="info-label">Fichier soumis:</div>
-                    <div class="info-value">
-                        <a href="{{ asset('storage/' . $submission->attachments) }}" target="_blank" style="color: #3b82f6;">
-                            📥 Télécharger mon fichier
-                        </a>
+                    <div class="info-label">Fichier(s) soumis:</div>
+                    <div class="info-value" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        @foreach((array)$submission->attachments as $attachment)
+                            <a href="{{ asset('storage/' . $attachment) }}" target="_blank" style="color: #3b82f6;">
+                                📥 Télécharger {{ basename($attachment) }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
             @endif

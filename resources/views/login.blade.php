@@ -1,329 +1,603 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Plateforme TP</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connexion - Plateforme TP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #020817;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
+body {
+  font-family: 'Inter', sans-serif;
+  height: 100vh;
+  display: flex;
+  background: #ffffff;
+  color: #0f172a;
+}
 
-        /* ── Galaxy background ── */
-        .stars {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background:
-                radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 60% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
-                #020817;
-        }
+/* ── LEFT SIDE ── */
+.left {
+  flex: 1;
+  background: #4f46e5;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+}
 
-        .stars::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 40% 10%, rgba(255,255,255,0.8) 0%, transparent 100%),
-                radial-gradient(1px 1px at 55% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.6) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 80% 70%, rgba(255,255,255,0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 90% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 15% 75%, rgba(255,255,255,0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 35% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 50% 35%, rgba(255,255,255,0.8) 0%, transparent 100%),
-                radial-gradient(1px 1px at 65% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 85% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 5% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 95% 80%, rgba(255,255,255,0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 45% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 75% 50%, rgba(255,255,255,0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 20% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 60% 5%, rgba(255,255,255,0.8) 0%, transparent 100%),
-                radial-gradient(1px 1px at 30% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 88% 35%, rgba(255,255,255,0.6) 0%, transparent 100%);
-        }
+.left::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 36px 36px;
+  z-index: 0;
+}
 
-        .stars::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                radial-gradient(1px 1px at 12% 30%, rgba(167,139,250,0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 38% 55%, rgba(129,140,248,0.5) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 62% 18%, rgba(167,139,250,0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 78% 82%, rgba(129,140,248,0.4) 0%, transparent 100%),
-                radial-gradient(1px 1px at 92% 60%, rgba(167,139,250,0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 48% 78%, rgba(99,102,241,0.5) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 22% 48%, rgba(139,92,246,0.6) 0%, transparent 100%);
-            animation: twinkle 4s ease-in-out infinite alternate;
-        }
+.left::after {
+  content: "";
+  position: absolute;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139,92,246,0.55), transparent 70%);
+  top: -120px;
+  right: -120px;
+  z-index: 0;
+}
 
-        @keyframes twinkle {
-            0%   { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
+.orb {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.4), transparent 70%);
+  bottom: 40px;
+  left: -80px;
+  z-index: 0;
+}
 
-        /* ── Nebula glow ── */
-        .nebula {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
-            pointer-events: none;
-        }
-        .nebula-1 {
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 70%);
-            top: -100px; left: -100px;
-            animation: drift 12s ease-in-out infinite alternate;
-        }
-        .nebula-2 {
-            width: 400px; height: 400px;
-            background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
-            bottom: -80px; right: -80px;
-            animation: drift 15s ease-in-out infinite alternate-reverse;
-        }
-        .nebula-3 {
-            width: 300px; height: 300px;
-            background: radial-gradient(circle, rgba(59,130,246,0.08) 0%, transparent 70%);
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            animation: drift 18s ease-in-out infinite alternate;
-        }
+.brand,
+.stats,
+.preview {
+  position: relative;
+  z-index: 1;
+}
 
-        @keyframes drift {
-            0%   { transform: translate(0, 0); }
-            100% { transform: translate(30px, 20px); }
-        }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 0.5px solid rgba(255,255,255,0.22);
+  border-radius: 100px;
+  padding: 5px 14px 5px 8px;
+  margin-bottom: 1.6rem;
+}
 
-        /* ── Login card ── */
-        .login-wrapper {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 420px;
-            padding: 1rem;
-        }
+.chip-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
 
-        .login-card {
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            box-shadow:
-                0 0 0 1px rgba(99,102,241,0.1),
-                0 25px 50px rgba(0,0,0,0.5),
-                inset 0 1px 0 rgba(255,255,255,0.05);
-        }
+.chip span {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.04em;
+}
 
-        /* ── Header ── */
-        .login-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+.brand h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  margin-bottom: 1rem;
+}
 
-        .login-logo {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            border-radius: 1rem;
-            font-size: 1.5rem;
-            margin-bottom: 1.25rem;
-            box-shadow: 0 8px 24px rgba(79, 70, 229, 0.4);
-        }
+.brand h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, #a5b4fc, #e879f9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
 
-        .login-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #f1f5f9;
-            letter-spacing: -0.025em;
-            margin-bottom: 0.4rem;
-        }
+.brand > p {
+  opacity: 0.65;
+  line-height: 1.65;
+  font-size: 0.88rem;
+  max-width: 340px;
+}
 
-        .login-subtitle {
-            font-size: 0.875rem;
-            color: #64748b;
-            font-weight: 400;
-        }
+.stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 2rem;
+}
 
-        /* ── Form ── */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+.stat {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+}
 
-        label {
-            display: block;
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: #94a3b8;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
+.stat-val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+}
 
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid #334155;
-            border-radius: 0.75rem;
-            color: #e2e8f0;
-            font-size: 0.95rem;
-            font-family: 'Inter', sans-serif;
-            outline: none;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
+.stat-lbl {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.55);
+  margin-top: 3px;
+}
 
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
+.preview {
+  background: rgba(255,255,255,0.08);
+  border: 0.5px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 1.1rem 1.2rem;
+}
 
-        input::placeholder { color: #475569; }
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
 
-        .error {
-            color: #fca5a5;
-            font-size: 0.8rem;
-            margin-top: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
+.preview-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa, #818cf8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
 
-        .forgot-link {
-            display: block;
-            text-align: right;
-            margin-top: 0.5rem;
-            font-size: 0.8rem;
-            color: #6366f1;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .forgot-link:hover { color: #818cf8; }
+.preview-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: white;
+}
 
-        /* ── Submit button ── */
-        .btn-submit {
-            width: 100%;
-            padding: 0.85rem;
-            background: linear-gradient(135deg, #4f46e5, #6d28d9);
-            color: white;
-            border: none;
-            border-radius: 0.75rem;
-            font-size: 0.95rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-            letter-spacing: 0.01em;
-        }
+.preview-sub {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.5);
+}
 
-        .btn-submit:hover {
-            opacity: 0.92;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-        }
+.preview-score {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #a5b4fc;
+}
 
-        .btn-submit:active {
-            transform: translateY(0);
-        }
+.bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-        /* ── Divider ── */
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #334155, transparent);
-            margin: 1.75rem 0;
-        }
+.bar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
-        .footer-text {
-            text-align: center;
-            font-size: 0.78rem;
-            color: #475569;
-        }
-    </style>
+.bar-label {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.5);
+  width: 36px;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 5px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 100px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, #a5b4fc, #818cf8);
+}
+
+.bar-pct {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  width: 28px;
+  text-align: right;
+}
+
+/* ── RIGHT SIDE ── */
+.right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #fafafa;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.8rem;
+  background: white;
+  border: 1px solid #eef2ff;
+  border-radius: 24px;
+  box-shadow:
+    0 10px 40px rgba(15,23,42,0.07),
+    0 2px 8px rgba(15,23,42,0.04);
+  animation: fadeUp 0.5s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #7c3aed;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #7c3aed;
+}
+
+.login-box h2 {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.3rem;
+  color: #0f172a;
+}
+
+.login-box > p {
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.2rem;
+}
+
+.input-group label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  display: block;
+  margin-bottom: 0.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 13px;
+  font-size: 16px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.5rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  color: #0f172a;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.input-group input:focus {
+  background: white;
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 4px rgba(124,58,237,0.1);
+  outline: none;
+}
+
+.input-group input::placeholder {
+  color: #cbd5e1;
+}
+
+.input-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+}
+
+.remember {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.remember input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+  accent-color: #7c3aed;
+  cursor: pointer;
+}
+
+.error {
+  color: #ef4444;
+  font-size: 0.78rem;
+  margin-top: 0.35rem;
+}
+
+.forgot a {
+  font-size: 0.78rem;
+  color: #6366f1;
+  text-decoration: none;
+}
+
+.forgot a:hover {
+  text-decoration: underline;
+}
+
+button[type="submit"] {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin-top: 1.2rem;
+  padding: 0.95rem;
+  border-radius: 12px;
+  border: none;
+  background: #4f46e5;
+  color: white;
+  font-weight: 700;
+  font-size: 0.92rem;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.01em;
+  transition: background 0.2s, transform 0.15s;
+}
+
+button[type="submit"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-20deg);
+  animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+  0%, 60% { left: -60%; }
+  80%, 100% { left: 120%; }
+}
+
+button[type="submit"]:hover {
+  background: #4338ca;
+  transform: translateY(-2px);
+}
+
+button[type="submit"]:active {
+  transform: scale(0.99);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 1.1rem 0;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #e2e8f0;
+}
+
+.btn-sso {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #374151;
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-sso:hover {
+  background: #f8fafc;
+  border-color: #c7d2fe;
+}
+
+.footer {
+  margin-top: 2rem;
+  font-size: 0.72rem;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.7;
+}
+
+@media (max-width: 900px) {
+  .left { display: none; }
+  .right { flex: 1; }
+}
+</style>
 </head>
 <body>
 
-    <!-- Galaxy background -->
-    <div class="stars"></div>
-    <div class="nebula nebula-1"></div>
-    <div class="nebula nebula-2"></div>
-    <div class="nebula nebula-3"></div>
-
-    <div class="login-wrapper">
-        <div class="login-card">
-
-            <div class="login-header">
-                <div class="login-logo">🎓</div>
-                <div class="login-title">Plateforme TP</div>
-                <div class="login-subtitle">Connectez-vous à votre espace</div>
-            </div>
-
-            <form method="POST" action="{{ route('login') }}">
-                @csrf
-
-                <div class="form-group">
-                    <label for="email">Adresse e-mail</label>
-                    <input type="email" id="email" name="email"
-                           placeholder="vous@exemple.com"
-                           required autofocus value="{{ old('email') }}">
-                    @error('email')
-                        <div class="error">⚠ {{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Mot de passe</label>
-                    <input type="password" id="password" name="password"
-                           placeholder="••••••••" required>
-                    @error('password')
-                        <div class="error">⚠ {{ $message }}</div>
-                    @enderror
-                    <a href="{{ route('password.forgot') }}" class="forgot-link">
-                        Mot de passe oublié ?
-                    </a>
-                </div>
-
-                <button type="submit" class="btn-submit">
-                    Se connecter →
-                </button>
-            </form>
-
-            <div class="divider"></div>
-
-            <div class="footer-text">
-                Plateforme de Gestion des Travaux Pratiques
-            </div>
-
-        </div>
+<!-- LEFT -->
+<div class="left">
+  <span class="orb"></span>
+  <div class="brand">
+    <div class="chip">
+      <div class="chip-dot"><i class="ti ti-code"></i></div>
+      <span>TP Platform</span>
     </div>
+    <h1>Gérez vos TPs<br>avec <em>clarté</em></h1>
+    <p>Soumettez vos projets, suivez vos performances et collaborez — tout en un seul endroit.</p>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-val">248</div>
+        <div class="stat-lbl">Étudiants</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">36</div>
+        <div class="stat-lbl">TPs actifs</div>
+      </div>
+      <div class="stat">
+        <div class="stat-val">94%</div>
+        <div class="stat-lbl">Soumis</div>
+      </div>
+    </div>
+  </div>
+  <div class="preview">
+    <div class="preview-header">
+      <div class="preview-avatar">AS</div>
+      <div>
+        <div class="preview-name">Amira Salah</div>
+        <div class="preview-sub">Informatique · L3</div>
+      </div>
+      <div class="preview-score">92 pts</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-item">
+        <span class="bar-label">TP 1</span>
+        <div class="bar-track"><div class="bar-fill" style="width:88%"></div></div>
+        <span class="bar-pct">88%</span>
+      </div>
+      <div class="bar-item">
+        <span class="bar-label">TP 2</span>
+        <div class="bar-track"><div class="bar-fill" style="width:95%"></div></div>
+        <span class="bar-pct">95%</span>
+      </div>
+      <div class="bar-item">
+        <span class="bar-label">TP 3</span>
+        <div class="bar-track"><div class="bar-fill" style="width:72%"></div></div>
+        <span class="bar-pct">72%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+  <div class="login-box">
+    <div class="eyebrow"><div class="eyebrow-dot"></div> Espace étudiant</div>
+    <h2>Connexion</h2>
+    <p>Bon retour — entrez vos identifiants</p>
+    <form method="POST" action="{{ route('login') }}">
+      @csrf
+      <div class="input-group">
+        <label>Email</label>
+        <div class="input-wrap">
+          <i class="ti ti-mail input-icon"></i>
+          <input type="email" name="email" placeholder="prenom.nom@univ.tn" required>
+        </div>
+        @error('email')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
+      <div class="input-group">
+        <label>Mot de passe</label>
+        <div class="input-wrap">
+          <i class="ti ti-lock input-icon"></i>
+          <input type="password" name="password" placeholder="••••••••" required>
+        </div>
+        <div class="input-meta">
+          <label class="remember">
+            <input type="checkbox" name="remember"> Se souvenir de moi
+          </label>
+          <div class="forgot">
+            <a href="{{ route('password.forgot') }}">Mot de passe oublié ?</a>
+          </div>
+        </div>
+        @error('password')
+          <div class="error">{{ $message }}</div>
+        @enderror
+      </div>
+      <button type="submit">
+        <i class="ti ti-arrow-right"></i> Se connecter
+      </button>
+    </form>
+    <div class="divider">ou continuer avec</div>
+    <button class="btn-sso">
+      <i class="ti ti-building-university"></i> SSO Université
+    </button>
+    <div class="footer">Plateforme de gestion des travaux pratiques</div>
+  </div>
+</div>
 
 </body>
 </html>

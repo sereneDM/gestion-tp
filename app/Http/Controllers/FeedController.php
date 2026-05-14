@@ -19,6 +19,12 @@ class FeedController extends Controller
     {
         $user = Auth::user();
         $post = Post::with(['user', 'class', 'tp', 'comments.user', 'comments.replies.user'])
+                    ->withCount('likes')
+                    ->withExists([
+                        'likes as is_liked' => function ($q) {
+                            $q->where('user_id', auth()->id());
+                        }
+                    ])
                     ->findOrFail($id);
 
         if ($user->isStudent()) {
@@ -122,6 +128,13 @@ class FeedController extends Controller
         if ($user->isStudent()) {
             $posts = Post::visibleToStudent($user->id)
                          ->with(['comments.replies'])
+                         ->withCount('likes')
+                         ->withExists([
+                             'likes as is_liked' => function ($q) {
+                                 $q->where('user_id', auth()->id());
+                             }
+                         ])
+                         ->latest()
                          ->paginate(10);
 
             $enrolledCoursesCount = $user->enrolledClasses()->count();
@@ -139,7 +152,13 @@ class FeedController extends Controller
         } else {
             $posts = Post::where('user_id', $user->id)
                          ->with(['class.students', 'tp', 'comments.replies'])
-                         ->orderBy('created_at', 'desc')
+                         ->withCount('likes')
+                         ->withExists([
+                             'likes as is_liked' => function ($q) {
+                                 $q->where('user_id', auth()->id());
+                             }
+                         ])
+                         ->latest()
                          ->paginate(10);
 
             $courses = ClassModel::where('teacher_id', $user->id)->with('students')->get();
