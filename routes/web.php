@@ -111,7 +111,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::delete('/users/{id}', [AdminController::class, 'destroy'])->name('users.destroy');
     Route::put('/users/{id}/role', [AdminController::class, 'updateRole'])->name('users.update-role');
     Route::get('/classes', [ClassController::class, 'index'])->name('classes.index');
+    Route::get('/classes/create', [ClassController::class, 'create'])->name('classes.create');
+    Route::post('/classes', [ClassController::class, 'store'])->name('classes.store');
     Route::get('/classes/{id}', [ClassController::class, 'show'])->name('classes.show');
+    Route::get('/classes/{id}/edit', [ClassController::class, 'edit'])->name('classes.edit');
+    Route::put('/classes/{id}', [ClassController::class, 'update'])->name('classes.update');
     Route::delete('/classes/{id}', [ClassController::class, 'destroy'])->name('classes.destroy');
     Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
     Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');

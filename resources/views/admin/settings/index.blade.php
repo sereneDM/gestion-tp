@@ -1,73 +1,19 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('title', 'Paramètres Système')
 
+@section('breadcrumb')
+    <span class="tb-bc-current">Paramètres</span>
+@endsection
+
 @section('extra-styles')
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-    :root {
-        --ink:        #0d1117;
-        --ink-2:      #3d4550;
-        --ink-3:      #6b7585;
-        --ink-4:      #9aa3af;
-        --line:       #e8ebef;
-        --line-2:     #d1d6dd;
-        --surface:    #ffffff;
-        --surface-2:  #f5f6f8;
-        --surface-3:  #eef0f3;
-        --accent:     #3d5afe;
-        --accent-2:   #5271ff;
-        --accent-bg:  #eef1ff;
-        --danger:     #e53935;
-        --warning:    #f59e0b;
-        --success:    #10b981;
-        --radius-sm:  6px;
-        --radius-md:  10px;
-        --radius-lg:  16px;
-        --radius-xl:  22px;
-        --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-        --font-body:  'DM Sans', sans-serif;
-        --font-serif: 'DM Serif Display', serif;
-    }
-
     .settings-wrapper {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0.5rem 0 3rem;
-    }
-
-    .page-header {
-        margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-    }
-
-    .page-title {
-        font-family: var(--font-serif);
-        font-size: 2.25rem;
-        color: var(--ink);
-    }
-
-    .info-box {
-        background: var(--surface-3);
-        border-radius: var(--radius-lg);
-        padding: 1rem 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.875rem;
-        color: var(--ink-3);
-        margin-bottom: 2rem;
-        border: 1px solid var(--line);
+        max-width: 800px;
     }
 
     .card {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: var(--radius-xl);
         padding: 2rem;
-        box-shadow: var(--shadow-sm);
         margin-bottom: 2rem;
     }
 
@@ -83,49 +29,6 @@
         gap: 0.75rem;
         border-bottom: 1px solid var(--line);
         padding-bottom: 1rem;
-    }
-
-    .form-group {
-        margin-bottom: 2rem;
-    }
-
-    .form-group:last-child {
-        margin-bottom: 0;
-    }
-
-    .label {
-        display: block;
-        font-size: 0.75rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--ink-2);
-        margin-bottom: 0.75rem;
-        letter-spacing: 0.05em;
-    }
-
-    .input {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        background: var(--surface-2);
-        color: var(--ink);
-        font-family: var(--font-body);
-        font-size: 0.95rem;
-        transition: all 0.2s;
-    }
-
-    .input:focus {
-        outline: none;
-        border-color: var(--accent);
-        background: var(--surface);
-        box-shadow: 0 0 0 4px var(--accent-bg);
-    }
-
-    textarea.input {
-        min-height: 100px;
-        resize: vertical;
-        line-height: 1.6;
     }
 
     .toggle-group {
@@ -188,38 +91,42 @@
         border: 1px solid var(--line);
     }
 
-    .btn {
+    .btn-save {
+        background: var(--accent);
+        color: white;
+        padding: 0.875rem 1.5rem;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        font-size: 0.875rem;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
+    }
+
+    .btn-save:hover {
+        background: var(--accent-2);
+        box-shadow: 0 4px 12px rgba(61, 90, 254, 0.2);
+    }
+
+    .btn-reset {
+        background: transparent;
+        color: var(--danger);
+        border: 1px solid rgba(229, 57, 53, 0.2);
         padding: 0.875rem 1.5rem;
         border-radius: var(--radius-md);
         font-weight: 700;
         font-size: 0.875rem;
         cursor: pointer;
         transition: all 0.2s;
-        text-decoration: none;
-        border: 1px solid transparent;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .btn-primary {
-        background: var(--accent);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--accent-2);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(61, 90, 254, 0.2);
-    }
-
-    .btn-danger-outline {
-        background: transparent;
-        color: var(--danger);
-        border-color: rgba(229, 57, 53, 0.2);
-    }
-
-    .btn-danger-outline:hover {
+    .btn-reset:hover {
         background: #fef2f2;
         border-color: var(--danger);
     }
@@ -228,13 +135,12 @@
 
 @section('content')
 <div class="settings-wrapper">
-    <div class="page-header">
-        <h1 class="page-title">Paramètres Système</h1>
-    </div>
+    <h1 class="page-title">Paramètres Système</h1>
+    <p class="page-subtitle">Configurez le comportement global de la plateforme.</p>
 
-    <div class="info-box">
-        <i class="ti ti-info-circle"></i>
-        <span>Ces réglages affectent le fonctionnement global de la plateforme. Toute modification est instantanée.</span>
+    <div class="card" style="display:flex; align-items:flex-start; gap:10px; background:var(--accent-bg); border:1px solid rgba(61,90,254,.15); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:24px; font-size:12.5px; color:var(--accent); line-height:1.5;">
+        <i class="ti ti-info-circle" style="font-size:16px; flex-shrink:0; margin-top:1px;"></i>
+        Ces réglages affectent le fonctionnement global de la plateforme. Toute modification est instantanée.
     </div>
 
     <form method="POST" action="{{ route('admin.settings.update') }}">
@@ -311,14 +217,14 @@
         </div>
 
         <div class="footer-actions">
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn-save">
                 <i class="ti ti-device-floppy"></i> Enregistrer les paramètres
             </button>
     </form>
     
     <form method="POST" action="{{ route('admin.settings.reset') }}" onsubmit="return confirm('Réinitialiser tous les paramètres aux valeurs par défaut ?')">
         @csrf
-        <button type="submit" class="btn btn-danger-outline">
+        <button type="submit" class="btn-reset">
             <i class="ti ti-refresh"></i> Réinitialiser
         </button>
     </form>
