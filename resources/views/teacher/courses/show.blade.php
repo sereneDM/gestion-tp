@@ -4,369 +4,526 @@
 @section('page-title', $course->name)
 
 @section('extra-styles')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-    .tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #334155;
-    }
-    .tab {
-        padding: 1rem 2rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-        color: #94a3b8;
-        border-bottom: 3px solid transparent;
-        transition: all 0.3s;
-    }
-    .tab:hover { color: #a5b4fc; }
-    .tab.active {
-        color: #c7d2fe;
-        border-bottom-color: #8b5cf6;
-        font-weight: bold;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+:root {
+    --ink:        #0d1117;
+    --ink-2:      #3d4550;
+    --ink-3:      #6b7585;
+    --ink-4:      #9aa3af;
+    --line:       #e8ebef;
+    --line-2:     #d1d6dd;
+    --surface:    #ffffff;
+    --surface-2:  #f5f6f8;
+    --surface-3:  #eef0f3;
+    --accent:     #3d5afe;
+    --accent-2:   #5271ff;
+    --accent-bg:  #eef1ff;
+    --danger:     #e53935;
+    --danger-bg:  #fff0f0;
+    --warning:    #f59e0b;
+    --warning-bg: #fffbeb;
+    --success:    #10b981;
+    --success-bg: #ecfdf5;
+    --purple:     #7c3aed;
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  16px;
+    --radius-xl:  22px;
+    --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md:  0 4px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-lg:  0 12px 40px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.05);
+    --font-body:  'DM Sans', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-body); background: var(--surface-2); color: var(--ink); }
 
-    .join-code-box {
-        background: #0f172a;
-        color: #e2e8f0;
-        padding: 2rem;
-        border-radius: 1rem;
-        text-align: center;
-        margin-bottom: 2rem;
-        border: 1px solid #334155;
-    }
-    .join-code {
-        font-size: 2.5rem;
-        font-weight: bold;
-        font-family: monospace;
-        letter-spacing: 0.1em;
-        margin: 1rem 0;
-        color: #a5b4fc;
-    }
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    .info-card {
-        background: #0f172a;
-        padding: 1.5rem;
-        border-radius: 1rem;
-        text-align: center;
-        border: 1px solid #334155;
-    }
-    .info-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #818cf8;
-    }
-    .info-label {
-        color: #94a3b8;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-    }
+.page-wrapper { max-width: 1100px; margin: 0 auto; padding: 0.5rem 0 3rem; }
 
-    /* ── TP cards ── */
-    .tps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-    .tp-card {
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        cursor: pointer;
-        transition: transform 0.2s, border-color 0.2s;
-        display: flex;
-        flex-direction: column;
-        min-height: 220px;
-        position: relative;
-    }
-    .tp-card:hover {
-        transform: translateY(-5px);
-        border-color: #475569;
-        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
-    }
-    .tp-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 0.75rem;
-        gap: 0.75rem;
-    }
-    .tp-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #c7d2fe;
-        flex: 1;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        min-width: 0;
-    }
-    .status-badge {
-        display: inline-block;
-        padding: 0.3rem 0.8rem;
-        border-radius: 9999px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-    .status-published { background: rgba(34,197,94,0.15);  color: #86efac; }
-    .status-draft     { background: rgba(251,191,36,0.15); color: #facc15; }
-    .status-closed    { background: rgba(239,68,68,0.15);  color: #fca5a5; }
+/* ── Top menu ── */
+.top-actions { display: flex; justify-content: flex-end; margin-bottom: 1.5rem; position: relative; }
 
-    .tp-description {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 2.88rem;
-        max-height: 2.88rem;
-    }
-    .tp-meta {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-bottom: 0.4rem;
-    }
-    .tp-spacer { flex: 1; }
-    .tp-footer {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 1rem;
-        position: relative;
-    }
+.menu-wrap { position: relative; }
+.menu-btn {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    transition: background 0.15s, color 0.15s;
+}
+.menu-btn:hover { background: var(--surface-2); color: var(--ink); }
 
-    /* ── TP dropdown menu ── */
-    .tp-menu-btn {
-        background: #1e293b;
-        border: 1px solid #334155;
-        color: #e2e8f0;
-        padding: 0.4rem 0.65rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        font-size: 1.1rem;
-        line-height: 1;
-        z-index: 1;
-    }
-    .tp-menu-dropdown {
-        display: none;
-        position: absolute;
-        bottom: 2.5rem;
-        right: 0;
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        min-width: 160px;
-        z-index: 200;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .tp-menu-dropdown a,
-    .tp-menu-dropdown button {
-        display: block;
-        width: 100%;
-        text-align: left;
-        padding: 0.75rem 1rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 0.875rem;
-        text-decoration: none;
-        box-sizing: border-box;
-    }
-    .tp-menu-dropdown a         { color: #e2e8f0; border-radius: 0.75rem 0.75rem 0 0; }
-    .tp-menu-dropdown button    { color: #fca5a5; border-radius: 0 0 0.75rem 0.75rem; }
-    .tp-menu-dropdown a:hover,
-    .tp-menu-dropdown button:hover { background: #334155; }
+.page-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px); right: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    min-width: 190px;
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+.page-dropdown a,
+.page-dropdown button {
+    display: flex; align-items: center; gap: 0.5rem;
+    width: 100%; text-align: left;
+    padding: 0.7rem 1rem;
+    background: none; border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: var(--font-body);
+    color: var(--ink-2);
+    text-decoration: none;
+    transition: background 0.15s;
+}
+.page-dropdown a i,
+.page-dropdown button i { font-size: 15px; color: var(--ink-4); }
+.page-dropdown a:hover,
+.page-dropdown button:hover { background: var(--surface-2); }
+.page-dropdown .danger-item { color: var(--danger) !important; }
+.page-dropdown .danger-item i { color: var(--danger) !important; }
+.page-dropdown .danger-item:hover { background: var(--danger-bg) !important; }
+.page-dropdown-divider { height: 1px; background: var(--line); margin: 0.25rem 0; }
 
-    /* ── buttons ── */
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border: none;
-        border-radius: 0.75rem;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
-        text-align: center;
-        color: #e2e8f0;
-    }
-    .btn-secondary { background: #475569; color: white; }
-    .btn-primary   { background: #4f46e5; color: white; }
-    .btn-warning   { background: #f59e0b; color: #1f2937; }
-    .btn-danger    { background: #dc3545; color: white; }
-    .btn-success   { background: #10b981; color: white; }
-    .btn-small     { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+/* ── Tabs ── */
+.tabs {
+    display: flex; gap: 0.25rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--line);
+}
+.tab {
+    padding: 0.75rem 1.25rem;
+    background: none; border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    cursor: pointer;
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--ink-3);
+    font-family: var(--font-body);
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: color 0.15s;
+}
+.tab i { font-size: 15px; }
+.tab:hover { color: var(--ink-2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
 
-    /* ── students table ── */
-    .students-table {
-        width: 100%;
-        border-collapse: collapse;
-        background: #0f172a;
-    }
-    .students-table thead {
-        background: #334155;
-        color: #e2e8f0;
-    }
-    .students-table th,
-    .students-table td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #475569;
-        color: #cbd5e1;
-    }
-    .students-table tbody tr:hover { background: #1e293b; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        color: #94a3b8;
-    }
+/* ── Join code box ── */
+.join-code-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+.join-code-label {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4); margin-bottom: 0.75rem;
+}
+.join-code {
+    font-size: 2.2rem; font-weight: 700;
+    font-family: monospace; letter-spacing: 0.15em;
+    color: var(--accent); margin-bottom: 1rem;
+}
+.btn-copy {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--ink-2);
+    font-size: 0.82rem; font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+.btn-copy:hover { background: var(--surface-3); border-color: var(--line-2); }
+.btn-copy i { font-size: 14px; }
 
-    /* ── course-level menu ── */
-    #course-menu a:hover,
-    #course-menu button:hover {
-        background: #334155;
-    }
+/* ── Stat tiles ── */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+.stat-tile {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+.stat-tile-val {
+    font-family: var(--font-serif);
+    font-size: 2rem; font-weight: 700;
+    color: var(--ink); line-height: 1;
+}
+.stat-tile-lbl { font-size: 0.78rem; color: var(--ink-3); margin-top: 0.4rem; }
+
+.description-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+.card-label {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4); margin-bottom: 0.6rem;
+}
+.description-card p { font-size: 0.9rem; color: var(--ink-2); line-height: 1.7; }
+
+/* ── TP grid ── */
+.section-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+.section-heading {
+    font-family: var(--font-serif);
+    font-size: 1.4rem; color: var(--ink); letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 0.5rem;
+}
+.count-badge {
+    font-family: var(--font-body);
+    font-size: 0.72rem; font-weight: 700;
+    color: var(--ink-4);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 0.1rem 0.5rem;
+}
+
+.btn-new {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    background: var(--success); color: white;
+    padding: 0.55rem 1.1rem;
+    border: none; border-radius: var(--radius-md);
+    font-size: 0.85rem; font-weight: 600;
+    font-family: var(--font-body); cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 2px 8px rgba(16,185,129,0.25);
+}
+.btn-new:hover { background: #0ea572; transform: translateY(-1px); }
+.btn-new i { font-size: 15px; }
+
+.tps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.25rem;
+}
+
+.tp-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 1.4rem;
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: var(--shadow-sm);
+    display: flex; flex-direction: column; gap: 0.6rem;
+    position: relative; overflow: hidden;
+}
+.tp-card::before {
+    content: "";
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; border-radius: 3px 0 0 3px;
+}
+.tp-card.status-published::before { background: var(--success); }
+.tp-card.status-draft::before     { background: var(--warning); }
+.tp-card.status-closed::before    { background: var(--danger);  }
+.tp-card:hover { border-color: var(--line-2); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.tp-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.tp-title {
+    font-size: 0.97rem; font-weight: 700;
+    color: var(--ink); letter-spacing: -0.01em;
+    flex: 1; min-width: 0;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 0.18rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.7rem; font-weight: 700;
+    white-space: nowrap; flex-shrink: 0;
+}
+.badge i { font-size: 11px; }
+.badge-published { background: var(--success-bg); color: var(--success); }
+.badge-draft     { background: var(--warning-bg); color: var(--warning); }
+.badge-closed    { background: var(--danger-bg);  color: var(--danger);  }
+
+.tp-description {
+    font-size: 0.83rem; color: var(--ink-3); line-height: 1.55;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; min-height: 2.5rem;
+}
+
+.tp-meta {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem; color: var(--ink-4);
+}
+.tp-meta i { font-size: 13px; }
+
+/* TP card footer menu */
+.tp-footer { display: flex; justify-content: flex-end; margin-top: auto; position: relative; }
+
+.tp-menu-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 1rem; line-height: 1;
+    display: flex; align-items: center;
+    transition: background 0.15s, color 0.15s;
+}
+.tp-menu-btn:hover { background: var(--surface-3); color: var(--ink); }
+
+.tp-dropdown {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 4px); right: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    min-width: 160px;
+    z-index: 200;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+.tp-dropdown a,
+.tp-dropdown button {
+    display: flex; align-items: center; gap: 0.5rem;
+    width: 100%; text-align: left;
+    padding: 0.7rem 1rem;
+    background: none; border: none;
+    cursor: pointer; font-size: 0.85rem;
+    font-family: var(--font-body);
+    color: var(--ink-2); text-decoration: none;
+    transition: background 0.15s;
+}
+.tp-dropdown a i,
+.tp-dropdown button i { font-size: 14px; color: var(--ink-4); }
+.tp-dropdown a:hover,
+.tp-dropdown button:hover { background: var(--surface-2); }
+.tp-dropdown .danger-item { color: var(--danger) !important; }
+.tp-dropdown .danger-item i { color: var(--danger) !important; }
+.tp-dropdown .danger-item:hover { background: var(--danger-bg) !important; }
+
+/* ── Students table ── */
+.table-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.students-table { width: 100%; border-collapse: collapse; }
+.students-table thead { background: var(--surface-2); }
+.students-table th {
+    padding: 0.85rem 1.25rem;
+    text-align: left;
+    font-size: 0.72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--ink-4);
+    border-bottom: 1px solid var(--line);
+}
+.students-table td {
+    padding: 0.9rem 1.25rem;
+    font-size: 0.875rem; color: var(--ink-2);
+    border-bottom: 1px solid var(--line);
+}
+.students-table tbody tr:last-child td { border-bottom: none; }
+.students-table tbody tr:hover { background: var(--surface-2); }
+
+.btn-remove {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(229,57,53,0.25);
+    background: var(--danger-bg);
+    color: var(--danger);
+    font-size: 0.78rem; font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-remove:hover { background: #ffcdd2; }
+.btn-remove i { font-size: 13px; }
+
+/* ── Empty state ── */
+.empty-state {
+    text-align: center; padding: 4rem 2rem;
+    background: var(--surface);
+    border: 1px dashed var(--line-2);
+    border-radius: var(--radius-xl);
+    color: var(--ink-3);
+}
+.empty-icon {
+    width: 64px; height: 64px; border-radius: 18px;
+    background: var(--surface-2); border: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem; font-size: 28px; color: var(--ink-4);
+}
+.empty-state h3 { color: var(--ink-2); font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+.empty-state p  { font-size: 0.875rem; max-width: 280px; margin: 0 auto; }
 </style>
 @endsection
 
 @section('content')
+<div class="page-wrapper">
 
-    <!-- Course Actions -->
-    <div style="display:flex; justify-content:flex-end; margin-bottom:2rem; position:relative;">
-        <button onclick="toggleMenu('course-menu')" style="background:#1e293b; border:1px solid #334155; color:#e2e8f0; padding:0.5rem 0.75rem; border-radius:0.5rem; cursor:pointer; font-size:1.2rem;">⋮</button>
-        <div id="course-menu" style="display:none; position:absolute; top:2.5rem; right:0; background:#1e293b; border:1px solid #334155; border-radius:0.75rem; min-width:180px; z-index:100; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
-            <a href="{{ route('teacher.courses.edit', $course->id) }}?from=tps"
-   style="display:block; padding:0.75rem 1rem; color:#e2e8f0; text-decoration:none; border-radius:0.75rem 0.75rem 0 0;">
-    ✏️ Modifier le cours
-</a>
-            <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
-                @csrf
-                <button type="submit"
-                        onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')"
-                        style="width:100%; text-align:left; padding:0.75rem 1rem; background:none; border:none; color:#e2e8f0; cursor:pointer;">
-                    🔄 Nouveau code
-                </button>
-            </form>
-            <form method="POST" action="{{ route('teacher.courses.destroy', $course->id) }}">
-                @csrf
-                @method('DELETE')
-                <button type="submit"
-                        onclick="return confirm('Supprimer ce cours? Action irréversible.')"
-                        style="width:100%; text-align:left; padding:0.75rem 1rem; background:none; border:none; color:#fca5a5; cursor:pointer; border-radius:0 0 0.75rem 0.75rem;">
-                    🗑️ Supprimer le cours
-                </button>
-            </form>
+    <div class="top-actions">
+        <div class="menu-wrap">
+            <button class="menu-btn" onclick="toggleMenu('course-menu')">
+                <i class="ti ti-dots-vertical"></i>
+            </button>
+            <div class="page-dropdown" id="course-menu">
+                <a href="{{ route('teacher.courses.edit', $course->id) }}?from=info">
+                    <i class="ti ti-edit"></i> Modifier le cours
+                </a>
+                <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
+                    @csrf
+                    <button type="submit" onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')">
+                        <i class="ti ti-refresh"></i> Nouveau code
+                    </button>
+                </form>
+                <div class="page-dropdown-divider"></div>
+                <form method="POST" action="{{ route('teacher.courses.destroy', $course->id) }}">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="danger-item"
+                            onclick="return confirm('Supprimer ce cours? Action irréversible.')">
+                        <i class="ti ti-trash"></i> Supprimer le cours
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('info', event)">📋 Informations</button>
-        <button class="tab" onclick="switchTab('tps', event)">📝 Travaux Pratiques</button>
-        <button class="tab" onclick="switchTab('students', event)">👥 Étudiants</button>
+        <button class="tab active" onclick="switchTab('info', event)">
+            <i class="ti ti-info-circle"></i> Informations
+        </button>
+        <button class="tab" onclick="switchTab('tps', event)">
+            <i class="ti ti-file-text"></i> Travaux Pratiques
+        </button>
+        <button class="tab" onclick="switchTab('students', event)">
+            <i class="ti ti-users"></i> Étudiants
+        </button>
     </div>
 
-    <!-- Tab: Course Info -->
+    {{-- Tab: Info --}}
     <div class="tab-content active" id="tab-info">
+
         <div class="join-code-box">
-            <div style="font-size: 0.9rem; opacity: 0.9;">Code d'accès au cours</div>
+            <div class="join-code-label">Code d'accès au cours</div>
             <div class="join-code" id="joinCode">{{ $course->join_code }}</div>
-            <button class="btn btn-secondary" style="margin-top: 1rem;" onclick="copyJoinCode()">
-                📋 Copier le code
+            <button class="btn-copy" onclick="copyJoinCode()">
+                <i class="ti ti-copy"></i> Copier le code
             </button>
         </div>
 
-        <div class="info-grid">
-            <div class="info-card">
-                <div class="info-number">{{ $course->students->count() }}</div>
-                <div class="info-label">Étudiants inscrits</div>
+        <div class="stat-grid">
+            <div class="stat-tile">
+                <div class="stat-tile-val">{{ $course->students->count() }}</div>
+                <div class="stat-tile-lbl">Étudiants inscrits</div>
             </div>
-            <div class="info-card">
-                <div class="info-number">{{ $course->tps->count() }}</div>
-                <div class="info-label">Travaux pratiques</div>
+            <div class="stat-tile">
+                <div class="stat-tile-val">{{ $course->tps->count() }}</div>
+                <div class="stat-tile-lbl">Travaux pratiques</div>
             </div>
-            <div class="info-card">
-                <div class="info-number">{{ $course->tps->where('status', 'published')->count() }}</div>
-                <div class="info-label">TP publiés</div>
+            <div class="stat-tile">
+                <div class="stat-tile-val">{{ $course->tps->where('status', 'published')->count() }}</div>
+                <div class="stat-tile-lbl">TP publiés</div>
             </div>
         </div>
 
         @if($course->description)
-            <div style="background:#0f172a; border:1px solid #334155; border-radius:1rem; padding:1.5rem; margin-top:1.5rem;">
-                <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.5rem;">Description</div>
-                <p style="margin:0; color:#cbd5e1; font-size:0.95rem; line-height:1.6;">{{ $course->description }}</p>
+            <div class="description-card">
+                <div class="card-label">Description</div>
+                <p>{{ $course->description }}</p>
             </div>
         @endif
+
     </div>
 
-    <!-- Tab: TPs -->
+    {{-- Tab: TPs --}}
     <div class="tab-content" id="tab-tps">
 
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">📝 Travaux Pratiques ({{ $course->tps->count() }})</h3>
-            <a href="{{ route('teacher.courses.tps.create', $course->id) }}" class="btn btn-success" style="display:inline-block; width:auto;">
-                ➕ Créer un TP
+        <div class="section-topbar">
+            <h2 class="section-heading">
+                Travaux Pratiques
+                <span class="count-badge">{{ $course->tps->count() }}</span>
+            </h2>
+            <a href="{{ route('teacher.courses.tps.create', $course->id) }}" class="btn-new">
+                <i class="ti ti-plus"></i> Créer un TP
             </a>
         </div>
 
         @if($course->tps->count() > 0)
             <div class="tps-grid">
                 @foreach($course->tps->sortBy('created_at') as $tp)
-                    <div class="tp-card"
+                    <div class="tp-card status-{{ $tp->status }}"
                          onclick="window.location.href='{{ route('teacher.tps.show', $tp->id) }}'">
 
                         <div class="tp-header">
                             <div class="tp-title">{{ $tp->title }}</div>
-                            <span class="status-badge status-{{ $tp->status }}">
-                                {{ ucfirst($tp->status) }}
+                            <span class="badge badge-{{ $tp->status }}">
+                                @if($tp->status === 'published') <i class="ti ti-circle-check"></i> Publié
+                                @elseif($tp->status === 'draft')  <i class="ti ti-pencil"></i> Brouillon
+                                @else                             <i class="ti ti-lock"></i> Fermé
+                                @endif
                             </span>
                         </div>
 
                         <div class="tp-description">
-                            @if(filled($tp->description))
-                                {{ $tp->description }}
-                            @else
-                                <span style="font-style:italic;">Aucune description</span>
+                            @if(filled($tp->description)) {{ $tp->description }}
+                            @else <span style="font-style:italic;color:var(--ink-4);">Aucune description</span>
                             @endif
                         </div>
 
-                        <div class="tp-meta">📅 {{ $tp->due_date ? 'Échéance: ' . $tp->due_date->format('d/m/Y à H:i') : 'Pas d\'échéance' }}</div>
-                        <div class="tp-meta">📊 {{ $tp->submissions->count() }} soumission(s)</div>
-
-                        <div class="tp-spacer"></div>
+                        <div class="tp-meta">
+                            <i class="ti ti-calendar-due"></i>
+                            {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Pas d\'échéance' }}
+                        </div>
+                        <div class="tp-meta">
+                            <i class="ti ti-upload"></i>
+                            {{ $tp->submissions->count() }} soumission(s)
+                        </div>
 
                         <div class="tp-footer">
                             <button class="tp-menu-btn"
-                                    onclick="event.stopPropagation(); toggleTpMenu('tp-menu-{{ $tp->id }}')">⋮</button>
-                            <div id="tp-menu-{{ $tp->id }}" class="tp-menu-dropdown">
-                                <a href="{{ route('teacher.tps.edit', $tp->id) }}"
-                                   onclick="event.stopPropagation();">
-                                    ✏️ Modifier
+                                    onclick="event.stopPropagation(); toggleTpMenu('tp-menu-{{ $tp->id }}')">
+                                <i class="ti ti-dots-vertical"></i>
+                            </button>
+                            <div id="tp-menu-{{ $tp->id }}" class="tp-dropdown">
+                                <a href="{{ route('teacher.tps.edit', $tp->id) }}" onclick="event.stopPropagation();">
+                                    <i class="ti ti-edit"></i> Modifier
                                 </a>
                                 <form method="POST" action="{{ route('teacher.tps.destroy', $tp->id) }}"
                                       onclick="event.stopPropagation();">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="danger-item"
                                             onclick="event.stopPropagation(); return confirm('Supprimer ce TP?')">
-                                        🗑️ Supprimer
+                                        <i class="ti ti-trash"></i> Supprimer
                                     </button>
                                 </form>
                             </div>
@@ -377,110 +534,114 @@
             </div>
         @else
             <div class="empty-state">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
+                <div class="empty-icon"><i class="ti ti-file-off"></i></div>
                 <h3>Aucun TP créé</h3>
-                <p>Créez votre premier TP pour ce cours</p>
+                <p>Créez votre premier TP pour ce cours.</p>
             </div>
         @endif
+
     </div>
 
-    <!-- Tab: Students -->
+    {{-- Tab: Students --}}
     <div class="tab-content" id="tab-students">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">👥 Étudiants Inscrits ({{ $course->students->count() }})</h3>
+
+        <div class="section-topbar">
+            <h2 class="section-heading">
+                Étudiants inscrits
+                <span class="count-badge">{{ $course->students->count() }}</span>
+            </h2>
         </div>
 
         @if($course->students->count() > 0)
-            <table class="students-table">
-                <thead>
-                    <tr>
-                        <th>Nom</th>
-                        <th>Email</th>
-                        <th>Date d'inscription</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($course->students as $student)
+            <div class="table-card">
+                <table class="students-table">
+                    <thead>
                         <tr>
-                            <td>{{ $student->name }}</td>
-                            <td>{{ $student->email }}</td>
-                            <td>{{ $student->pivot->created_at->format('d/m/Y') }}</td>
-                            <td>
-                                <form method="POST" action="{{ route('teacher.courses.remove-student', [$course->id, $student->id]) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-small"
-                                            onclick="return confirm('Retirer cet étudiant?')">
-                                        ✗ Retirer
-                                    </button>
-                                </form>
-                            </td>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Inscrit le</th>
+                            <th></th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($course->students as $student)
+                            <tr>
+                                <td style="font-weight:600;color:var(--ink);">{{ $student->name }}</td>
+                                <td>{{ $student->email }}</td>
+                                <td>{{ $student->pivot->created_at->format('d/m/Y') }}</td>
+                                <td>
+                                    <form method="POST" action="{{ route('teacher.courses.remove-student', [$course->id, $student->id]) }}">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn-remove"
+                                                onclick="return confirm('Retirer cet étudiant?')">
+                                            <i class="ti ti-user-minus"></i> Retirer
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @else
             <div class="empty-state">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">👥</div>
+                <div class="empty-icon"><i class="ti ti-users-off"></i></div>
                 <h3>Aucun étudiant inscrit</h3>
-                <p>Partagez le code d'accès avec vos étudiants pour qu'ils rejoignent le cours</p>
+                <p>Partagez le code d'accès avec vos étudiants.</p>
             </div>
         @endif
+
     </div>
 
+</div>
 @endsection
 
 @section('extra-scripts')
 <script>
-    /* ── Course-level menu ── */
-    function toggleMenu(id) {
-        event.stopPropagation();
-        const menu = document.getElementById(id);
-        const isOpen = menu.style.display === 'block';
-        closeAllMenus();
-        menu.style.display = isOpen ? 'none' : 'block';
-    }
+function toggleMenu(id) {
+    event.stopPropagation();
+    const menu = document.getElementById(id);
+    const isOpen = menu.style.display === 'block';
+    closeAllMenus();
+    menu.style.display = isOpen ? 'none' : 'block';
+}
 
-    /* ── TP-level menus ── */
-    function toggleTpMenu(id) {
-        const menu = document.getElementById(id);
-        const isOpen = menu.style.display === 'block';
-        document.querySelectorAll('[id^="tp-menu-"]').forEach(m => m.style.display = 'none');
-        menu.style.display = isOpen ? 'none' : 'block';
-    }
+function toggleTpMenu(id) {
+    event.stopPropagation();
+    const menu = document.getElementById(id);
+    const isOpen = menu.style.display === 'block';
+    document.querySelectorAll('.tp-dropdown').forEach(m => m.style.display = 'none');
+    menu.style.display = isOpen ? 'none' : 'block';
+}
 
-    function closeAllMenus() {
-        document.querySelectorAll('[id$="-menu"], [id^="tp-menu-"]').forEach(m => m.style.display = 'none');
-    }
+function closeAllMenus() {
+    document.querySelectorAll('.page-dropdown, .tp-dropdown').forEach(m => m.style.display = 'none');
+}
 
-    document.addEventListener('click', closeAllMenus);
+document.addEventListener('click', closeAllMenus);
 
-    function switchTab(tabName, event) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
-        document.getElementById('tab-' + tabName).classList.add('active');
-        history.replaceState(null, null, '?tab=' + tabName);
-    }
-
-    function copyJoinCode() {
+function copyJoinCode() {
     const code = document.getElementById('joinCode').textContent.trim();
     navigator.clipboard.writeText(code).then(() => showToast('✓ Code copié : ' + code));
 }
 
-    /* ── Activate correct tab from ?tab= param, no flash ── */
-    const tabParam = new URLSearchParams(window.location.search).get('tab');
-    const validTabs = ['info', 'tps', 'students'];
-    if (tabParam && validTabs.includes(tabParam)) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.getElementById('tab-' + tabParam).classList.add('active');
-        document.querySelectorAll('.tab').forEach(tab => {
-            if (tab.getAttribute('onclick')?.includes("'" + tabParam + "'")) {
-                tab.classList.add('active');
-            }
-        });
-    }
+function switchTab(tabName, event) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    event.target.closest('.tab').classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+    history.replaceState(null, null, '?tab=' + tabName);
+}
+
+const tabParam = new URLSearchParams(window.location.search).get('tab');
+const validTabs = ['info', 'tps', 'students'];
+if (tabParam && validTabs.includes(tabParam)) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tabParam).classList.add('active');
+    document.querySelectorAll('.tab').forEach(tab => {
+        if (tab.getAttribute('onclick')?.includes("'" + tabParam + "'")) tab.classList.add('active');
+    });
+}
 </script>
 @endsection

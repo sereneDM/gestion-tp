@@ -1,174 +1,270 @@
 @extends('layouts.app')
 
 @section('title', 'Détails de la Classe')
-@section('page-title', $class->name)
 
 @section('extra-styles')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
-        background: #1e293b;
-        color: #e2e8f0;
-        font-weight: 500;
-        transition: all 0.2s;
+    :root {
+        --ink:        #0d1117;
+        --ink-2:      #3d4550;
+        --ink-3:      #6b7585;
+        --ink-4:      #9aa3af;
+        --line:       #e8ebef;
+        --line-2:     #d1d6dd;
+        --surface:    #ffffff;
+        --surface-2:  #f5f6f8;
+        --surface-3:  #eef0f3;
+        --accent:     #3d5afe;
+        --accent-2:   #5271ff;
+        --accent-bg:  #eef1ff;
+        --danger:     #e53935;
+        --warning:    #f59e0b;
+        --success:    #10b981;
+        --radius-sm:  6px;
+        --radius-md:  10px;
+        --radius-lg:  16px;
+        --radius-xl:  22px;
+        --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --font-body:  'DM Sans', sans-serif;
+        --font-serif: 'DM Serif Display', serif;
     }
-    .btn:hover {
-        background: #334155;
-        border-color: #475569;
+
+    .class-wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0.5rem 0 3rem;
     }
-    .btn-secondary {
-        background-color: #1e293b;
-        color: #e2e8f0;
-    }
-    .btn-secondary:hover {
-        background: #334155;
-    }
-    .section {
-        background: #0f172a;
-        padding: 2rem;
-        border-radius: 1rem;
+
+    .page-header {
         margin-bottom: 2rem;
-        border: 1px solid #334155;
-    }
-    .section h2 {
-        color: #c7d2fe;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #334155;
-    }
-    .info-row {
         display: flex;
-        margin-bottom: 1rem;
-        padding: 0.5rem;
+        justify-content: space-between;
+        align-items: flex-end;
     }
+
+    .page-title {
+        font-family: var(--font-serif);
+        font-size: 2.25rem;
+        color: var(--ink);
+    }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 700;
+        font-size: 0.875rem;
+        color: var(--ink-3);
+        text-decoration: none;
+        margin-bottom: 0.5rem;
+        transition: color 0.2s;
+    }
+
+    .btn-back:hover {
+        color: var(--accent);
+    }
+
+    .grid-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 2rem;
+    }
+
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-xl);
+        padding: 2rem;
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+    }
+
+    .card-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--ink-4);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
     .info-label {
-        font-weight: bold;
-        min-width: 200px;
-        color: #cbd5e1;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--ink-4);
+        text-transform: uppercase;
     }
-    .info-value {
-        color: #e2e8f0;
+
+    .info-val {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--ink);
     }
-    .join-code {
-        font-family: monospace;
-        background: #1e293b;
-        color: #818cf8;
-        padding: 0.5rem 1rem;
-        border-radius: 0.75rem;
-        font-size: 1.2rem;
-        font-weight: bold;
-        border: 1px solid #334155;
+
+    .join-code-large {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--accent);
+        background: var(--accent-bg);
+        padding: 1rem;
+        border-radius: var(--radius-lg);
+        text-align: center;
+        margin: 1rem 0;
+        letter-spacing: 0.1em;
+        border: 2px dashed var(--accent);
     }
+
+    .badge {
+        display: inline-flex;
+        padding: 0.25rem 0.75rem;
+        border-radius: 100px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .badge-active { background: #ecfdf5; color: #10b981; }
+    .badge-archived { background: #fef2f2; color: #ef4444; }
+
     table {
         width: 100%;
         border-collapse: collapse;
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        overflow: hidden;
     }
-    thead {
-        background-color: #1e293b;
-        border-bottom: 2px solid #334155;
-    }
+
     th {
         padding: 1rem;
         text-align: left;
-        color: #cbd5e1;
-        font-weight: bold;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--ink-4);
+        border-bottom: 1px solid var(--line);
     }
+
     td {
         padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #334155;
-        color: #e2e8f0;
+        font-size: 0.875rem;
+        color: var(--ink-2);
+        border-bottom: 1px solid var(--line);
     }
-    tbody tr:hover {
-        background-color: #1e293b;
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    @media (max-width: 900px) {
+        .grid-layout { grid-template-columns: 1fr; }
     }
 </style>
 @endsection
 
 @section('content')
+<div class="class-wrapper">
+    <a href="{{ route('admin.classes.index') }}" class="btn-back">
+        <i class="ti ti-arrow-left"></i> Retour aux classes
+    </a>
     
-
-
-    <div class="section">
-        <h2>Informations de la Classe</h2>
-
-        <div class="info-row">
-            <div class="info-label">Nom:</div>
-            <div class="info-value">{{ $class->name }}</div>
-        </div>
-
-        @if($class->description)
-            <div class="info-row">
-                <div class="info-label">Description:</div>
-                <div class="info-value">{{ $class->description }}</div>
-            </div>
+    <div class="page-header">
+        <h1 class="page-title">{{ $class->name }}</h1>
+        @if($class->status === 'active')
+            <span class="badge badge-active">Active</span>
+        @else
+            <span class="badge badge-archived">Archivée</span>
         @endif
+    </div>
 
-        <div class="info-row">
-            <div class="info-label">Enseignant:</div>
-            <div class="info-value">{{ $class->teacher ? $class->teacher->name : 'Non assigné' }}</div>
-        </div>
+    <div class="grid-layout">
+        <div class="main-col">
+            <div class="card">
+                <div class="card-title"><i class="ti ti-info-circle"></i> Détails généraux</div>
+                <div class="info-list">
+                    @if($class->description)
+                        <div class="info-item">
+                            <div class="info-label">Description</div>
+                            <div class="info-val" style="font-weight:400; line-height:1.6;">{{ $class->description }}</div>
+                        </div>
+                    @endif
+                    
+                    <div class="info-item">
+                        <div class="info-label">Enseignant responsable</div>
+                        <div class="info-val">
+                            <i class="ti ti-user-circle"></i> 
+                            {{ $class->teacher ? $class->teacher->name : 'Non assigné' }}
+                        </div>
+                    </div>
 
-        <div class="info-row">
-            <div class="info-label">Code d'accès:</div>
-            <div class="info-value"><span class="join-code">{{ $class->join_code }}</span></div>
-        </div>
+                    <div class="info-item">
+                        <div class="info-label">Date de création</div>
+                        <div class="info-val">{{ $class->created_at->format('d/m/Y à H:i') }}</div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="info-row">
-            <div class="info-label">Statut:</div>
-            <div class="info-value">
-                <span style="padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: bold; background: {{ $class->status === 'active' ? '#d4edda' : '#f8d7da' }}; color: {{ $class->status === 'active' ? '#155724' : '#721c24' }};">
-                    {{ $class->status === 'active' ? 'Actif' : 'Archivé' }}
-                </span>
+            <div class="card" style="padding: 1rem 0;">
+                <div class="card-title" style="padding: 0 2rem;"><i class="ti ti-users"></i> Étudiants inscrits ({{ $class->students->count() }})</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="padding-left: 2rem;">Nom</th>
+                            <th>Email</th>
+                            <th style="padding-right: 2rem;">Date d'inscription</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($class->students as $student)
+                            <tr>
+                                <td style="padding-left: 2rem; font-weight:700;">{{ $student->name }}</td>
+                                <td>{{ $student->email }}</td>
+                                <td style="padding-right: 2rem; color:var(--ink-4);">{{ $student->pivot->created_at->format('d/m/Y') }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="3" style="text-align: center; padding: 4rem; color: var(--ink-4);">
+                                    Aucun étudiant inscrit dans cette classe.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="info-row">
-            <div class="info-label">Nombre d'étudiants:</div>
-            <div class="info-value">{{ $class->students->count() }}</div>
-        </div>
+        <div class="side-col">
+            <div class="card">
+                <div class="card-title"><i class="ti ti-key"></i> Code d'accès</div>
+                <div class="join-code-large">{{ $class->join_code }}</div>
+                <p style="font-size: 0.75rem; color: var(--ink-4); text-align: center;">
+                    Ce code permet aux étudiants de rejoindre la classe.
+                </p>
+            </div>
 
-        <div class="info-row">
-            <div class="info-label">Date de création:</div>
-            <div class="info-value">{{ $class->created_at->format('d/m/Y à H:i') }}</div>
+            <div class="card" style="background: var(--surface-2); border-color: transparent;">
+                <div class="card-title"><i class="ti ti-activity"></i> Statistiques rapides</div>
+                <div class="info-list">
+                    <div class="info-item">
+                        <div class="info-label">Total Étudiants</div>
+                        <div class="info-val" style="font-size:1.5rem;">{{ $class->students->count() }}</div>
+                    </div>
+                    {{-- You can add more stats here if available, e.g. active TPs --}}
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="section">
-        <h2>👥 Étudiants Inscrits ({{ $class->students->count() }})</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Email</th>
-                    <th>Date d'inscription</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($class->students as $student)
-                    <tr>
-                        <td>{{ $student->name }}</td>
-                        <td>{{ $student->email }}</td>
-                        <td>{{ $student->pivot->created_at->format('d/m/Y à H:i') }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="3" style="text-align: center; padding: 2rem; color: #999;">
-                            Aucun étudiant inscrit
-                        </td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+</div>
 @endsection

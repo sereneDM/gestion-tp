@@ -4,260 +4,361 @@
 @section('page-title', $course->name)
 
 @section('extra-styles')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-    .btn {
-        display: inline-block;
-        padding: 0.65rem 1.5rem;
-        text-align: center;
-        text-decoration: none;
-        border-radius: 0.75rem;
-        font-weight: 500;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-        border: 1px solid #334155;
-        cursor: pointer;
-        background: #1e293b;
-        color: #e2e8f0;
-    }
-    .btn:hover {
-        background: #334155;
-        border-color: #475569;
-    }
-    .btn-primary        { background: #1e293b; color: #e2e8f0; }
-    .btn-primary:hover  { background: #334155; }
-    .btn-success        { background: #1e293b; color: #e2e8f0; }
-    .btn-success:hover  { background: #334155; }
-    .btn-info           { background: #1e293b; color: #e2e8f0; }
-    .btn-info:hover     { background: #334155; }
+:root {
+    --ink:        #0d1117;
+    --ink-2:      #3d4550;
+    --ink-3:      #6b7585;
+    --ink-4:      #9aa3af;
+    --line:       #e8ebef;
+    --line-2:     #d1d6dd;
+    --surface:    #ffffff;
+    --surface-2:  #f5f6f8;
+    --surface-3:  #eef0f3;
+    --accent:     #3d5afe;
+    --accent-2:   #5271ff;
+    --accent-bg:  #eef1ff;
+    --success:    #10b981;
+    --success-bg: #ecfdf5;
+    --info:       #0ea5e9;
+    --info-bg:    #f0f9ff;
+    --warning:    #f59e0b;
+    --warning-bg: #fffbeb;
+    --danger:     #ef4444;
+    --danger-bg:  #fef2f2;
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  16px;
+    --radius-xl:  22px;
+    --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md:  0 4px 16px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
+    --font-body:  'DM Sans', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+}
 
-    /* ── Form Centering ── */
-    .form-centered {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 2rem;
-        background: #0f172a;
-        border-radius: 1rem;
-        border: 1px solid #334155;
-    }
-    .form-centered form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .form-centered .btn {
-        width: 100%;
-    }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-body); background: var(--surface-2); color: var(--ink); }
 
-    /* ── Tabs (matches teacher) ── */
-    .tabs {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
-        border-bottom: 2px solid #334155;
-    }
-    .tab {
-        padding: 1rem 2rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1rem;
-        color: #94a3b8;
-        border-bottom: 3px solid transparent;
-        transition: all 0.3s;
-    }
-    .tab:hover { color: #a5b4fc; }
-    .tab.active {
-        color: #c7d2fe;
-        border-bottom-color: #8b5cf6;
-        font-weight: bold;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+.page-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0.5rem 0 3rem;
+}
 
-    .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-bottom: 2rem;
-    }
-    .info-card {
-        background: #0f172a;
-        padding: 1.5rem;
-        border-radius: 1rem;
-        text-align: center;
-        border: 1px solid #334155;
-    }
-    .info-number {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #818cf8;
-    }
-    .info-label {
-        color: #94a3b8;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-    }
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    padding: 0.6rem 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+}
+.btn-primary { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(61,90,254,0.3); }
+.btn-primary:hover { background: var(--accent-2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(61,90,254,0.35); }
+.btn-success { background: var(--success); color: white; box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
+.btn-success:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(16,185,129,0.35); }
+.btn-info { background: var(--info); color: white; box-shadow: 0 2px 8px rgba(14,165,233,0.3); }
+.btn-info:hover { background: #0284c7; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,165,233,0.35); }
+.btn-danger { background: var(--danger-bg); color: var(--danger); }
+.btn-danger:hover { background: #fee2e2; }
 
-    /* ── TP grid ── */
-    .tps-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-    .tp-card {
-        background: #0f172a;
-        border-radius: 1rem;
-        padding: 1.5rem;
-        border: 1px solid #334155;
-        cursor: pointer;
-        transition: transform 0.2s, border-color 0.2s;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        min-height: 220px;
-    }
-    .tp-card:hover {
-        transform: translateY(-5px);
-        border-color: #475569;
-        box-shadow: 0 12px 24px rgba(15,23,42,0.25);
-    }
-    .tp-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 0.75rem;
-        gap: 0.75rem;
-    }
-    .tp-title {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: #c7d2fe;
-        flex: 1;
-        line-height: 1.3;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        min-width: 0;
-    }
-    .status-badge {
-        display: inline-block;
-        padding: 0.3rem 0.8rem;
-        border-radius: 9999px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-    .status-pending   { background: rgba(251,191,36,0.15); color: #facc15; }
-    .status-submitted { background: rgba(34,197,94,0.15);  color: #86efac; }
-    .status-graded    { background: rgba(6,182,212,0.15);  color: #67e8f9; }
+/* ── Top bar ── */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+}
 
-    .tp-description {
-        color: #94a3b8;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        min-height: 2.88rem;
-        max-height: 2.88rem;
-    }
-    .tp-meta {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin-bottom: 0.4rem;
-    }
-    .tp-grade {
-        font-family: monospace;
-        background: #164e63;
-        color: #67e8f9;
-        padding: 0.3rem 0.75rem;
-        border-radius: 0.75rem;
-        font-size: 0.95rem;
-        font-weight: bold;
-        display: inline-block;
-        margin-bottom: 0.75rem;
-        align-self: flex-start;
-    }
-    .tp-spacer { flex: 1; }
+.course-teacher-info {
+    font-size: 0.85rem;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
 
-    /* ── 3-dots menu ── */
-    .course-menu-btn {
-        background: transparent;
-        border: 1px solid #334155;
-        color: #94a3b8;
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.15s;
-    }
-    .course-menu-btn:hover {
-        background: #1e293b;
-        border-color: #475569;
-        color: #e2e8f0;
-    }
-    .course-menu-dropdown {
-        display: none;
-        position: absolute;
-        top: 2.2rem;
-        right: 0;
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        min-width: 150px;
-        z-index: 100;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    }
-    .course-menu-dropdown button {
-        width: 100%;
-        text-align: left;
-        padding: 0.75rem 1rem;
-        background: none;
-        border: none;
-        color: #fca5a5;
-        cursor: pointer;
-        border-radius: 0.75rem;
-        font-size: 0.875rem;
-        transition: background 0.15s;
-    }
-    .course-menu-dropdown button:hover { background: #334155; }
+/* ── Tabs ── */
+.tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+}
+.tab {
+    padding: 1rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--ink-3);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-family: var(--font-body);
+}
+.tab:hover { color: var(--ink); }
+.tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 600;
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-    .empty-state {
-        text-align: center;
-        padding: 3rem;
-        background: #0f172a;
-        border-radius: 1rem;
-        color: #94a3b8;
-        border: 1px solid #334155;
-    }
+/* ── Stats ── */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+.info-card {
+    background: var(--surface);
+    padding: 1.5rem;
+    border-radius: var(--radius-xl);
+    text-align: center;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+}
+.info-number {
+    font-size: 2.25rem;
+    font-family: var(--font-serif);
+    color: var(--accent);
+    line-height: 1.2;
+}
+.info-label {
+    color: var(--ink-3);
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ── Description ── */
+.course-desc-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+.course-desc-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-4);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+.course-desc-body {
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+/* ── TP grid ── */
+.tps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+.tp-card {
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    min-height: 220px;
+    box-shadow: var(--shadow-sm);
+}
+.tp-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--line-2);
+    box-shadow: var(--shadow-md);
+}
+.tp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+    gap: 0.75rem;
+}
+.tp-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    flex: 1;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.status-badge i { font-size: 14px; }
+.status-pending   { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+.status-submitted { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+.status-graded    { background: var(--info-bg); color: var(--info); border: 1px solid rgba(14, 165, 233, 0.2); }
+
+.tp-description {
+    color: var(--ink-3);
+    font-size: 0.85rem;
+    line-height: 1.55;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.6rem;
+}
+.tp-meta {
+    font-size: 0.8rem;
+    color: var(--ink-3);
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+.tp-meta i { font-size: 14px; color: var(--ink-4); }
+.tp-grade {
+    background: var(--info-bg);
+    color: var(--info);
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+    align-self: flex-start;
+}
+.tp-spacer { flex: 1; }
+
+/* ── 3-dots menu ── */
+.course-menu-btn {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    box-shadow: var(--shadow-sm);
+}
+.course-menu-btn:hover {
+    background: var(--surface-2);
+    color: var(--ink);
+}
+.course-menu-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    min-width: 180px;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
+    padding: 0.5rem;
+}
+.course-menu-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    transition: background 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.course-menu-dropdown button i { font-size: 16px; }
+.course-menu-dropdown button:hover { background: var(--danger-bg); }
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--surface);
+    border-radius: var(--radius-xl);
+    color: var(--ink-3);
+    border: 1px dashed var(--line-2);
+}
+.empty-icon {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 28px;
+    color: var(--ink-4);
+}
+.empty-state h3 { color: var(--ink-2); font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
+.empty-state p  { font-size: 0.875rem; max-width: 320px; margin: 0 auto; }
 </style>
 @endsection
 
 @section('content')
+<div class="page-wrapper">
 
-    {{-- Course header row (teacher name + leave menu) --}}
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+    {{-- Course header --}}
+    <div class="topbar">
         <div>
-            <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.25rem;">Enseignant</div>
-            <div style="color:#cbd5e1; font-size:0.95rem;">👨‍🏫 {{ $course->teacher->name }}</div>
+            <h1 class="page-heading">{{ $course->name }}</h1>
+            <div class="course-teacher-info">
+                <i class="ti ti-user"></i> Enseignant: {{ $course->teacher->name }}
+            </div>
         </div>
         <div style="position:relative;">
-            <button class="course-menu-btn" onclick="toggleCourseMenu()">⋮</button>
+            <button class="course-menu-btn" onclick="toggleCourseMenu()">
+                <i class="ti ti-dots-vertical"></i>
+            </button>
             <div class="course-menu-dropdown" id="course-menu">
-                <form method="POST" action="{{ route('student.leave-course', $course->id) }}"
-                      style="display:block; width:100%;">
+                <form method="POST" action="{{ route('student.leave-course', $course->id) }}" style="display:block; width:100%;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit">🚪 Quitter le cours</button>
+                    <button type="submit">
+                        <i class="ti ti-door-exit"></i> Quitter le cours
+                    </button>
                 </form>
             </div>
         </div>
@@ -265,8 +366,12 @@
 
     {{-- Tabs --}}
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('info', event)">📋 Informations</button>
-        <button class="tab" onclick="switchTab('tps', event)">📝 Travaux Pratiques</button>
+        <button class="tab active" onclick="switchTab('info', event)">
+            <i class="ti ti-info-circle" style="margin-right: 0.4rem; vertical-align: -2px;"></i> Informations
+        </button>
+        <button class="tab" onclick="switchTab('tps', event)">
+            <i class="ti ti-file-text" style="margin-right: 0.4rem; vertical-align: -2px;"></i> Travaux Pratiques
+        </button>
     </div>
 
     {{-- Tab: Info --}}
@@ -288,9 +393,9 @@
         </div>
 
         @if($course->description)
-            <div style="background:#0f172a; border:1px solid #334155; border-radius:1rem; padding:1.5rem;">
-                <div style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin-bottom:0.5rem;">Description</div>
-                <p style="margin:0; color:#cbd5e1; font-size:0.95rem; line-height:1.6;">{{ $course->description }}</p>
+            <div class="course-desc-card">
+                <div class="course-desc-title">Description du cours</div>
+                <div class="course-desc-body">{{ $course->description }}</div>
             </div>
         @endif
 
@@ -298,10 +403,6 @@
 
     {{-- Tab: TPs --}}
     <div class="tab-content" id="tab-tps">
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-            <h3 style="margin:0; font-size:1.5rem; color:#f1f5f9;">📝 Travaux Pratiques ({{ $course->tps->count() }})</h3>
-        </div>
 
         @if($course->tps->count() > 0)
             <div class="tps-grid">
@@ -312,17 +413,16 @@
                         $isGraded     = $hasSubmitted && $submission->grade !== null;
                     @endphp
 
-                    <div class="tp-card"
-                         onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'">
+                    <div class="tp-card" onclick="window.location.href='{{ route('student.tps.show', $tp->id) }}'">
 
                         <div class="tp-header">
                             <div class="tp-title">{{ $tp->title }}</div>
                             @if($isGraded)
-                                <span class="status-badge status-graded">✓ Noté</span>
+                                <span class="status-badge status-graded"><i class="ti ti-check"></i> Noté</span>
                             @elseif($hasSubmitted)
-                                <span class="status-badge status-submitted">✓ Soumis</span>
+                                <span class="status-badge status-submitted"><i class="ti ti-upload"></i> Soumis</span>
                             @else
-                                <span class="status-badge status-pending">À faire</span>
+                                <span class="status-badge status-pending"><i class="ti ti-clock"></i> À faire</span>
                             @endif
                         </div>
 
@@ -330,47 +430,54 @@
                             @if(filled($tp->description))
                                 {{ $tp->description }}
                             @else
-                                <span style="font-style:italic;">Aucune description</span>
+                                <span style="font-style:italic; color:var(--ink-4);">Aucune description</span>
                             @endif
                         </div>
 
-                        <div class="tp-meta">📅 Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Non définie' }}</div>
-                        <div class="tp-meta">👨‍🏫 {{ $course->teacher->name }}</div>
+                        <div class="tp-meta">
+                            <i class="ti ti-calendar"></i>
+                            Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Non définie' }}
+                        </div>
+                        
                         @if($hasSubmitted)
-                            <div class="tp-meta">📤 Soumis le {{ $submission->submitted_at->format('d/m/Y à H:i') }}</div>
+                            <div class="tp-meta">
+                                <i class="ti ti-upload"></i>
+                                Soumis le {{ $submission->submitted_at->format('d/m/Y à H:i') }}
+                            </div>
                         @endif
 
                         @if($isGraded)
-                            <div class="tp-grade">🎯 {{ $submission->grade }}/20</div>
+                            <div class="tp-grade">
+                                <i class="ti ti-award"></i> {{ $submission->grade }}/20
+                            </div>
                         @endif
 
                         <div class="tp-spacer"></div>
 
-                        <a href="{{ route('student.tps.show', $tp->id) }}"
-                           onclick="event.stopPropagation();"
-                           class="btn {{ $isGraded ? 'btn-info' : ($hasSubmitted ? 'btn-success' : 'btn-primary') }}">
+                        <button class="btn {{ $isGraded ? 'btn-info' : ($hasSubmitted ? 'btn-success' : 'btn-primary') }}" style="width: 100%;">
                             @if($isGraded)
-                                Voir ma note &amp; commentaires
+                                <i class="ti ti-eye"></i> Voir ma note
                             @elseif($hasSubmitted)
-                                Voir ma soumission
+                                <i class="ti ti-eye"></i> Voir ma soumission
                             @else
-                                Voir et soumettre
+                                <i class="ti ti-arrow-right"></i> Voir et soumettre
                             @endif
-                        </a>
+                        </button>
 
                     </div>
                 @endforeach
             </div>
         @else
             <div class="empty-state">
-                <div style="font-size: 4rem; margin-bottom: 1rem;">📝</div>
-                <h2>Aucun TP disponible</h2>
+                <div class="empty-icon"><i class="ti ti-file-text"></i></div>
+                <h3>Aucun TP disponible</h3>
                 <p>Votre enseignant n'a pas encore publié de travaux pratiques.</p>
             </div>
         @endif
 
     </div>
 
+</div>
 @endsection
 
 @section('extra-scripts')

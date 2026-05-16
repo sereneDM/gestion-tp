@@ -8,441 +8,351 @@
 @endsection
 
 @section('extra-styles')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
-    .settings-card {
-        background: #0f172a;
-        padding: 2rem;
-        border-radius: 1rem;
-        margin-bottom: 1.5rem;
-        border: 1px solid #334155;
-    }
-    .settings-card h2 {
-        margin-top: 0;
-        color: #f1f5f9;
-        border-bottom: 1px solid #334155;
-        padding-bottom: 0.75rem;
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-    }
-    .info-box {
-        background: rgba(99,102,241,0.1);
-        border-left: 4px solid #6366f1;
-        padding: 0.9rem 1rem;
-        margin-bottom: 1.5rem;
-        border-radius: 0.5rem;
-        font-size: 0.9rem;
-        color: #a5b4fc;
-    }
-    .setting-group {
-        margin-bottom: 1.5rem;
-        padding-bottom: 1.5rem;
-        border-bottom: 1px solid #1e293b;
-    }
-    .setting-group:last-child {
-        border-bottom: none;
-        margin-bottom: 0;
-        padding-bottom: 0;
-    }
-    .setting-group h3 {
-        color: #cbd5e1;
-        margin-bottom: 0.75rem;
-        font-size: 1rem;
-    }
-    .checkbox-item {
-        display: flex;
-        align-items: center;
-        padding: 0.9rem 1rem;
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        margin-bottom: 0.5rem;
-        transition: background 0.2s, border-color 0.2s;
-    }
-    .checkbox-item:hover {
-        background: #263448;
-        border-color: #475569;
-    }
-    .checkbox-item input[type="checkbox"] {
-        width: 18px;
-        height: 18px;
-        margin-right: 1rem;
-        cursor: pointer;
-        accent-color: #6366f1;
-        flex-shrink: 0;
-    }
-    .checkbox-label {
-        flex: 1;
-        cursor: pointer;
-        color: #e2e8f0;
-    }
-    .checkbox-description {
-        font-size: 0.83rem;
-        color: #64748b;
-        margin-top: 0.2rem;
-    }
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: 0.75rem;
-        font-size: 1rem;
-        font-weight: 500;
-        transition: background 0.2s, opacity 0.2s;
-    }
-    .btn-primary {
-        background: #4f46e5;
-        color: white;
-        cursor: pointer;
-    }
-    .btn-primary:not(:disabled):hover { background: #4338ca; }
-    .btn-primary:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+:root {
+    --ink:        #0d1117;
+    --ink-2:      #3d4550;
+    --ink-3:      #6b7585;
+    --ink-4:      #9aa3af;
+    --line:       #e8ebef;
+    --line-2:     #d1d6dd;
+    --surface:    #ffffff;
+    --surface-2:  #f5f6f8;
+    --surface-3:  #eef0f3;
+    --accent:     #3d5afe;
+    --accent-2:   #5271ff;
+    --accent-bg:  #eef1ff;
+    --danger:     #e53935;
+    --warning:    #f59e0b;
+    --success:    #10b981;
+    --radius-sm:  6px;
+    --radius-md:  10px;
+    --radius-lg:  16px;
+    --radius-xl:  22px;
+    --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --font-body:  'DM Sans', sans-serif;
+    --font-serif: 'DM Serif Display', serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font-body); background: var(--surface-2); color: var(--ink); }
 
-    /* ── Course filter bar ── */
-    .course-filter {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
-    }
-    .course-filter label {
-        font-size: 0.9rem;
-        color: #94a3b8;
-        white-space: nowrap;
-        font-weight: bold;
-    }
-    .course-filter select,
-    .course-filter input[type="text"] {
-        background: #1e293b;
-        border: 1px solid #334155;
-        color: #e2e8f0;
-        padding: 0.5rem 1rem;
-        border-radius: 0.75rem;
-        font-size: 0.9rem;
-        outline: none;
-    }
-    .course-filter select { cursor: pointer; }
-    .course-filter input[type="text"] { flex: 1; min-width: 180px; }
-    .course-filter select:focus,
-    .course-filter input[type="text"]:focus { border-color: #6366f1; }
+.page-wrapper { max-width: 720px; margin: 0 auto; padding: 0.5rem 0 3rem; display: flex; flex-direction: column; gap: 1.25rem; }
 
-    .course-placeholder {
-        text-align: center;
-        padding: 2rem;
-        color: #475569;
-        font-size: 0.95rem;
-        border: 1px dashed #334155;
-        border-radius: 0.75rem;
-        margin-bottom: 0.5rem;
-    }
+/* ── Card ── */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
 
-    #no-course-results {
-        display: none;
-        text-align: center;
-        padding: 2rem;
-        color: #64748b;
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 1rem;
-        margin-bottom: 1.5rem;
-    }
+.card-header {
+    display: flex; align-items: center; gap: 0.65rem;
+    padding: 1.25rem 1.75rem 1.1rem;
+    border-bottom: 1px solid var(--line);
+}
+.card-header-icon {
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    background: var(--accent-bg);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); font-size: 16px;
+}
+.card-header-title { font-size: 0.9rem; font-weight: 700; color: var(--ink); }
+
+.card-body { padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 0; }
+
+.info-box {
+    display: flex; align-items: flex-start; gap: 0.65rem;
+    background: var(--accent-bg);
+    border: 1px solid rgba(61,90,254,0.15);
+    border-radius: var(--radius-md);
+    padding: 0.85rem 1rem;
+    font-size: 0.82rem; color: var(--accent); line-height: 1.5;
+    margin-bottom: 1.25rem;
+}
+.info-box i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── Checkbox items ── */
+.checkbox-item {
+    display: flex; align-items: center;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--line);
+    gap: 0.85rem;
+    cursor: pointer;
+}
+.checkbox-item:last-child { border-bottom: none; }
+.checkbox-item:hover { background: none; }
+
+.checkbox-item input[type="checkbox"] {
+    width: 17px; height: 17px;
+    accent-color: var(--accent);
+    flex-shrink: 0; cursor: pointer;
+}
+
+.checkbox-label { flex: 1; cursor: pointer; }
+.checkbox-title { font-size: 0.875rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.checkbox-desc  { font-size: 0.77rem; color: var(--ink-4); line-height: 1.4; }
+
+/* ── Course filter ── */
+.course-filter {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+.course-filter-label { font-size: 0.75rem; font-weight: 600; color: var(--ink-4); white-space: nowrap; }
+
+.filter-input {
+    padding: 0.55rem 0.9rem;
+    border: 1px solid var(--line-2);
+    border-radius: var(--radius-md);
+    font-size: 0.85rem; font-family: var(--font-body);
+    background: var(--surface); color: var(--ink);
+    transition: border-color 0.2s;
+}
+.filter-input:focus { outline: none; border-color: var(--accent); }
+.filter-input[type="text"] { flex: 1; min-width: 160px; }
+select.filter-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7585' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 2rem; cursor: pointer;
+}
+
+.course-placeholder {
+    text-align: center; padding: 1.75rem;
+    color: var(--ink-4); font-size: 0.85rem;
+    border: 1px dashed var(--line-2);
+    border-radius: var(--radius-md);
+}
+.course-placeholder i { font-size: 20px; display: block; margin-bottom: 0.4rem; color: var(--line-2); }
+
+#no-course-results {
+    display: none;
+    text-align: center; padding: 1.75rem;
+    color: var(--ink-4); font-size: 0.85rem;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+}
+
+.course-group {
+    border-top: 1px solid var(--line);
+    padding-top: 1rem; margin-top: 1rem;
+}
+.course-group-title {
+    font-size: 0.82rem; font-weight: 700; color: var(--ink-2);
+    margin-bottom: 0.5rem;
+    display: flex; align-items: center; gap: 0.4rem;
+}
+.course-group-title i { font-size: 14px; color: var(--ink-4); }
+
+/* ── Save button ── */
+.save-section { display: flex; }
+
+.btn-save {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: var(--radius-md); border: none;
+    background: var(--accent); color: white;
+    font-size: 0.875rem; font-weight: 700;
+    font-family: var(--font-body); cursor: pointer;
+    box-shadow: 0 2px 8px rgba(61,90,254,0.3);
+    transition: background 0.2s, transform 0.15s, opacity 0.2s;
+}
+.btn-save i { font-size: 15px; }
+.btn-save:hover:not(:disabled) { background: var(--accent-2); transform: translateY(-1px); }
+.btn-save:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 </style>
 @endsection
 
 @section('content')
-
+<div class="page-wrapper">
     <form method="POST" action="{{ route('notification-settings.update') }}" id="settings-form">
         @csrf
 
-        <!-- Global Settings -->
-        <div class="settings-card">
-            <h2>🌍 Paramètres Globaux</h2>
-
-            <div class="info-box">
-                ℹ️ Ces paramètres s'appliquent à tous vos cours. Vous pouvez personnaliser par cours ci-dessous.
+        {{-- ── Global settings ── --}}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon"><i class="ti ti-world"></i></div>
+                <div class="card-header-title">Paramètres globaux</div>
             </div>
+            <div class="card-body">
 
-            <div class="setting-group">
+                <div class="info-box">
+                    <i class="ti ti-info-circle"></i>
+                    Ces paramètres s'appliquent à tous vos cours. Vous pouvez personnaliser par cours ci-dessous.
+                </div>
+
                 @if(Auth::user()->isStudent())
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_new_tp" name="global_new_tp"
-                               {{ $globalSettings->new_tp_notifications ? 'checked' : '' }}>
-                        <label for="global_new_tp" class="checkbox-label">
-                            <div>📝 Nouveaux TP</div>
-                            <div class="checkbox-description">Être notifié quand un enseignant publie un nouveau TP</div>
+                    @foreach([
+                        ['global_new_tp',           $globalSettings->new_tp_notifications,           'ti-file-text',   'Nouveaux TP',      'Être notifié quand un enseignant publie un nouveau TP'],
+                        ['global_submission_graded', $globalSettings->submission_graded_notifications,'ti-star',        'TP notés',         'Être notifié quand un TP est noté'],
+                        ['global_post',              $globalSettings->post_notifications,             'ti-speakerphone','Publications',     'Être notifié des nouvelles annonces'],
+                        ['global_comment',           $globalSettings->comment_notifications,          'ti-message-circle','Commentaires',   'Être notifié quand quelqu\'un répond à votre commentaire'],
+                        ['global_like',              $globalSettings->like_notifications,             'ti-heart',       'Likes',            'Être notifié quand quelqu\'un aime votre commentaire'],
+                    ] as [$name, $checked, $icon, $title, $desc])
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="{{ $name }}" name="{{ $name }}" {{ $checked ? 'checked' : '' }}>
+                            <label for="{{ $name }}" class="checkbox-label">
+                                <div class="checkbox-title"><i class="ti {{ $icon }}" style="font-size:14px;margin-right:4px;color:var(--ink-4);"></i>{{ $title }}</div>
+                                <div class="checkbox-desc">{{ $desc }}</div>
+                            </label>
                         </label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_submission_graded" name="global_submission_graded"
-                               {{ $globalSettings->submission_graded_notifications ? 'checked' : '' }}>
-                        <label for="global_submission_graded" class="checkbox-label">
-                            <div>⭐ TP notés</div>
-                            <div class="checkbox-description">Être notifié quand un TP est noté</div>
-                        </label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_post" name="global_post"
-                               {{ $globalSettings->post_notifications ? 'checked' : '' }}>
-                        <label for="global_post" class="checkbox-label">
-                            <div>📢 Publications</div>
-                            <div class="checkbox-description">Être notifié des nouvelles annonces</div>
-                        </label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_comment" name="global_comment"
-                               {{ $globalSettings->comment_notifications ? 'checked' : '' }}>
-                        <label for="global_comment" class="checkbox-label">
-                            <div>💬 Commentaires</div>
-                            <div class="checkbox-description">Être notifié quand quelqu'un répond à votre commentaire</div>
-                        </label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_like" name="global_like"
-                               {{ $globalSettings->like_notifications ? 'checked' : '' }}>
-                        <label for="global_like" class="checkbox-label">
-                            <div>❤️ Likes</div>
-                            <div class="checkbox-description">Être notifié quand quelqu'un aime votre commentaire</div>
-                        </label>
-                    </div>
+                    @endforeach
                 @else
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_new_submission" name="global_new_submission"
-                               {{ $globalSettings->new_submission_notifications ? 'checked' : '' }}>
-                        <label for="global_new_submission" class="checkbox-label">
-                            <div>📤 Nouvelles soumissions</div>
-                            <div class="checkbox-description">Être notifié quand un étudiant soumet un TP</div>
+                    @foreach([
+                        ['global_new_submission',  $globalSettings->new_submission_notifications,  'ti-upload',      'Nouvelles soumissions', 'Être notifié quand un étudiant soumet un TP'],
+                        ['global_student_joined',  $globalSettings->student_joined_notifications,  'ti-user-plus',   'Nouveaux étudiants',    'Être notifié quand un étudiant rejoint un de vos cours'],
+                        ['global_comment',         $globalSettings->comment_notifications,         'ti-message-circle','Commentaires',        'Être notifié quand quelqu\'un commente vos publications'],
+                        ['global_like',            $globalSettings->like_notifications,            'ti-heart',       'Likes',                 'Être notifié quand quelqu\'un aime votre publication'],
+                    ] as [$name, $checked, $icon, $title, $desc])
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="{{ $name }}" name="{{ $name }}" {{ $checked ? 'checked' : '' }}>
+                            <label for="{{ $name }}" class="checkbox-label">
+                                <div class="checkbox-title"><i class="ti {{ $icon }}" style="font-size:14px;margin-right:4px;color:var(--ink-4);"></i>{{ $title }}</div>
+                                <div class="checkbox-desc">{{ $desc }}</div>
+                            </label>
                         </label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_student_joined" name="global_student_joined"
-                               {{ $globalSettings->student_joined_notifications ? 'checked' : '' }}>
-                        <label for="global_student_joined" class="checkbox-label">
-                            <div>👤 Nouveaux étudiants</div>
-                            <div class="checkbox-description">Être notifié quand un étudiant rejoint un de vos cours</div>
-                        </label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_comment" name="global_comment"
-                               {{ $globalSettings->comment_notifications ? 'checked' : '' }}>
-                        <label for="global_comment" class="checkbox-label">
-                            <div>💬 Commentaires</div>
-                            <div class="checkbox-description">Être notifié quand quelqu'un commente vos publications</div>
-                        </label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="global_like" name="global_like"
-                               {{ $globalSettings->like_notifications ? 'checked' : '' }}>
-                        <label for="global_like" class="checkbox-label">
-                            <div>❤️ Likes</div>
-                            <div class="checkbox-description">Être notifié quand quelqu'un aime votre publication ou commentaire</div>
-                        </label>
-                    </div>
+                    @endforeach
                 @endif
+
             </div>
         </div>
 
-        <!-- Per-Course Settings -->
-        <div class="settings-card">
-            <h2>📚 Paramètres par Cours</h2>
+        {{-- ── Per-course settings ── --}}
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header-icon"><i class="ti ti-books"></i></div>
+                <div class="card-header-title">Paramètres par cours</div>
+            </div>
+            <div class="card-body">
 
-            @if($courses->count() > 0)
-                <div class="course-filter">
-                    <label for="course-search">🔍</label>
-                    <input type="text" id="course-search" placeholder="Rechercher un cours..."
-                           oninput="filterCourses()">
-                    <label for="course-select">ou</label>
-                    <select id="course-select" onchange="jumpToCourse(this.value)">
-                        <option value="">— Aller à un cours —</option>
-                        @foreach($courses as $course)
-                            <option value="course-{{ $course->id }}">{{ $course->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                @if($courses->count() > 0)
 
-                <div id="course-placeholder" class="course-placeholder">
-                    🔍 Recherchez un cours ou utilisez le menu déroulant pour afficher ses paramètres
-                </div>
+                    <div class="course-filter">
+                        <span class="course-filter-label"><i class="ti ti-search" style="font-size:13px;"></i></span>
+                        <input type="text" class="filter-input" id="course-search"
+                               placeholder="Rechercher un cours..." oninput="filterCourses()">
+                        <select class="filter-input" id="course-select" onchange="jumpToCourse(this.value)">
+                            <option value="">— Aller à un cours —</option>
+                            @foreach($courses as $course)
+                                <option value="course-{{ $course->id }}">{{ $course->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <div id="no-course-results">Aucun cours trouvé.</div>
+                    <div id="course-placeholder" class="course-placeholder">
+                        <i class="ti ti-search"></i>
+                        Recherchez un cours ou utilisez le menu déroulant
+                    </div>
 
-                @foreach($courses as $course)
-                    <div class="setting-group"
-                         id="course-{{ $course->id }}"
-                         data-course-name="{{ strtolower($course->name) }}"
-                         style="display: none;">
-                        <h3>{{ $course->name }}</h3>
+                    <div id="no-course-results">Aucun cours trouvé.</div>
 
-                        @if(Auth::user()->isStudent())
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_new_tp"
-                                       name="courses[{{ $course->id }}][new_tp]"
-                                       {{ $settings[$course->id]->new_tp_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_new_tp" class="checkbox-label">
-                                    <div>📝 Nouveaux TP</div>
-                                </label>
+                    @foreach($courses as $course)
+                        <div class="course-group"
+                             id="course-{{ $course->id }}"
+                             data-course-name="{{ strtolower($course->name) }}"
+                             style="display:none;">
+                            <div class="course-group-title">
+                                <i class="ti ti-book"></i> {{ $course->name }}
                             </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_graded"
-                                       name="courses[{{ $course->id }}][submission_graded]"
-                                       {{ $settings[$course->id]->submission_graded_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_graded" class="checkbox-label">
-                                    <div>⭐ TP notés</div>
-                                </label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_post"
-                                       name="courses[{{ $course->id }}][post]"
-                                       {{ $settings[$course->id]->post_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_post" class="checkbox-label">
-                                    <div>📢 Publications</div>
-                                </label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_comment"
-                                       name="courses[{{ $course->id }}][comment]"
-                                       {{ $settings[$course->id]->comment_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_comment" class="checkbox-label">
-                                    <div>💬 Commentaires</div>
-                                </label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_like"
-                                       name="courses[{{ $course->id }}][like]"
-                                       {{ $settings[$course->id]->like_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_like" class="checkbox-label">
-                                    <div>❤️ Likes</div>
-                                </label>
-                            </div>
-                        @else
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_submission"
-                                       name="courses[{{ $course->id }}][new_submission]"
-                                       {{ $settings[$course->id]->new_submission_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_submission" class="checkbox-label">
-                                    <div>📤 Nouvelles soumissions</div>
-                                </label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_student_joined"
-                                       name="courses[{{ $course->id }}][student_joined]"
-                                       {{ $settings[$course->id]->student_joined_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_student_joined" class="checkbox-label">
-                                    <div>👤 Nouveaux étudiants</div>
-                                </label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_comment"
-                                       name="courses[{{ $course->id }}][comment]"
-                                       {{ $settings[$course->id]->comment_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_comment" class="checkbox-label">
-                                    <div>💬 Commentaires</div>
-                                </label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox"
-                                       id="course_{{ $course->id }}_like"
-                                       name="courses[{{ $course->id }}][like]"
-                                       {{ $settings[$course->id]->like_notifications ? 'checked' : '' }}>
-                                <label for="course_{{ $course->id }}_like" class="checkbox-label">
-                                    <div>❤️ Likes</div>
-                                </label>
-                            </div>
+
+                            @if(Auth::user()->isStudent())
+                                @foreach([
+                                    ["courses[{$course->id}][new_tp]",           $settings[$course->id]->new_tp_notifications,           'Nouveaux TP'],
+                                    ["courses[{$course->id}][submission_graded]", $settings[$course->id]->submission_graded_notifications, 'TP notés'],
+                                    ["courses[{$course->id}][post]",             $settings[$course->id]->post_notifications,             'Publications'],
+                                    ["courses[{$course->id}][comment]",          $settings[$course->id]->comment_notifications,          'Commentaires'],
+                                    ["courses[{$course->id}][like]",             $settings[$course->id]->like_notifications,             'Likes'],
+                                ] as [$name, $checked, $title])
+                                    <label class="checkbox-item" style="padding:0.65rem 0;">
+                                        <input type="checkbox" name="{{ $name }}" {{ $checked ? 'checked' : '' }}>
+                                        <label class="checkbox-label">
+                                            <div class="checkbox-title">{{ $title }}</div>
+                                        </label>
+                                    </label>
+                                @endforeach
+                            @else
+                                @foreach([
+                                    ["courses[{$course->id}][new_submission]",  $settings[$course->id]->new_submission_notifications,  'Nouvelles soumissions'],
+                                    ["courses[{$course->id}][student_joined]",  $settings[$course->id]->student_joined_notifications,  'Nouveaux étudiants'],
+                                    ["courses[{$course->id}][comment]",         $settings[$course->id]->comment_notifications,         'Commentaires'],
+                                    ["courses[{$course->id}][like]",            $settings[$course->id]->like_notifications,            'Likes'],
+                                ] as [$name, $checked, $title])
+                                    <label class="checkbox-item" style="padding:0.65rem 0;">
+                                        <input type="checkbox" name="{{ $name }}" {{ $checked ? 'checked' : '' }}>
+                                        <label class="checkbox-label">
+                                            <div class="checkbox-title">{{ $title }}</div>
+                                        </label>
+                                    </label>
+                                @endforeach
+                            @endif
+                        </div>
+                    @endforeach
+
+                @else
+                    <div style="text-align:center;padding:2rem;color:var(--ink-4);font-size:0.875rem;">
+                        @if(Auth::user()->isStudent()) Vous n'êtes inscrit à aucun cours
+                        @else Vous n'avez créé aucun cours
                         @endif
                     </div>
-                @endforeach
-            @else
-                <div style="text-align:center; padding:2rem; color:#64748b;">
-                    @if(Auth::user()->isStudent())
-                        Vous n'êtes inscrit à aucun cours
-                    @else
-                        Vous n'avez créé aucun cours
-                    @endif
-                </div>
-            @endif
+                @endif
+
+            </div>
         </div>
 
-        <div>
-            <button type="submit" id="save-btn" class="btn btn-primary" disabled>
-                ✓ Enregistrer les paramètres
+        <div class="save-section">
+            <button type="submit" id="save-btn" class="btn-save" disabled>
+                <i class="ti ti-device-floppy"></i> Enregistrer les paramètres
             </button>
         </div>
-    </form>
 
+    </form>
+</div>
 @endsection
 
 @section('extra-scripts')
 <script>
-    // ── Change detection ──────────────────────────────────
-    const form    = document.getElementById('settings-form');
-    const saveBtn = document.getElementById('save-btn');
+const form    = document.getElementById('settings-form');
+const saveBtn = document.getElementById('save-btn');
 
-    function getState() {
-        return Array.from(form.querySelectorAll('input[type="checkbox"]'))
-            .map(cb => cb.name + ':' + cb.checked)
-            .join('|');
-    }
+function getState() {
+    return Array.from(form.querySelectorAll('input[type="checkbox"]'))
+        .map(cb => cb.name + ':' + cb.checked).join('|');
+}
+const originalState = getState();
+form.addEventListener('change', () => { saveBtn.disabled = getState() === originalState; });
 
-    const originalState = getState();
+function filterCourses() {
+    const query       = document.getElementById('course-search').value.toLowerCase().trim();
+    const groups      = document.querySelectorAll('.course-group[data-course-name]');
+    const placeholder = document.getElementById('course-placeholder');
+    const noResults   = document.getElementById('no-course-results');
+    let anyVisible    = false;
 
-    form.addEventListener('change', () => {
-        saveBtn.disabled = getState() === originalState;
+    groups.forEach(group => {
+        if (!query) { group.style.display = 'none'; return; }
+        const match = group.dataset.courseName.includes(query);
+        group.style.display = match ? 'block' : 'none';
+        if (match) anyVisible = true;
     });
 
-    // ── Course search filter ──────────────────────────────
-    function filterCourses() {
-        const query       = document.getElementById('course-search').value.toLowerCase().trim();
-        const groups      = document.querySelectorAll('.setting-group[data-course-name]');
-        const placeholder = document.getElementById('course-placeholder');
-        const noResults   = document.getElementById('no-course-results');
-        let anyVisible    = false;
+    placeholder.style.display = query ? 'none' : 'block';
+    noResults.style.display   = query && !anyVisible ? 'block' : 'none';
+    document.getElementById('course-select').value = '';
+}
 
-        groups.forEach(group => {
-            if (!query) {
-                group.style.display = 'none';
-                return;
-            }
-            const match = group.dataset.courseName.includes(query);
-            group.style.display = match ? 'block' : 'none';
-            if (match) anyVisible = true;
-        });
-
-        placeholder.style.display = query ? 'none' : 'block';
-        noResults.style.display   = query && !anyVisible ? 'block' : 'none';
-
-        // Reset dropdown when typing
-        document.getElementById('course-select').value = '';
-    }
-
-    // ── Dropdown jump-to ─────────────────────────────────
-    function jumpToCourse(id) {
-        if (!id) return;
-
-        const groups      = document.querySelectorAll('.setting-group[data-course-name]');
-        const placeholder = document.getElementById('course-placeholder');
-        const noResults   = document.getElementById('no-course-results');
-
-        // Hide all courses and clear search
-        groups.forEach(g => g.style.display = 'none');
-        document.getElementById('course-search').value = '';
-        placeholder.style.display = 'none';
-        noResults.style.display   = 'none';
-
-        // Show only the selected course and scroll to it
-        const target = document.getElementById(id);
-        if (target) {
-            target.style.display = 'block';
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    }
+function jumpToCourse(id) {
+    if (!id) return;
+    document.querySelectorAll('.course-group[data-course-name]').forEach(g => g.style.display = 'none');
+    document.getElementById('course-search').value = '';
+    document.getElementById('course-placeholder').style.display = 'none';
+    document.getElementById('no-course-results').style.display  = 'none';
+    const target = document.getElementById(id);
+    if (target) { target.style.display = 'block'; target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+}
 </script>
 @endsection

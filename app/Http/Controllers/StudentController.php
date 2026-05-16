@@ -7,6 +7,7 @@ use App\Models\ClassModel;
 use App\Models\Submission;
 use App\Models\Notification;
 use App\Models\NotificationSetting;
+use App\Models\Attendance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -258,43 +259,52 @@ class StudentController extends Controller
     }
 
     public function myProgress()
-{
-    $student = Auth::user();
+    {
+        $student = Auth::user();
 
-    $courses = $student->enrolledClasses()
-        ->with(['tps' => function ($query) {
-            $query->where('status', 'published')->distinct();
-        }])
-        ->get();
+        // 1. Submissions statistics
+        $allSubmissions = Submission::where('student_id', $student->id)
+            ->with(['tp.teacher', 'tp.class'])
+            ->orderBy('submitted_at', 'desc')
+            ->get();
 
-    $tpIds = collect();
+        $totalSubmissions   = $allSubmissions->count();
+        $gradedSubmissions  = $allSubmissions->whereNotNull('grade')->count();
+        $pendingSubmissions = $allSubmissions->whereNull('grade')->count();
+        
+        $totalGrade = $allSubmissions->whereNotNull('grade')->sum('grade');
+        $averageGrade = $gradedSubmissions > 0 ? $totalGrade / $gradedSubmissions : 0;
 
-    foreach ($courses as $course) {
-        $tpIds = $tpIds->merge($course->tps->pluck('id'));
+        // 2. Detailed grades list
+        $gradesByTP = $allSubmissions->whereNotNull('grade')->map(function($s) {
+            return [
+                'tp'           => $s->tp,
+                'grade'        => $s->grade,
+                'submitted_at' => $s->submitted_at,
+            ];
+        });
+
+        // 3. Attendance statistics & history
+        $attendances = Attendance::where('student_id', $student->id)
+            ->with('class')
+            ->orderBy('date', 'desc')
+            ->get();
+
+        $attendanceStats = [
+            'present' => $attendances->where('status', 'present')->count(),
+            'absent'  => $attendances->where('status', 'absent')->count(),
+            'late'    => $attendances->where('status', 'late')->count(),
+            'excused' => $attendances->where('status', 'excused')->count(),
+        ];
+
+        return view('student.progress.index', compact(
+            'totalSubmissions',
+            'gradedSubmissions',
+            'pendingSubmissions',
+            'averageGrade',
+            'attendanceStats',
+            'gradesByTP',
+            'attendances'
+        ));
     }
-
-    $tpIds = $tpIds->unique();
-
-    $submissions = Submission::where('student_id', $student->id)
-        ->whereIn('tp_id', $tpIds)
-        ->get()
-        ->keyBy('tp_id');
-
-    $totalTPs = $tpIds->count();
-    $submittedTPs = $submissions->count();
-    $gradedTPs = $submissions->whereNotNull('grade')->count();
-    $totalGrade = $submissions->sum('grade');
-
-    $averageGrade = $gradedTPs > 0 ? round($totalGrade / $gradedTPs, 2) : 0;
-    $completionRate = $totalTPs > 0 ? round(($submittedTPs / $totalTPs) * 100, 2) : 0;
-
-    return view('student.progress.index', compact(
-        'courses',
-        'totalTPs',
-        'submittedTPs',
-        'gradedTPs',
-        'averageGrade',
-        'completionRate'
-    ));
-}
 }

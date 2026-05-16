@@ -1,301 +1,316 @@
 @extends('layouts.app')
 
 @section('title', 'Statistiques Globales')
-@section('page-title', 'Statistiques Globales du Système')
 
 @section('extra-styles')
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
 <style>
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        cursor: pointer;
-        text-decoration: none;
-        font-size: 0.9rem;
-        display: inline-block;
-        background: #1e293b;
-        color: #e2e8f0;
-        font-weight: 500;
-        transition: all 0.2s;
+    :root {
+        --ink:        #0d1117;
+        --ink-2:      #3d4550;
+        --ink-3:      #6b7585;
+        --ink-4:      #9aa3af;
+        --line:       #e8ebef;
+        --line-2:     #d1d6dd;
+        --surface:    #ffffff;
+        --surface-2:  #f5f6f8;
+        --surface-3:  #eef0f3;
+        --accent:     #3d5afe;
+        --accent-2:   #5271ff;
+        --accent-bg:  #eef1ff;
+        --danger:     #e53935;
+        --warning:    #f59e0b;
+        --success:    #10b981;
+        --radius-sm:  6px;
+        --radius-md:  10px;
+        --radius-lg:  16px;
+        --radius-xl:  22px;
+        --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --shadow-md:  0 4px 16px rgba(0,0,0,0.07);
+        --font-body:  'DM Sans', sans-serif;
+        --font-serif: 'DM Serif Display', serif;
     }
-    .btn:hover {
-        background: #334155;
-        border-color: #475569;
+
+    .stats-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.5rem 0 3rem;
     }
-    .btn-secondary {
-        background-color: #1e293b;
-        color: #e2e8f0;
+
+    .page-header {
+        margin-bottom: 2rem;
     }
-    .btn-secondary:hover {
-        background: #334155;
+
+    .page-title {
+        font-family: var(--font-serif);
+        font-size: 2rem;
+        color: var(--ink);
+        margin-bottom: 0.5rem;
     }
+
+    .page-subtitle {
+        color: var(--ink-4);
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--ink-4);
+        margin: 2.5rem 0 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 2rem;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.25rem;
     }
+
     .stat-card {
-        background: #0f172a;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
         padding: 1.5rem;
-        border-radius: 1rem;
-        border: 1px solid #334155;
-        text-align: center;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
     }
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: #818cf8;
+
+    .stat-val {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--ink);
+        line-height: 1;
     }
+
     .stat-label {
-        color: #94a3b8;
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
+        font-size: 0.82rem;
+        color: var(--ink-3);
+        font-weight: 500;
     }
-    .section {
-        background: #0f172a;
-        padding: 2rem;
-        border-radius: 1rem;
-        margin-bottom: 2rem;
-        border: 1px solid #334155;
-    }
-    .section h2 {
-        color: #c7d2fe;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #334155;
-    }
-    .section-heading {
-        color: #cbd5e1;
-        margin-bottom: 1rem;
-        margin-top: 2rem;
-    }
-    .grid-2col {
+
+    .stat-card.accent { border-left: 4px solid var(--accent); }
+    .stat-card.success { border-left: 4px solid var(--success); }
+    .stat-card.warning { border-left: 4px solid var(--warning); }
+    .stat-card.danger { border-left: 4px solid var(--danger); }
+
+    .data-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 2rem;
+        margin-top: 2rem;
     }
+
+    .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface-2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 700;
+        color: var(--ink);
+    }
+
+    .card-header i { color: var(--accent); }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
     table {
         width: 100%;
         border-collapse: collapse;
-        background: #0f172a;
-        border: 1px solid #334155;
-        border-radius: 0.75rem;
-        overflow: hidden;
     }
-    th, td {
-        padding: 1rem;
-        text-align: left;
-        border-bottom: 1px solid #334155;
-    }
+
     th {
-        background-color: #1e293b;
-        font-weight: bold;
-        color: #cbd5e1;
+        padding: 0.75rem 1.5rem;
+        text-align: left;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink-4);
+        border-bottom: 1px solid var(--line);
     }
+
     td {
-        color: #e2e8f0;
+        padding: 1rem 1.5rem;
+        font-size: 0.875rem;
+        color: var(--ink-2);
+        border-bottom: 1px solid var(--line);
     }
-    tr:hover {
-        background-color: #f8f9fa;
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface-2); }
+
+    .badge {
+        padding: 0.25rem 0.65rem;
+        border-radius: 100px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
     }
-    .status-badge {
-        padding: 0.3rem 0.8rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: bold;
-        display: inline-block;
-    }
-    .status-graded {
-        background-color: #28a745;
-        color: white;
-    }
-    .status-submitted {
-        background-color: #ffc107;
-        color: #333;
-    }
-    .header-actions {
-        margin-bottom: 1.5rem;
-        text-align: right;
+
+    .badge-success { background: #ecfdf5; color: #10b981; }
+    .badge-warning { background: #fffbeb; color: #f59e0b; }
+
+    @media (max-width: 992px) {
+        .data-grid { grid-template-columns: 1fr; }
     }
 </style>
 @endsection
 
 @section('content')
-    
+<div class="stats-wrapper">
+    <div class="page-header">
+        <h1 class="page-title">Statistiques Globales</h1>
+        <p class="page-subtitle">Vue d'ensemble des performances et de l'activité du système</p>
+    </div>
 
-
-    <h3 class="section-heading">👥 Utilisateurs</h3>
+    <div class="section-title"><i class="ti ti-users"></i> Communauté</div>
     <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalUsers }}</div>
-            <div class="stat-label">Total utilisateurs</div>
+        <div class="stat-card accent">
+            <div class="stat-val">{{ $totalUsers }}</div>
+            <div class="stat-label">Utilisateurs inscrits</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $totalStudents }}</div>
-            <div class="stat-label">Étudiants</div>
+        <div class="stat-card success">
+            <div class="stat-val">{{ $totalStudents }}</div>
+            <div class="stat-label">Étudiants actifs</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $totalTeachers }}</div>
+        <div class="stat-card warning">
+            <div class="stat-val">{{ $totalTeachers }}</div>
             <div class="stat-label">Enseignants</div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #dc3545;">{{ $totalAdmins }}</div>
+        <div class="stat-card danger">
+            <div class="stat-val">{{ $totalAdmins }}</div>
             <div class="stat-label">Administrateurs</div>
         </div>
     </div>
 
-    <h3 class="section-heading">📚 Classes</h3>
+    <div class="section-title"><i class="ti ti-book"></i> Académique</div>
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-number">{{ $totalClasses }}</div>
-            <div class="stat-label">Total classes</div>
+            <div class="stat-val">{{ $totalClasses }}</div>
+            <div class="stat-label">Total des classes</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">{{ $classesWithStudents }}</div>
-            <div class="stat-label">Classes avec étudiants</div>
+            <div class="stat-val">{{ $totalTPs }}</div>
+            <div class="stat-label">TP créés</div>
         </div>
         <div class="stat-card">
-            <div class="stat-number">{{ $classesWithTeachers }}</div>
-            <div class="stat-label">Classes avec enseignants</div>
+            <div class="stat-val">{{ $totalSubmissions }}</div>
+            <div class="stat-label">Soumissions reçues</div>
+        </div>
+        <div class="stat-card accent">
+            <div class="stat-val">{{ $averageGrade ? number_format($averageGrade, 1) : '—' }}</div>
+            <div class="stat-label">Moyenne générale /20</div>
         </div>
     </div>
 
-    <h3 class="section-heading">📝 Travaux Pratiques</h3>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalTPs }}</div>
-            <div class="stat-label">Total TP</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $publishedTPs }}</div>
-            <div class="stat-label">TP publiés</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $draftTPs }}</div>
-            <div class="stat-label">Brouillons</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalSubmissions }}</div>
-            <div class="stat-label">Total soumissions</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $gradedSubmissions }}</div>
-            <div class="stat-label">Notées</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $pendingSubmissions }}</div>
-            <div class="stat-label">En attente</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ $averageGrade ? number_format($averageGrade, 2) : 'N/A' }}</div>
-            <div class="stat-label">Moyenne générale</div>
-        </div>
-    </div>
-
-    <h3 class="section-heading">✓ Présences</h3>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ $totalAttendances }}</div>
-            <div class="stat-label">Total enregistrements</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #28a745;">{{ $presentCount }}</div>
-            <div class="stat-label">Présents</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #dc3545;">{{ $absentCount }}</div>
-            <div class="stat-label">Absents</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" style="color: #ffc107;">{{ $lateCount }}</div>
-            <div class="stat-label">Retards</div>
-        </div>
-    </div>
-
-    <div class="grid-2col">
-        <div class="section">
-            <h2>🏆 Meilleurs étudiants</h2>
-            @if($topStudents->count() > 0)
+    <div class="data-grid">
+        <div class="card">
+            <div class="card-header"><i class="ti ti-medal"></i> Meilleurs étudiants</div>
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Étudiant</th>
                             <th>Moyenne</th>
-                            <th>TP soumis</th>
+                            <th>TP Soumis</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($topStudents as $item)
+                        @forelse($topStudents as $item)
                             <tr>
-                                <td>{{ $item->student->name }}</td>
-                                <td><strong>{{ number_format($item->avg_grade, 2) }}/20</strong></td>
+                                <td style="font-weight:600;">{{ $item->student->name }}</td>
+                                <td><span style="color:var(--success); font-weight:700;">{{ number_format($item->avg_grade, 2) }}</span></td>
                                 <td>{{ $item->total_submissions }}</td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr><td colspan="3" style="text-align:center; padding:3rem; color:var(--ink-4);">Aucune donnée disponible</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
-            @else
-                <p style="text-align: center; color: #999; padding: 2rem;">Aucune donnée</p>
-            @endif
+            </div>
         </div>
 
-        <div class="section">
-            <h2>👨‍🏫 Enseignants les plus actifs</h2>
-            @if($activeTeachers->count() > 0)
+        <div class="card">
+            <div class="card-header"><i class="ti ti-chalkboard"></i> Enseignants actifs</div>
+            <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Enseignant</th>
-                            <th>TP créés</th>
+                            <th>TP Créés</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($activeTeachers as $item)
+                        @forelse($activeTeachers as $item)
                             <tr>
-                                <td>{{ $item->teacher->name }}</td>
-                                <td><strong>{{ $item->tps_count }}</strong></td>
+                                <td style="font-weight:600;">{{ $item->teacher->name }}</td>
+                                <td><span style="color:var(--accent); font-weight:700;">{{ $item->tps_count }}</span></td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr><td colspan="2" style="text-align:center; padding:3rem; color:var(--ink-4);">Aucune donnée disponible</td></tr>
+                        @endforelse
                     </tbody>
                 </table>
-            @else
-                <p style="text-align: center; color: #999; padding: 2rem;">Aucune donnée</p>
-            @endif
+            </div>
         </div>
     </div>
 
-    <div class="section">
-        <h2>📋 Soumissions récentes</h2>
-        @if($recentSubmissions->count() > 0)
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header"><i class="ti ti-history"></i> Soumissions récentes</div>
+        <div class="table-container">
             <table>
                 <thead>
                     <tr>
                         <th>Étudiant</th>
-                        <th>TP</th>
+                        <th>Travail Pratique</th>
                         <th>Date</th>
                         <th>Statut</th>
                         <th>Note</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($recentSubmissions as $submission)
+                    @forelse($recentSubmissions as $submission)
                         <tr>
-                            <td>{{ $submission->student->name }}</td>
+                            <td style="font-weight:600;">{{ $submission->student->name }}</td>
                             <td>{{ $submission->tp->title }}</td>
-                            <td>{{ $submission->submitted_at->format('d/m/Y H:i') }}</td>
+                            <td style="color:var(--ink-3);">{{ $submission->submitted_at->format('d/m/Y H:i') }}</td>
                             <td>
-                                <span class="status-badge status-{{ $submission->status }}">
-                                    {{ ucfirst($submission->status) }}
-                                </span>
+                                @if($submission->status === 'graded')
+                                    <span class="badge badge-success">Noté</span>
+                                @else
+                                    <span class="badge badge-warning">En attente</span>
+                                @endif
                             </td>
-                            <td>{{ $submission->grade ? $submission->grade . '/20' : 'En attente' }}</td>
+                            <td style="font-weight:700;">
+                                {{ $submission->grade ? number_format($submission->grade, 1) . '/20' : '—' }}
+                            </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr><td colspan="5" style="text-align:center; padding:3rem; color:var(--ink-4);">Aucune soumission récente</td></tr>
+                    @endforelse
                 </tbody>
             </table>
-        @else
-            <p style="text-align: center; color: #999; padding: 2rem;">Aucune soumission</p>
-        @endif
+        </div>
     </div>
+</div>
 @endsection
