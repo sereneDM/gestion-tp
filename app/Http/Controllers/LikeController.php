@@ -29,7 +29,7 @@ class LikeController extends Controller
                 if (NotificationSetting::shouldNotify($post->user_id, $post->class_id, 'like')) {
                     Notification::createFor(
                         $post->user_id,
-                        'comment_liked',
+                        'post_liked', // ← was 'comment_liked', now distinct type
                         '❤️ ' . auth()->user()->name . ' a aimé votre publication',
                         Str::limit($post->title, 80),
                         route('posts.show', $post->id),
@@ -59,10 +59,10 @@ class LikeController extends Controller
 
             // Notify comment author (not self)
             if ($userId !== $comment->user_id) {
-                $post    = $comment->post;
-                $anchor  = route('posts.show', $post->id) . '#comment-' . $comment->id;
+                $post   = $comment->post;
+                $anchor = route('posts.show', $post->id) . '#comment-' . $comment->id;
 
-                if (NotificationSetting::shouldNotify($comment->user_id, $post->class_id, 'like')) {
+                if (NotificationSetting::shouldNotify($comment->user_id, $post->class_id, 'comment_like')) {
                     Notification::createFor(
                         $comment->user_id,
                         'comment_liked',

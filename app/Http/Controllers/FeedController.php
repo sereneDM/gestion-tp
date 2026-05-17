@@ -18,7 +18,19 @@ class FeedController extends Controller
     public function show($id)
     {
         $user = Auth::user();
-        $post = Post::with(['user', 'class', 'tp', 'comments.user', 'comments.replies.user'])
+        $post = Post::with([
+                        'user', 'class', 'tp',
+                        'comments.user',
+                        'comments' => function ($q) {
+                            $q->withCount('likes')
+                              ->withExists(['likes as is_liked' => fn($q) => $q->where('user_id', auth()->id())]);
+                        },
+                        'comments.replies.user',
+                        'comments.replies' => function ($q) {
+                            $q->withCount('likes')
+                              ->withExists(['likes as is_liked' => fn($q) => $q->where('user_id', auth()->id())]);
+                        },
+                    ])
                     ->withCount('likes')
                     ->withExists([
                         'likes as is_liked' => function ($q) {

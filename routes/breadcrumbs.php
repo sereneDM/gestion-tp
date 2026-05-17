@@ -107,9 +107,9 @@ Breadcrumbs::for('teacher.statistics', fn (Trail $t) =>
 );
 
 // ─── STUDENT ─────────────────────────────────────────────
-Breadcrumbs::for('student.dashboard', fn (Trail $t) =>
-    $t->push('Tableau de bord', route('student.dashboard'))
-);
+Breadcrumbs::for('student.dashboard', function ($trail) {
+    $trail->push('Fil d\'actualité', route('student.dashboard'));
+});
 
 Breadcrumbs::for('student.my-courses', fn (Trail $t) =>
     $t->push('Mes cours', route('student.my-courses'))

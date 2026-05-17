@@ -341,6 +341,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     border: 1px solid var(--line);
     border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
     padding: 0.8rem 1rem;
+    transition: background 0.3s, border-color 0.3s;
 }
 
 .comment-header-row {
@@ -410,6 +411,8 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .comment-action-btn i { font-size: 13px; }
 .comment-action-btn:hover { background: var(--surface-2); color: var(--ink-2); }
 .comment-action-btn.delete-btn:hover { color: var(--danger); background: var(--danger-bg); }
+.comment-action-btn.liked       { color: var(--danger); }
+.comment-action-btn.like-comment-btn:hover { color: var(--danger); background: var(--danger-bg); }
 
 /* ── Replies ── */
 .replies {
@@ -708,16 +711,15 @@ select.form-input {
 .btn-save-edit i { font-size: 15px; }
 .btn-save-edit:hover { background: var(--accent-2); transform: translateY(-1px); }
 
-/* ── Comment highlight animation ── */
+/* ── Comment highlight animation ──
+   Starts at accent-bg (blue tint) and fades back to surface-2 (the
+   bubble's normal grey background) so the end state is always correct. ── */
 @keyframes highlightFade {
-    0%   { background: var(--accent-bg); }
-    100% { background: transparent; }
+    0%   { background: var(--accent-bg); border-color: rgba(61,90,254,0.3); }
+    100% { background: var(--surface-2); border-color: var(--line); }
 }
 .comment-highlight {
     animation: highlightFade 2.5s ease-out forwards;
-    border-radius: var(--radius-md);
-    padding: 0.25rem;
-    margin: -0.25rem;
 }
 
 /* scrollbar */
@@ -878,6 +880,13 @@ select.form-input {
                                     onclick="toggleReply('reply-form-{{ $comment->id }}', '{{ addslashes($comment->user->name) }}')">
                                 <i class="ti ti-arrow-back-up"></i> Répondre
                             </button>
+                            <button class="comment-action-btn like-comment-btn {{ $comment->is_liked ? 'liked' : '' }}"
+                                    data-id="{{ $comment->id }}">
+                                <span class="like-icon">
+                                    <i class="ti ti-heart{{ $comment->is_liked ? '-filled' : '' }}"></i>
+                                </span>
+                                <span class="like-count">{{ $comment->likes_count }}</span>
+                            </button>
                             @if($comment->user_id === Auth::id())
                                 <form method="POST" action="{{ route('comments.destroy', $comment->id) }}" style="display:inline;">
                                     @csrf @method('DELETE')
@@ -912,6 +921,13 @@ select.form-input {
                                                 <button class="comment-action-btn"
                                                         onclick="toggleReply('reply-form-{{ $comment->id }}', '{{ addslashes($reply->user->name) }}'); document.getElementById('reply-form-{{ $comment->id }}').scrollIntoView({behavior:'smooth', block:'center'});">
                                                     <i class="ti ti-arrow-back-up"></i> Répondre
+                                                </button>
+                                                <button class="comment-action-btn like-comment-btn {{ $reply->is_liked ? 'liked' : '' }}"
+                                                        data-id="{{ $reply->id }}">
+                                                    <span class="like-icon">
+                                                        <i class="ti ti-heart{{ $reply->is_liked ? '-filled' : '' }}"></i>
+                                                    </span>
+                                                    <span class="like-count">{{ $reply->likes_count }}</span>
                                                 </button>
                                                 @if($reply->user_id === Auth::id())
                                                     <form method="POST" action="{{ route('comments.destroy', $reply->id) }}" style="display:inline;">
@@ -1117,6 +1133,7 @@ document.querySelectorAll('.comment-input').forEach(textarea => {
     });
 });
 
+// ── Post like ──
 document.querySelectorAll('.like-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
         const id  = btn.dataset.id;
@@ -1135,16 +1152,36 @@ document.querySelectorAll('.like-btn').forEach(btn => {
     });
 });
 
-// Scroll to & highlight target comment
+// ── Comment like ──
+document.querySelectorAll('.like-comment-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const id  = btn.dataset.id;
+        const res = await fetch(`/comments/${id}/like`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            }
+        });
+        const data = await res.json();
+        const icon = btn.querySelector('.like-icon i');
+        icon.className = data.liked ? 'ti ti-heart-filled' : 'ti ti-heart';
+        btn.querySelector('.like-count').textContent = data.count;
+        btn.classList.toggle('liked', data.liked);
+    });
+});
+
+// ── Scroll to & highlight target comment ──
+// Applies .comment-highlight directly to .comment-bubble so the animation
+// fades from accent-bg back to surface-2 (the bubble's actual background),
+// making the highlight visible and the end state correct.
 (function () {
     const newCommentId = @json(session('new_comment_id'));
     const scrollTo     = @json(session('scroll_to'));
     const hash         = window.location.hash;
 
-    // Only treat as a specific comment if hash looks like #comment-123
-    const specificHash = hash && /^#comment-\d+$/.test(hash) ? hash.replace('#', '') : null;
-    const sessionTarget = newCommentId ? 'comment-' + newCommentId : scrollTo;
-
+    const specificHash    = hash && /^#comment-\d+$/.test(hash) ? hash.replace('#', '') : null;
+    const sessionTarget   = newCommentId ? 'comment-' + newCommentId : scrollTo;
     const scrollTargetId  = specificHash || sessionTarget || (hash === '#comments' ? 'comments' : null);
     const highlightTargetId = specificHash || sessionTarget;
 
@@ -1154,8 +1191,9 @@ document.querySelectorAll('.like-btn').forEach(btn => {
             setTimeout(() => {
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 if (highlightTargetId && highlightTargetId === scrollTargetId) {
-                    const target = el.querySelector('.comment-bubble') || el;
-                    target.classList.add('comment-highlight');
+                    // Target the bubble directly so animation ends at surface-2
+                    const bubble = el.querySelector('.comment-bubble');
+                    if (bubble) bubble.classList.add('comment-highlight');
                 }
             }, 100);
         }

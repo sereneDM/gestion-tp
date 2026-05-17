@@ -42,47 +42,31 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .page-wrapper { max-width: 780px; margin: 0 auto; padding: 0.5rem 0 3rem; }
 
 /* ── Top bar ── */
-.topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 1.25rem;
-}
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
 .topbar-left { display: flex; align-items: center; gap: 0.6rem; }
-.page-heading {
-    font-family: var(--font-serif);
-    font-size: 1.5rem; color: var(--ink); letter-spacing: -0.01em;
-}
+.page-heading { font-family: var(--font-serif); font-size: 1.5rem; color: var(--ink); letter-spacing: -0.01em; }
 .unread-badge {
     display: inline-flex; align-items: center; justify-content: center;
     background: var(--accent-bg); color: var(--accent);
     border: 1px solid rgba(61,90,254,0.2);
-    border-radius: 100px;
-    font-size: 0.72rem; font-weight: 700;
-    padding: 0.1rem 0.55rem;
+    border-radius: 100px; font-size: 0.72rem; font-weight: 700; padding: 0.1rem 0.55rem;
 }
-
 .topbar-right { display: flex; align-items: center; gap: 0.5rem; }
 
 .btn-mark-all {
     display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-md); border: none;
-    background: var(--accent); color: white;
-    font-size: 0.8rem; font-weight: 600;
-    font-family: var(--font-body); cursor: pointer;
-    transition: background 0.15s;
+    padding: 0.5rem 1rem; border-radius: var(--radius-md); border: none;
+    background: var(--accent); color: white; font-size: 0.8rem; font-weight: 600;
+    font-family: var(--font-body); cursor: pointer; transition: background 0.15s;
 }
 .btn-mark-all:hover { background: var(--accent-2); }
 .btn-mark-all i { font-size: 14px; }
 
 .btn-settings {
     display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.5rem 1rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--line);
-    background: var(--surface); color: var(--ink-2);
-    font-size: 0.8rem; font-weight: 500;
-    text-decoration: none;
-    transition: background 0.15s;
+    padding: 0.5rem 1rem; border-radius: var(--radius-md);
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink-2);
+    font-size: 0.8rem; font-weight: 500; text-decoration: none; transition: background 0.15s;
 }
 .btn-settings:hover { background: var(--surface-2); }
 .btn-settings i { font-size: 14px; }
@@ -91,77 +75,74 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .notif-list { display: flex; flex-direction: column; gap: 0.6rem; }
 
 .notif-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-    padding: 1.1rem 1.25rem;
-    cursor: pointer;
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius-lg); padding: 1.1rem 1.25rem; cursor: pointer;
     transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
-    box-shadow: var(--shadow-sm);
-    position: relative;
-    overflow: hidden;
+    box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
     display: flex; gap: 1rem; align-items: flex-start;
 }
 .notif-card::before {
-    content: "";
-    position: absolute; left: 0; top: 0; bottom: 0;
+    content: ""; position: absolute; left: 0; top: 0; bottom: 0;
     width: 3px; border-radius: 3px 0 0 3px;
-    background: var(--line-2);
-    transition: background 0.2s;
+    background: var(--line-2); transition: background 0.2s;
 }
 .notif-card.unread::before { background: var(--accent); }
 .notif-card.unread { background: var(--surface); }
 .notif-card.read   { opacity: 0.65; }
 .notif-card:hover  { border-color: var(--line-2); box-shadow: var(--shadow-md); transform: translateX(2px); }
 
-/* type accent colors */
+/* ── Type accent bars ── */
 .notif-card.type-new_tp::before            { background: var(--success); }
-.notif-card.type-submission_graded::before { background: var(--accent); }
+.notif-card.type-submission_graded::before { background: var(--accent);  }
 .notif-card.type-new_submission::before    { background: var(--warning); }
-.notif-card.type-new_post::before          { background: var(--danger); }
-.notif-card.type-student_joined::before    { background: var(--purple); }
+.notif-card.type-new_post::before          { background: var(--danger);  }
+.notif-card.type-student_joined::before    { background: var(--purple);  }
+.notif-card.type-new_comment::before       { background: var(--accent);  }
+.notif-card.type-post_liked::before        { background: var(--danger);  }
+.notif-card.type-comment_liked::before     { background: var(--danger);  }
 
+/* ── Icon wrap colors ── */
 .notif-icon-wrap {
     width: 36px; height: 36px; flex-shrink: 0;
     border-radius: var(--radius-sm);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 16px;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
 }
 .type-new_tp            .notif-icon-wrap { background: var(--success-bg); color: var(--success); }
 .type-submission_graded .notif-icon-wrap { background: var(--accent-bg);  color: var(--accent);  }
 .type-new_submission    .notif-icon-wrap { background: var(--warning-bg); color: var(--warning); }
 .type-new_post          .notif-icon-wrap { background: var(--danger-bg);  color: var(--danger);  }
 .type-student_joined    .notif-icon-wrap { background: var(--purple-bg);  color: var(--purple);  }
+.type-new_comment       .notif-icon-wrap { background: var(--accent-bg);  color: var(--accent);  }
+.type-post_liked        .notif-icon-wrap { background: var(--danger-bg);  color: var(--danger);  }
+.type-comment_liked     .notif-icon-wrap { background: var(--danger-bg);  color: var(--danger);  }
 
 .notif-body { flex: 1; min-width: 0; }
-
 .notif-header-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.2rem; }
 
+/* ── Badge colors ── */
 .notif-badge {
     display: inline-flex; align-items: center; gap: 4px;
-    padding: 0.15rem 0.5rem;
-    border-radius: 100px;
-    font-size: 0.68rem; font-weight: 700;
-    white-space: nowrap; flex-shrink: 0;
+    padding: 0.15rem 0.5rem; border-radius: 100px;
+    font-size: 0.68rem; font-weight: 700; white-space: nowrap; flex-shrink: 0;
 }
 .type-new_tp            .notif-badge { background: var(--success-bg); color: var(--success); }
 .type-submission_graded .notif-badge { background: var(--accent-bg);  color: var(--accent);  }
 .type-new_submission    .notif-badge { background: var(--warning-bg); color: var(--warning); }
 .type-new_post          .notif-badge { background: var(--danger-bg);  color: var(--danger);  }
 .type-student_joined    .notif-badge { background: var(--purple-bg);  color: var(--purple);  }
+.type-new_comment       .notif-badge { background: var(--accent-bg);  color: var(--accent);  }
+.type-post_liked        .notif-badge { background: var(--danger-bg);  color: var(--danger);  }
+.type-comment_liked     .notif-badge { background: var(--danger-bg);  color: var(--danger);  }
 
-.notif-time { font-size: 0.72rem; color: var(--ink-4); white-space: nowrap; }
-
-.notif-title { font-size: 0.875rem; font-weight: 700; color: var(--ink); margin-bottom: 0.15rem; }
+.notif-time    { font-size: 0.72rem; color: var(--ink-4); white-space: nowrap; }
+.notif-title   { font-size: 0.875rem; font-weight: 700; color: var(--ink); margin-bottom: 0.15rem; }
 .notif-message { font-size: 0.82rem; color: var(--ink-3); line-height: 1.5; }
 
 /* ── Empty state ── */
 .empty-state {
     text-align: center; padding: 4rem 2rem;
-    background: var(--surface);
-    border: 1px dashed var(--line-2);
-    border-radius: var(--radius-xl);
-    color: var(--ink-3);
+    background: var(--surface); border: 1px dashed var(--line-2);
+    border-radius: var(--radius-xl); color: var(--ink-3);
 }
 .empty-icon {
     width: 64px; height: 64px; border-radius: 18px;
@@ -211,12 +192,15 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
                     <div class="notif-icon-wrap">
                         <i class="ti
-                            @if($notification->type === 'new_tp')            ti-file-text
+                            @if($notification->type === 'new_tp')                ti-file-text
                             @elseif($notification->type === 'submission_graded') ti-star
                             @elseif($notification->type === 'new_submission')    ti-upload
                             @elseif($notification->type === 'new_post')          ti-speakerphone
                             @elseif($notification->type === 'student_joined')    ti-user-plus
-                            @else                                                 ti-bell
+                            @elseif($notification->type === 'new_comment')       ti-message-circle
+                            @elseif($notification->type === 'post_liked')        ti-heart
+                            @elseif($notification->type === 'comment_liked')     ti-heart
+                            @else                                                ti-bell
                             @endif
                         "></i>
                     </div>
@@ -224,12 +208,15 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                     <div class="notif-body">
                         <div class="notif-header-row">
                             <span class="notif-badge">
-                                @if($notification->type === 'new_tp')            Nouveau TP
+                                @if($notification->type === 'new_tp')                Nouveau TP
                                 @elseif($notification->type === 'submission_graded') Note reçue
                                 @elseif($notification->type === 'new_submission')    Soumission
                                 @elseif($notification->type === 'new_post')          Annonce
                                 @elseif($notification->type === 'student_joined')    Nouvel étudiant
-                                @else Notification
+                                @elseif($notification->type === 'new_comment')       Commentaire
+                                @elseif($notification->type === 'post_liked')        J'aime · Publication
+                                @elseif($notification->type === 'comment_liked')     J'aime · Commentaire
+                                @else                                                Notification
                                 @endif
                             </span>
                             <span class="notif-time">{{ $notification->created_at->diffForHumans() }}</span>

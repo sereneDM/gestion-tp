@@ -334,6 +334,41 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 }
 .empty-state h3 { color: var(--ink-2); font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
 .empty-state p  { font-size: 0.875rem; max-width: 320px; margin: 0 auto; }
+
+/* ── Join code box ── */
+.join-code-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+.join-code-label {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4); margin-bottom: 0.75rem;
+}
+.join-code {
+    font-size: 2.2rem; font-weight: 700;
+    font-family: monospace; letter-spacing: 0.15em;
+    color: var(--accent); margin-bottom: 1rem;
+}
+.btn-copy {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--ink-2);
+    font-size: 0.82rem; font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+.btn-copy:hover { background: var(--surface-3); border-color: var(--line-2); }
+.btn-copy i { font-size: 14px; }
 </style>
 @endsection
 
@@ -376,6 +411,14 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
     {{-- Tab: Info --}}
     <div class="tab-content active" id="tab-info">
+
+        <div class="join-code-box">
+            <div class="join-code-label">Code d'accès au cours</div>
+            <div class="join-code" id="joinCode">{{ $course->join_code }}</div>
+            <button class="btn-copy" onclick="copyJoinCode()">
+                <i class="ti ti-copy"></i> Copier le code
+            </button>
+        </div>
 
         <div class="info-grid">
             <div class="info-card">
@@ -516,5 +559,14 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             });
         }
     });
+    function copyJoinCode() {
+        const code = document.getElementById('joinCode').textContent.trim();
+        navigator.clipboard.writeText(code).then(() => {
+            const btn = document.querySelector('.btn-copy');
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="ti ti-check"></i> Copié !';
+            setTimeout(() => btn.innerHTML = original, 2000);
+        });
+    }
 </script>
 @endsection

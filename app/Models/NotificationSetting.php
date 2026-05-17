@@ -16,16 +16,18 @@ class NotificationSetting extends Model
         'student_joined_notifications',
         'comment_notifications',
         'like_notifications',
+        'comment_like_notifications',
     ];
 
     protected $casts = [
-        'new_tp_notifications'           => 'boolean',
+        'new_tp_notifications'            => 'boolean',
         'submission_graded_notifications' => 'boolean',
-        'new_submission_notifications'   => 'boolean',
-        'post_notifications'             => 'boolean',
-        'student_joined_notifications'   => 'boolean',
-        'comment_notifications'          => 'boolean',
-        'like_notifications'             => 'boolean',
+        'new_submission_notifications'    => 'boolean',
+        'post_notifications'              => 'boolean',
+        'student_joined_notifications'    => 'boolean',
+        'comment_notifications'           => 'boolean',
+        'like_notifications'              => 'boolean',
+        'comment_like_notifications'      => 'boolean', // ← was missing from $casts
     ];
 
     public function user()
@@ -43,13 +45,14 @@ class NotificationSetting extends Model
         return self::firstOrCreate(
             ['user_id' => $userId, 'class_id' => $classId],
             [
-                'new_tp_notifications'           => true,
+                'new_tp_notifications'            => true,
                 'submission_graded_notifications' => true,
-                'new_submission_notifications'   => true,
-                'post_notifications'             => true,
-                'student_joined_notifications'   => true,
-                'comment_notifications'          => true,
-                'like_notifications'             => true,
+                'new_submission_notifications'    => true,
+                'post_notifications'              => true,
+                'student_joined_notifications'    => true,
+                'comment_notifications'           => true,
+                'like_notifications'              => true,
+                'comment_like_notifications'      => true,
             ]
         );
     }
