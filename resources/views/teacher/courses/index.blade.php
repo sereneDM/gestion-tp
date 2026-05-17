@@ -57,6 +57,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     font-size: 1.65rem;
     color: var(--ink);
     letter-spacing: -0.01em;
+    
 }
 
 .btn-new {

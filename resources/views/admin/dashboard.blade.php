@@ -175,17 +175,7 @@
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <div class="card-header-title"><i class="ti ti-info-circle"></i> Bonjour</div>
-            </div>
-            <div style="padding: 16px 20px;">
-                <p style="font-size: 13px; color: var(--ink-3); line-height: 1.6;">
-                    Bienvenue, <strong style="color: var(--ink);">{{ Auth::user()->name }}</strong>.<br>
-                    Gérez les utilisateurs, surveillez les activités et analysez les performances globales de la plateforme.
-                </p>
-            </div>
-        </div>
+        
     </div>
  
 </div>
