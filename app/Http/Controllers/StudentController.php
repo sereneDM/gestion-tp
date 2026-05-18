@@ -20,12 +20,15 @@ class StudentController extends Controller
 
         $posts = \App\Models\Post::visibleToStudent($student->id)->paginate(10);
 
-        $enrolledCoursesCount = $student->enrolledClasses()->count();
+        $enrolledCoursesCount = $student->enrolledClasses()
+            ->where('status', 'active')
+            ->count();
 
         $availableTPs = TP::whereHas('class', function($query) use ($student) {
-            $query->whereHas('students', function($q) use ($student) {
-                $q->where('users.id', $student->id);
-            });
+            $query->where('status', 'active')
+                  ->whereHas('students', function($q) use ($student) {
+                      $q->where('users.id', $student->id);
+                  });
         })->where('status', 'published')->count();
 
         $submittedCount = Submission::where('student_id', $student->id)->count();
@@ -47,86 +50,88 @@ class StudentController extends Controller
         return view('student.courses.join');
     }
 
-   public function joinCourse(Request $request)
-{
-    $request->validate([
-        'join_code' => 'required|string',
-    ]);
+    public function joinCourse(Request $request)
+    {
+        $request->validate([
+            'join_code' => 'required|string',
+        ]);
 
-    $course = ClassModel::where('join_code', strtoupper($request->join_code))
-                        ->where('status', 'active')
-                        ->first();
+        $course = ClassModel::where('join_code', strtoupper($request->join_code))
+                            ->where('status', 'active')
+                            ->first();
 
-    if (!$course) {
-        return back()->withErrors(['join_code' => 'Code invalide ou cours non actif.']);
+        if (!$course) {
+            return back()->withErrors(['join_code' => 'Code invalide ou cours non actif.']);
+        }
+
+        if ($course->students()->where('users.id', Auth::id())->exists()) {
+            return back()->withErrors(['join_code' => 'Vous êtes déjà inscrit à ce cours.']);
+        }
+
+        $course->students()->attach(Auth::id());
+
+        if (NotificationSetting::shouldNotify($course->teacher_id, $course->id, 'student_joined')) {
+            Notification::createFor(
+                $course->teacher_id,
+                'student_joined',
+                '👤 Nouvel étudiant: ' . Auth::user()->name,
+                Auth::user()->name . ' a rejoint le cours ' . $course->name,
+                route('teacher.courses.show', $course->id) . '?tab=students',
+                $course->id
+            );
+        }
+
+        return redirect()->route('student.my-courses')
+                         ->with('success', 'Vous avez rejoint le cours: ' . $course->name);
     }
 
-    if ($course->students()->where('users.id', Auth::id())->exists()) {
-        return back()->withErrors(['join_code' => 'Vous êtes déjà inscrit à ce cours.']);
-    }
-
-    $course->students()->attach(Auth::id());
-
-    // Notify the teacher
-    if (NotificationSetting::shouldNotify($course->teacher_id, $course->id, 'student_joined')) {
-        Notification::createFor(
-            $course->teacher_id,
-            'student_joined',
-            '👤 Nouvel étudiant: ' . Auth::user()->name,
-            Auth::user()->name . ' a rejoint le cours ' . $course->name,
-            route('teacher.courses.show', $course->id) . '?tab=students',
-            $course->id
-        );
-    }
-
-    return redirect()->route('student.my-courses')
-                     ->with('success', 'Vous avez rejoint le cours: ' . $course->name);
-}
     public function myCourses()
-{
-    $student = Auth::user();
+    {
+        $student = Auth::user();
 
-    $courses = $student->enrolledClasses()
-        ->with([
-            'teacher',
-            'tps' => function ($query) {
-                $query->where('status', 'published')
-                      ->distinct()
-                      ->orderBy('created_at', 'desc');
-            }
-        ])
-        ->withCount('tps')
-        ->get();
+        $courses = $student->enrolledClasses()
+            ->where('status', 'active')
+            ->with([
+                'teacher',
+                'tps' => function ($query) {
+                    $query->where('status', 'published')
+                          ->distinct()
+                          ->orderBy('created_at', 'desc');
+                }
+            ])
+            ->withCount('tps')
+            ->get();
 
-    return view('student.courses.index', compact('courses'));
-}
+        return view('student.courses.index', compact('courses'));
+    }
 
     public function showCourse($courseId)
-{
-    $student = Auth::user();
+    {
+        $student = Auth::user();
 
-    $course = ClassModel::whereHas('students', function ($query) use ($student) {
-            $query->where('users.id', $student->id);
-        })
-        ->with([
-            'teacher',
-            'tps' => function ($query) {
-                $query->where('status', 'published')
-                      ->distinct()
-                      ->orderBy('created_at', 'desc');
-            }
-        ])
-        ->findOrFail($courseId);
+        $course = ClassModel::whereHas('students', function ($query) use ($student) {
+                $query->where('users.id', $student->id);
+            })
+            ->where('status', 'active')
+            ->with([
+                'teacher',
+                'tps' => function ($query) {
+                    $query->where('status', 'published')
+                          ->distinct()
+                          ->orderBy('created_at', 'desc');
+                }
+            ])
+            ->findOrFail($courseId);
 
-    $tpIds = $course->tps->pluck('id')->unique();
+        $tpIds = $course->tps->pluck('id')->unique();
 
-    $submissions = Submission::where('student_id', $student->id)
-        ->whereIn('tp_id', $tpIds)
-        ->get()
-        ->keyBy('tp_id');
+        $submissions = Submission::where('student_id', $student->id)
+            ->whereIn('tp_id', $tpIds)
+            ->get()
+            ->keyBy('tp_id');
 
-    return view('student.courses.show', compact('course', 'submissions'));
-}
+        return view('student.courses.show', compact('course', 'submissions'));
+    }
 
     public function leaveCourse($courseId)
     {
@@ -139,76 +144,79 @@ class StudentController extends Controller
     }
 
     public function showTP($id)
-{
-    $student = Auth::user();
+    {
+        $student = Auth::user();
 
-    $tp = TP::with(['class', 'teacher'])
-        ->whereHas('class.students', function ($query) use ($student) {
-            $query->where('users.id', $student->id);
-        })
-        ->where('id', $id)
-        ->firstOrFail();
-
-    $submission = Submission::where('tp_id', $tp->id)
-        ->where('student_id', $student->id)
-        ->first();
-
-    return view('student.tps.show', compact('tp', 'submission'));
-}
-
-   public function submitTP(Request $request, $id)
-{
-    $student = Auth::user();
-
-    $tp = TP::where('id', $id)
-            ->whereHas('class.students', fn($q) => $q->where('users.id', $student->id))
+        $tp = TP::with(['class', 'teacher'])
+            ->whereHas('class', fn($q) => $q->where('status', 'active'))
+            ->whereHas('class.students', function ($query) use ($student) {
+                $query->where('users.id', $student->id);
+            })
+            ->where('id', $id)
             ->firstOrFail();
 
-    if ($tp->status === 'closed') {
-        return back()->withErrors(['error' => 'Ce TP n\'accepte plus de soumissions.']);
+        $submission = Submission::where('tp_id', $tp->id)
+            ->where('student_id', $student->id)
+            ->first();
+
+        return view('student.tps.show', compact('tp', 'submission'));
     }
 
-    $request->validate([
-        'submission_file' => 'required|file|mimes:pdf,zip,doc,docx|max:51200',
-        'comments'        => 'nullable|string',
-    ]);
+    public function submitTP(Request $request, $id)
+    {
+        $student = Auth::user();
 
-    if (Submission::where('tp_id', $tp->id)->where('student_id', $student->id)->exists()) {
-        return back()->withErrors(['error' => 'Vous avez déjà soumis ce TP.']);
+        $tp = TP::where('id', $id)
+                ->whereHas('class', fn($q) => $q->where('status', 'active'))
+                ->whereHas('class.students', fn($q) => $q->where('users.id', $student->id))
+                ->firstOrFail();
+
+        if ($tp->status === 'closed') {
+            return back()->withErrors(['error' => 'Ce TP n\'accepte plus de soumissions.']);
+        }
+
+        $request->validate([
+            'submission_file' => 'required|file|mimes:pdf,zip,doc,docx|max:51200',
+            'comments'        => 'nullable|string',
+        ]);
+
+        if (Submission::where('tp_id', $tp->id)->where('student_id', $student->id)->exists()) {
+            return back()->withErrors(['error' => 'Vous avez déjà soumis ce TP.']);
+        }
+
+        $file     = $request->file('submission_file');
+        $filename = uniqid($student->id . '_') . '.' . $file->getClientOriginalExtension();
+        $filePath = $file->storeAs('submissions', $filename, 'public');
+
+        $submission = Submission::create([
+            'tp_id'        => $tp->id,
+            'student_id'   => $student->id,
+            'attachments'  => $filePath,
+            'content'      => $request->comments,
+            'submitted_at' => now(),
+            'status'       => 'submitted',
+        ]);
+
+        if (NotificationSetting::shouldNotify($tp->teacher_id, $tp->class_id, 'new_submission')) {
+            Notification::createFor(
+                $tp->teacher_id,
+                'new_submission',
+                '📤 Nouvelle soumission: ' . $tp->title,
+                $student->name . ' a soumis le TP',
+                route('teacher.submissions.show', [$tp->id, $submission->id]),
+                $submission->id
+            );
+        }
+
+        return redirect()->route('student.tps.show', $tp->id);
     }
-
-    $file     = $request->file('submission_file');
-    $filename = uniqid($student->id . '_') . '.' . $file->getClientOriginalExtension();
-    $filePath = $file->storeAs('submissions', $filename, 'public');
-
-    $submission = Submission::create([
-        'tp_id'        => $tp->id,
-        'student_id'   => $student->id,
-        'attachments'  => $filePath,
-        'content'      => $request->comments,
-        'submitted_at' => now(),
-        'status'       => 'submitted',
-    ]);
-
-    if (NotificationSetting::shouldNotify($tp->teacher_id, $tp->class_id, 'new_submission')) {
-        Notification::createFor(
-            $tp->teacher_id,
-            'new_submission',
-            '📤 Nouvelle soumission: ' . $tp->title,
-            $student->name . ' a soumis le TP',
-            route('teacher.submissions.show', [$tp->id, $submission->id]),
-            $submission->id
-        );
-    }
-
-    return redirect()->route('student.tps.show', $tp->id);
-}
 
     public function updateSubmission(Request $request, $id)
     {
         $student = Auth::user();
 
         $tp = TP::where('id', $id)
+                ->whereHas('class', fn($q) => $q->where('status', 'active'))
                 ->whereHas('class.students', fn($q) => $q->where('users.id', $student->id))
                 ->firstOrFail();
 
@@ -224,14 +232,10 @@ class StudentController extends Controller
             return back()->withErrors(['error' => 'Vous ne pouvez pas modifier une soumission déjà notée.']);
         }
 
-       $request->validate([
-    'submission_file' => 'nullable|file|mimes:pdf,zip,doc,docx|max:51200',
-    'comments'        => 'nullable|string',
-]);
-
-// Also remove the manual check here
-
-    
+        $request->validate([
+            'submission_file' => 'nullable|file|mimes:pdf,zip,doc,docx|max:51200',
+            'comments'        => 'nullable|string',
+        ]);
 
         if ($request->hasFile('submission_file')) {
             $file     = $request->file('submission_file');
@@ -262,7 +266,6 @@ class StudentController extends Controller
     {
         $student = Auth::user();
 
-        // 1. Submissions statistics
         $allSubmissions = Submission::where('student_id', $student->id)
             ->with(['tp.teacher', 'tp.class'])
             ->orderBy('submitted_at', 'desc')
@@ -271,11 +274,10 @@ class StudentController extends Controller
         $totalSubmissions   = $allSubmissions->count();
         $gradedSubmissions  = $allSubmissions->whereNotNull('grade')->count();
         $pendingSubmissions = $allSubmissions->whereNull('grade')->count();
-        
-        $totalGrade = $allSubmissions->whereNotNull('grade')->sum('grade');
+
+        $totalGrade   = $allSubmissions->whereNotNull('grade')->sum('grade');
         $averageGrade = $gradedSubmissions > 0 ? $totalGrade / $gradedSubmissions : 0;
 
-        // 2. Detailed grades list
         $gradesByTP = $allSubmissions->whereNotNull('grade')->map(function($s) {
             return [
                 'tp'           => $s->tp,
@@ -284,7 +286,6 @@ class StudentController extends Controller
             ];
         });
 
-        // 3. Attendance statistics & history
         $attendances = Attendance::where('student_id', $student->id)
             ->with('class')
             ->orderBy('date', 'desc')

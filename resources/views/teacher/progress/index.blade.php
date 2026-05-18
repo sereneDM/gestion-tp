@@ -267,11 +267,11 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
         <div class="filter-input-wrap">
             <i class="ti ti-search"></i>
             <input type="text" class="filter-input" id="class-search"
-                   placeholder="Rechercher une classe..." oninput="filterClasses()">
+                   placeholder="Rechercher un cours..." oninput="filterClasses()">
         </div>
         <span class="filter-divider">ou</span>
         <select class="filter-select" id="class-select" onchange="jumpToClass(this.value)">
-            <option value="">Sélectionner une classe</option>
+            <option value="">Sélectionner un cours</option>
             @foreach($classes as $class)
                 <option value="class-{{ $class->id }}">{{ $class->name }}</option>
             @endforeach
@@ -280,13 +280,13 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
     <div id="empty-state" class="empty-state">
         <div class="empty-icon"><i class="ti ti-school"></i></div>
-        <h3>Sélectionnez une classe</h3>
-        <p>Recherchez ou choisissez une classe dans le menu déroulant pour afficher ses étudiants.</p>
+        <h3>Sélectionnez un cours</h3>
+        <p>Recherchez ou choisissez un cours dans le menu déroulant pour afficher ses étudiants.</p>
     </div>
 
     <div id="no-results" class="no-results">
         <i class="ti ti-mood-empty" style="font-size:2rem; display:block; margin-bottom:0.5rem;"></i>
-        Aucune classe trouvée.
+        Aucun cours trouvé.
     </div>
 
     @forelse($classes as $class)
@@ -309,7 +309,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                     <thead>
                         <tr>
                             <th>Étudiant</th>
-                            <th>Effectif classe</th>
+                            <th>Effectif cours</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -337,16 +337,12 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             @else
                 <div class="no-students">
                     <i class="ti ti-user-off" style="font-size:1.5rem; display:block; margin-bottom:0.4rem; color:var(--ink-4);"></i>
-                    Aucun étudiant dans cette classe
+                    Aucun étudiant dans ce cours
                 </div>
             @endif
         </div>
     @empty
-        <div class="empty-state">
-            <div class="empty-icon"><i class="ti ti-books"></i></div>
-            <h3>Aucune classe assignée</h3>
-            <p>Vous n'avez aucune classe assignée pour le moment.</p>
-        </div>
+        
     @endforelse
 
 </div>

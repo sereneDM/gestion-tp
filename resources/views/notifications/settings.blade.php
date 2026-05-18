@@ -9,6 +9,7 @@
 
 @section('extra-styles')
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
     --ink:        #0d1117;
@@ -83,6 +84,14 @@ select.filter-input { appearance: none; background-image: url("data:image/svg+xm
 .btn-save i { font-size: 15px; }
 .btn-save:hover:not(:disabled) { background: var(--accent-2); transform: translateY(-1px); }
 .btn-save:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+/* Match feed heading style */
+main h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.65rem !important;
+    font-weight: 400 !important;   /* Serif Display looks better at normal weight */
+    letter-spacing: -0.01em;
+    color: #0d1117;
+}
 </style>
 @endsection
 

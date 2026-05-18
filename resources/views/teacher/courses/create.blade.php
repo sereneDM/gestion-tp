@@ -166,7 +166,9 @@ textarea.form-input { min-height: 110px; resize: vertical; line-height: 1.6; }
     <div class="form-card">
 
         <div class="form-card-header">
-            <div class="form-card-icon"><i class="ti ti-book-plus"></i></div>
+            <div class="form-card-icon">
+    <i class="ti ti-book-2"></i>
+</div>
             <div>
                 <div class="form-card-title">Créer un cours</div>
                 <div class="form-card-subtitle">Un code d'accès unique sera généré automatiquement</div>

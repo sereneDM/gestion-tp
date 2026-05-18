@@ -317,9 +317,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             </div>
             <h3>Aucun cours créé</h3>
             <p>Créez votre premier cours pour commencer à enseigner.</p>
-            <a href="{{ route('teacher.courses.create') }}" class="btn-new">
-                <i class="ti ti-plus"></i> Créer un cours
-            </a>
+            
         </div>
     @endif
 

@@ -62,7 +62,64 @@ class ProfileController extends Controller
         return back()->with('success', 'Profil mis à jour avec succès');
     }
 
-    // Step 1: user requests email change → send code to NEW email
+    public function updatePicture(Request $request)
+{
+    $request->validate([
+        'profile_picture' => 'required|image|max:4096',
+    ]);
+
+    $user = Auth::user();
+
+    if ($user->profile_picture) {
+        Storage::disk('public')->delete($user->profile_picture);
+    }
+
+    $file     = $request->file('profile_picture');
+    $path     = $file->store('profile_pictures', 'public');
+    $fullPath = storage_path('app/public/' . $path);
+
+    $manager = ImageManager::usingDriver(GdDriver::class);
+    $image   = $manager->decodePath($fullPath);
+
+    if ($request->filled('crop_width') && (int) $request->crop_width > 0) {
+        $image->crop(
+            (int) $request->crop_width,
+            (int) $request->crop_height,
+            (int) $request->crop_x,
+            (int) $request->crop_y
+        );
+        $image->save($fullPath);
+    }
+
+    $image->scale(width: 300);
+    $image->save($fullPath);
+
+    $filename = 'profile_pictures/' . $user->id . '_' . time() . '.jpg';
+
+    // Rename to final filename
+    Storage::disk('public')->move($path, $filename);
+
+    $user->profile_picture = $filename;
+    $user->save();
+
+    return back()->with('info', 'Photo de profil mise à jour.');
+}
+
+    public function deletePicture()
+    {
+        $user = Auth::user();
+
+        if ($user->profile_picture) {
+            Storage::disk('public')->delete($user->profile_picture);
+        }
+
+        $user->profile_picture = null;
+        $user->save();
+
+        return redirect()->route('profile.edit')
+                         ->with('success', 'Photo de profil supprimée.');
+    }
+
     public function requestEmailChange(Request $request)
     {
         $user = Auth::user();
@@ -82,7 +139,6 @@ class ProfileController extends Controller
             return back()->withErrors(['email' => 'Cette adresse email est déjà votre email actuel.']);
         }
 
-        // Generate 6-digit code
         $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
         $user->pending_email                = $request->email;
@@ -98,7 +154,6 @@ class ProfileController extends Controller
                      ->with('info', 'Un code de confirmation a été envoyé à ' . $request->email);
     }
 
-    // Step 2: user submits the code → apply email change
     public function confirmEmailChange(Request $request)
     {
         $user = Auth::user();
@@ -124,7 +179,6 @@ class ProfileController extends Controller
                          ->with('email_code_sent', true);
         }
 
-        // Apply the email change
         $user->email                        = $user->pending_email;
         $user->pending_email                = null;
         $user->email_change_code            = null;
@@ -133,75 +187,58 @@ class ProfileController extends Controller
 
         return back()->with('success', 'Adresse email mise à jour avec succès!');
     }
-public function updatePassword(Request $request)
-{
-    $user = Auth::user();
 
-    // Step 1: check current password FIRST, stop if wrong
-    if (!Hash::check($request->current_password, $user->password)) {
-        return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
-    }
-
-    // Step 2: validate the new password
-    $request->validate([
-        'new_password' => [
-            'required',
-            'confirmed',
-            'min:8',
-            'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
-        ],
-    ], [
-        'new_password.confirmed' => 'Les nouveaux mots de passe ne correspondent pas.',
-        'new_password.min'       => 'Le mot de passe doit contenir au moins 8 caractères.',
-        'new_password.regex'     => 'Le mot de passe doit contenir au moins: 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial .',
-    ]);
-
-    // Step 3: check not same as old
-    if (Hash::check($request->new_password, $user->password)) {
-        return back()->withErrors(['new_password' => 'Le nouveau mot de passe doit être différent de l\'ancien.']);
-    }
-
-    $user->password = Hash::make($request->new_password);
-    $user->save();
-    activity()
-    ->causedBy(Auth::user())
-    ->log('Mot de passe modifié');
-
-    return redirect()->route('profile.edit')
-                     ->with('success', 'Mot de passe changé avec succès!');
-}
-
-    public function deletePicture()
+    public function updatePassword(Request $request)
     {
         $user = Auth::user();
 
-        if ($user->profile_picture) {
-            Storage::disk('public')->delete($user->profile_picture);
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Le mot de passe actuel est incorrect.']);
         }
 
-        $user->profile_picture = null;
+        $request->validate([
+            'new_password' => [
+                'required',
+                'confirmed',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/',
+            ],
+        ], [
+            'new_password.confirmed' => 'Les nouveaux mots de passe ne correspondent pas.',
+            'new_password.min'       => 'Le mot de passe doit contenir au moins 8 caractères.',
+            'new_password.regex'     => 'Le mot de passe doit contenir au moins: 1 majuscule, 1 minuscule, 1 chiffre et 1 caractère spécial.',
+        ]);
+
+        if (Hash::check($request->new_password, $user->password)) {
+            return back()->withErrors(['new_password' => 'Le nouveau mot de passe doit être différent de l\'ancien.']);
+        }
+
+        $user->password = Hash::make($request->new_password);
         $user->save();
 
+        activity()
+            ->causedBy(Auth::user())
+            ->log('Mot de passe modifié');
+
         return redirect()->route('profile.edit')
-                         ->with('success', 'Photo de profil supprimée.');
+                         ->with('success', 'Mot de passe changé avec succès!');
     }
-    // In ProfileController.php — add this method:
 
-public function search(Request $request)
-{
-    $q = $request->get('q', '');
+    public function search(Request $request)
+    {
+        $q = $request->get('q', '');
 
-    $users = \App\Models\User::where('name', 'like', "%{$q}%")
-        ->orderBy('name')
-        ->limit(8)
-        ->get();
+        $users = \App\Models\User::where('name', 'like', "%{$q}%")
+            ->orderBy('name')
+            ->limit(8)
+            ->get();
 
-    return response()->json($users->map(fn($u) => [
-        'id'         => $u->id,
-        'name'       => $u->name,
-        'avatar'     => $u->profile_picture_url,
-        'role'       => $u->isTeacher() ? 'Enseignant' : 'Étudiant',
-        'is_teacher' => $u->isTeacher(),
-    ]));
-}
+        return response()->json($users->map(fn($u) => [
+            'id'         => $u->id,
+            'name'       => $u->name,
+            'avatar'     => $u->profile_picture_url,
+            'role'       => $u->isTeacher() ? 'Enseignant' : 'Étudiant',
+            'is_teacher' => $u->isTeacher(),
+        ]));
+    }
 }

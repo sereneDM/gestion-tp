@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="{{ asset('css/posts.css') }}">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+
 @yield('extra-styles')
 </head>
 
@@ -117,11 +118,11 @@
         {{-- User dropdown --}}
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button"
-                 style="display:flex; align-items:center; gap:8px; cursor:pointer;
-                        padding:5px 10px 5px 5px; border-radius:10px; border:1px solid #e8ebef;
-                        background:#ffffff; transition:background 0.15s;"
-                 onmouseover="this.style.background='#f0f2f5'"
-                 onmouseout="this.style.background='#ffffff'">
+     style="display:flex; align-items:center; gap:8px; cursor:pointer;
+            padding:5px 10px 5px 5px; border-radius:10px;
+            background:transparent; transition:background 0.15s;"
+     onmouseover="this.style.background='#f0f2f5'"
+     onmouseout="this.style.background='transparent'">
                 <img src="{{ Auth::user()->profile_picture_url }}"
                      alt="{{ Auth::user()->name }}"
                      style="width:30px; height:30px; border-radius:50%; object-fit:cover; flex-shrink:0;"

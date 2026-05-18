@@ -270,7 +270,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 <thead>
                     <tr>
                         <th>Date</th>
-                        <th>Classe</th>
+                        <th>Cours</th>
                         <th>Statut</th>
                         <th>Notes</th>
                     </tr>

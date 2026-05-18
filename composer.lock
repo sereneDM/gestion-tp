@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9bf79e4953b43357cefa59994ba5ea0c",
+    "content-hash": "e3d6d313d328be8f2d54939a316caa96",
     "packages": [
         {
             "name": "brick/math",
@@ -1246,16 +1246,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "4.0.3",
+            "version": "4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "76d4e5a48b78f7b48f84d90160e6973b1e800832"
+                "reference": "fb795553f76afbe55c80d32b6bfe2090a6b1a0af"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/76d4e5a48b78f7b48f84d90160e6973b1e800832",
-                "reference": "76d4e5a48b78f7b48f84d90160e6973b1e800832",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/fb795553f76afbe55c80d32b6bfe2090a6b1a0af",
+                "reference": "fb795553f76afbe55c80d32b6bfe2090a6b1a0af",
                 "shasum": ""
             },
             "require": {
@@ -1302,7 +1302,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image/issues",
-                "source": "https://github.com/Intervention/image/tree/4.0.3"
+                "source": "https://github.com/Intervention/image/tree/4.1.0"
             },
             "funding": [
                 {
@@ -1318,7 +1318,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-05-01T08:19:10+00:00"
+            "time": "2026-05-15T06:52:36+00:00"
         },
         {
             "name": "laravel/framework",

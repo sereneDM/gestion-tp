@@ -3,7 +3,7 @@
 @section('title', 'Détails de la Classe')
 
 @section('breadcrumb')
-    <a href="{{ route('admin.classes.index') }}" class="tb-bc-page" style="text-decoration:none;">Classes</a>
+    <a href="{{ route('admin.classes.index') }}" class="tb-bc-page" style="text-decoration:none;">Cours</a>
     <span class="tb-bc-sep">/</span>
     <span class="tb-bc-current">{{ $class->name }}</span>
 @endsection
@@ -93,7 +93,7 @@
                             <tr>
                                 <td colspan="3" style="text-align: center; padding: 4rem; color: var(--ink-4);">
                                     <i class="ti ti-users" style="font-size:2rem; display:block; margin-bottom:1rem; opacity:0.4;"></i>
-                                    Aucun étudiant inscrit dans cette classe.
+                                    Aucun étudiant inscrit dans ce cours.
                                 </td>
                             </tr>
                         @endforelse
@@ -108,7 +108,7 @@
             <div class="card-header-title" style="margin-bottom:1rem;"><i class="ti ti-key"></i> Code d'accès</div>
             <div class="join-code-large">{{ $class->join_code }}</div>
             <p style="font-size: 11px; color: var(--ink-4); text-align: center; line-height: 1.4;">
-                Ce code unique permet aux étudiants de rejoindre cette classe via leur portail.
+                Ce code unique permet aux étudiants de rejoindre ce cours via leur portail.
             </p>
         </div>
 
@@ -123,9 +123,9 @@
         
         <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
             <a href="{{ route('admin.classes.edit', $class->id) }}" class="btn btn-secondary" style="flex:none; width:100%;">
-                <i class="ti ti-edit"></i> Modifier la classe
+                <i class="ti ti-edit"></i> Modifier le cours
             </a>
-            <form method="POST" action="{{ route('admin.classes.destroy', $class->id) }}" onsubmit="return confirm('Supprimer cette classe définitivement ?')">
+            <form method="POST" action="{{ route('admin.classes.destroy', $class->id) }}" onsubmit="return confirm('Supprimer ce cours définitivement ?')">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-secondary" style="flex:none; width:100%; color:var(--danger); border-color:rgba(229, 57, 53, 0.2);">

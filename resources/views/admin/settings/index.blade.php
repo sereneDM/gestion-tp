@@ -143,6 +143,7 @@
         Ces réglages affectent le fonctionnement global de la plateforme. Toute modification est instantanée.
     </div>
 
+    {{-- Single form wraps ALL cards + the footer-actions --}}
     <form method="POST" action="{{ route('admin.settings.update') }}">
         @csrf
         @method('PUT')
@@ -216,18 +217,24 @@
             @endforeach
         </div>
 
+        {{-- footer-actions is INSIDE the save form --}}
         <div class="footer-actions">
             <button type="submit" class="btn-save">
                 <i class="ti ti-device-floppy"></i> Enregistrer les paramètres
             </button>
-    </form>
-    
-    <form method="POST" action="{{ route('admin.settings.reset') }}" onsubmit="return confirm('Réinitialiser tous les paramètres aux valeurs par défaut ?')">
-        @csrf
-        <button type="submit" class="btn-reset">
-            <i class="ti ti-refresh"></i> Réinitialiser
-        </button>
-    </form>
+
+            {{-- Reset is a separate form but kept visually inside footer-actions --}}
+            <form method="POST"
+                  action="{{ route('admin.settings.reset') }}"
+                  onsubmit="return confirm('Réinitialiser tous les paramètres aux valeurs par défaut ?')"
+                  style="margin:0;">
+                @csrf
+                <button type="submit" class="btn-reset">
+                    <i class="ti ti-refresh"></i> Réinitialiser
+                </button>
+            </form>
         </div>
+
+    </form>{{-- end save form --}}
 </div>
 @endsection

@@ -1,515 +1,991 @@
 @extends('layouts.app')
 
 @section('title', 'Mon Profil')
-@section('page-title', 'Paramètres de Mon Profil')
+@section('page-title', 'Paramètres du Profil')
 
 @section('extra-styles')
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+
 <style>
-:root {
-    --ink:        #0d1117;
-    --ink-2:      #3d4550;
-    --ink-3:      #6b7585;
-    --ink-4:      #9aa3af;
-    --line:       #e8ebef;
-    --line-2:     #d1d6dd;
-    --surface:    #ffffff;
-    --surface-2:  #f5f6f8;
-    --surface-3:  #eef0f3;
-    --accent:     #3d5afe;
-    --accent-2:   #5271ff;
-    --accent-bg:  #eef1ff;
-    --danger:     #e53935;
-    --danger-bg:  #fff0f0;
-    --warning:    #f59e0b;
-    --warning-bg: #fffbeb;
-    --success:    #10b981;
-    --success-bg: #ecfdf5;
-    --radius-sm:  6px;
-    --radius-md:  10px;
-    --radius-lg:  16px;
-    --radius-xl:  22px;
-    --shadow-sm:  0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --font-body:  'DM Sans', sans-serif;
-    --font-serif: 'DM Serif Display', serif;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: var(--font-body); background: var(--surface-2); color: var(--ink); }
-
-.page-wrapper { max-width: 1000px; margin: 0 auto; padding: 0.5rem 0 3rem; display: flex; flex-direction: column; gap: 1.25rem; }
-
-/* ── Alert boxes ── */
-.alert-box {
-    display: flex; align-items: flex-start; gap: 0.65rem;
-    padding: 0.85rem 1rem;
-    border-radius: var(--radius-md);
-    font-size: 0.85rem; line-height: 1.5;
-}
-.alert-box i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-.alert-info    { background: var(--accent-bg);  border: 1px solid rgba(61,90,254,0.15); color: var(--accent); }
-.alert-warning { background: var(--warning-bg); border: 1px solid rgba(245,158,11,0.2);  color: var(--warning); }
-
-/* ── Grid ── */
-.profile-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.25rem;
+/* ── Serif heading override (matches feed page) ── */
+main h1 {
+    font-family: 'DM Serif Display', serif !important;
+    font-size: 1.65rem !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.01em !important;
+    color: #0d1117 !important;
 }
 
-/* ── Card ── */
-.card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
+:root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --line:#e8edf5;
+
+    --text:#0f172a;
+    --muted:#64748b;
+
+    --accent:#4f46e5;
+    --accent-2:#6366f1;
+    --accent-bg:#eef2ff;
+
+    --success:#10b981;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+
+    --radius:24px;
+    --radius-sm:16px;
+
+    --shadow:
+        0 10px 30px rgba(15,23,42,0.05);
+
+    --font:'DM Sans',sans-serif;
 }
 
-.card-header {
-    padding: 1.25rem 1.75rem 1.1rem;
-    border-bottom: 1px solid var(--line);
-    display: flex; align-items: center; gap: 0.65rem;
-}
-.card-header-icon {
-    width: 34px; height: 34px;
-    border-radius: var(--radius-sm);
-    background: var(--accent-bg);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--accent); font-size: 16px;
-}
-.card-header-title { font-size: 0.9rem; font-weight: 700; color: var(--ink); }
-
-.card-body { padding: 1.5rem 1.75rem; display: flex; flex-direction: column; gap: 1.1rem; }
-.card-footer {
-    padding: 1rem 1.75rem;
-    border-top: 1px solid var(--line);
-    background: var(--surface-2);
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 0.5rem;
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
 }
 
-/* ── Avatar row ── */
-.avatar-row {
-    display: flex; align-items: center; gap: 1rem;
-}
-.avatar-img {
-    width: 72px; height: 72px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--line);
-    flex-shrink: 0;
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font);
 }
 
-.btn-danger-sm {
-    display: inline-flex; align-items: center; gap: 0.35rem;
-    padding: 0.35rem 0.8rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid rgba(229,57,53,0.25);
-    background: var(--danger-bg);
-    color: var(--danger);
-    font-size: 0.78rem; font-weight: 600;
-    font-family: var(--font-body); cursor: pointer;
-    transition: background 0.15s;
-}
-.btn-danger-sm:hover { background: #ffcdd2; }
-.btn-danger-sm i { font-size: 13px; }
+/* ───────────────── Layout ───────────────── */
 
-/* ── Form elements ── */
-.form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+.profile-layout{
+    max-width:1200px;
+    margin:0 auto;
+    padding:1rem 0 3rem;
 
-.form-label {
-    font-size: 0.72rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--ink-3);
+    display:grid;
+    grid-template-columns:320px 1fr;
+    gap:1.5rem;
+    align-items:start;
 }
-.form-label-note { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-4); }
 
-.form-input {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    border: 1px solid var(--line-2);
-    border-radius: var(--radius-md);
-    font-size: 0.875rem; font-family: var(--font-body);
-    background: var(--surface); color: var(--ink);
-    transition: border-color 0.2s, box-shadow 0.2s;
+@media(max-width:960px){
+    .profile-layout{
+        grid-template-columns:1fr;
+    }
 }
-.form-input::placeholder { color: var(--ink-4); }
-.form-input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(61,90,254,0.1);
-}
-input[type="file"].form-input { cursor: pointer; padding: 0.55rem 1rem; }
 
-.error { font-size: 0.75rem; color: var(--danger); display: flex; align-items: center; gap: 4px; }
-.error i { font-size: 13px; }
+/* ───────────────── Cards ───────────────── */
 
-/* ── Cropper container ── */
-#cropper-container { margin-top: 0.75rem; }
-.cancel-photo-btn {
-    display: inline-flex; align-items: center; gap: 0.35rem;
-    padding: 0.3rem 0.75rem;
-    background: var(--danger-bg); color: var(--danger);
-    border: 1px solid rgba(229,57,53,0.2);
-    border-radius: var(--radius-sm);
-    font-size: 0.78rem; font-weight: 600;
-    font-family: var(--font-body); cursor: pointer;
-    margin-bottom: 0.5rem;
+.card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
 }
-.cancel-photo-btn i { font-size: 12px; }
 
-/* ── Password strength ── */
-.strength-bar-wrap {
-    height: 4px;
-    background: var(--line);
-    border-radius: 4px;
-    margin-top: 0.4rem;
-    overflow: hidden;
-}
-.strength-bar { height: 100%; width: 0%; border-radius: 4px; transition: all 0.3s; }
+.card-header{
+    padding:1.3rem 1.5rem;
+    border-bottom:1px solid var(--line);
 
-.password-requirements {
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    padding: 0.7rem 1rem;
-    font-size: 0.8rem;
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
 }
-.password-requirements ul { margin: 0.35rem 0 0 1.1rem; padding: 0; line-height: 1.9; }
-.req { color: var(--ink-4); }
-.req.met { color: var(--success); font-weight: 600; }
 
-.forgot-link {
-    font-size: 0.78rem; color: var(--accent);
-    text-decoration: none; text-align: right; display: block;
-}
-.forgot-link:hover { text-decoration: underline; }
+.card-icon{
+    width:42px;
+    height:42px;
 
-/* ── Email code box ── */
-.email-code-box {
-    background: var(--warning-bg);
-    border: 1px solid rgba(245,158,11,0.25);
-    border-radius: var(--radius-md);
-    padding: 1rem;
-    margin-top: 0.5rem;
-}
-.email-code-input {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    border: 1px solid var(--line-2);
-    border-radius: var(--radius-md);
-    font-size: 1.4rem;
-    letter-spacing: 0.3em;
-    text-align: center;
-    font-family: monospace;
-    background: var(--surface); color: var(--ink);
-    margin-top: 0.5rem;
-    transition: border-color 0.2s;
-}
-.email-code-input:focus { outline: none; border-color: var(--accent); }
-.email-code-input::placeholder { color: var(--ink-4); letter-spacing: 0.2em; }
+    border-radius:14px;
 
-/* ── Buttons ── */
-.btn-primary {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-md); border: none;
-    background: var(--accent); color: white;
-    font-size: 0.85rem; font-weight: 700;
-    font-family: var(--font-body); cursor: pointer;
-    box-shadow: 0 2px 8px rgba(61,90,254,0.25);
-    transition: background 0.2s, transform 0.15s;
-}
-.btn-primary:hover { background: var(--accent-2); transform: translateY(-1px); }
-.btn-primary i { font-size: 14px; }
+    background:linear-gradient(
+        135deg,
+        var(--accent-2),
+        var(--accent)
+    );
 
-.btn-success {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-md); border: none;
-    background: var(--success); color: white;
-    font-size: 0.85rem; font-weight: 700;
-    font-family: var(--font-body); cursor: pointer;
-    box-shadow: 0 2px 8px rgba(16,185,129,0.25);
-    transition: background 0.2s;
-}
-.btn-success:hover { background: #0ea572; }
-.btn-success i { font-size: 14px; }
+    display:flex;
+    align-items:center;
+    justify-content:center;
 
-.btn-warning {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: var(--radius-md); border: none;
-    background: var(--warning); color: #1f2937;
-    font-size: 0.85rem; font-weight: 700;
-    font-family: var(--font-body); cursor: pointer;
-    transition: opacity 0.15s;
-    text-decoration: none;
-}
-.btn-warning:hover { opacity: 0.9; }
-.btn-warning i { font-size: 14px; }
+    color:white;
+    font-size:18px;
 
-@media (max-width: 768px) {
-    .profile-grid { grid-template-columns: 1fr; }
+    box-shadow:
+        0 8px 20px rgba(79,70,229,0.2);
+}
+
+.card-title{
+    font-size:0.95rem;
+    font-weight:700;
+    letter-spacing:-0.02em;
+}
+
+.card-subtitle{
+    margin-top:2px;
+    color:var(--muted);
+    font-size:0.78rem;
+}
+
+.card-body{
+    padding:1.5rem;
+}
+
+/* ───────────────── Sidebar ───────────────── */
+
+.profile-sidebar{
+    position:sticky;
+    top:85px;
+}
+
+.profile-sidebar-inner{
+    padding:2rem 1.5rem;
+}
+
+/* ───────────────── Avatar ───────────────── */
+
+.avatar-wrap{
+    display:flex;
+    justify-content:center;
+    position:relative;
+    width:fit-content;
+    margin:0 auto;
+}
+
+.avatar{
+    width:110px;
+    height:110px;
+
+    border-radius:50%;
+    object-fit:cover;
+
+    border:4px solid white;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,0.12);
+}
+
+.avatar-delete-btn{
+    position:absolute;
+    top:4px;
+    right:4px;
+
+    width:26px;
+    height:26px;
+
+    border-radius:50%;
+
+    background:var(--danger);
+    color:white;
+
+    border:2px solid white;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:14px;
+    font-weight:700;
+    line-height:1;
+
+    cursor:pointer;
+
+    box-shadow:0 2px 8px rgba(0,0,0,0.18);
+
+    transition:transform 0.15s ease, background 0.15s ease;
+}
+
+.avatar-delete-btn:hover{
+    transform:scale(1.12);
+    background:#dc2626;
+}
+
+/* ───────────────── Profile name/role ───────────────── */
+
+.profile-name{
+    text-align:center;
+    margin-top:1rem;
+
+    font-size:1.25rem;
+    font-weight:800;
+
+    letter-spacing:-0.03em;
+}
+
+.profile-role{
+    text-align:center;
+    margin-top:0.35rem;
+
+    font-size:0.85rem;
+    color:var(--muted);
+}
+
+.profile-divider{
+    height:1px;
+    background:var(--line);
+    margin:1.5rem 0;
+}
+
+.upload-box{
+    border:1.5px dashed #cbd5e1;
+
+    border-radius:20px;
+
+    padding:1.1rem;
+
+    background:#fafbff;
+
+    text-align:center;
+
+    transition:0.2s ease;
+}
+
+.upload-box:hover{
+    border-color:var(--accent);
+    background:#f4f7ff;
+}
+
+.upload-box input{
+    display:none;
+}
+
+.upload-trigger{
+    cursor:pointer;
+    display:block;
+}
+
+.upload-trigger i{
+    font-size:1.5rem;
+    color:var(--accent);
+}
+
+.upload-trigger p{
+    margin-top:0.5rem;
+    font-size:0.82rem;
+    color:var(--muted);
+}
+
+#cropper-container{
+    margin-top:1rem;
+}
+
+#cropper-preview{
+    max-width:100%;
+    border-radius:20px;
+}
+
+/* ───────────────── Circular cropper ───────────────── */
+
+.cropper-view-box,
+.cropper-face{
+    border-radius:50%;
+}
+
+/* ───────────────── Right Side ───────────────── */
+
+.settings-column{
+    display:flex;
+    flex-direction:column;
+    gap:1.5rem;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+}
+
+@media(max-width:768px){
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:0.45rem;
+}
+
+.form-label{
+    font-size:0.72rem;
+    font-weight:700;
+
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+
+    color:#64748b;
+}
+
+.form-input{
+    width:100%;
+
+    padding:0.9rem 1rem;
+
+    border-radius:18px;
+
+    border:1px solid #dfe5ef;
+
+    background:white;
+
+    font-size:0.9rem;
+
+    transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+}
+
+.form-input:focus{
+    outline:none;
+
+    border-color:var(--accent);
+
+    box-shadow:
+        0 0 0 4px rgba(79,70,229,0.08);
+}
+
+/* ───────────────── Buttons ───────────────── */
+
+.actions{
+    display:flex;
+    gap:0.8rem;
+    flex-wrap:wrap;
+
+    margin-top:1.2rem;
+}
+
+.btn{
+    border:none;
+
+    padding:0.85rem 1.4rem;
+
+    border-radius:18px;
+
+    display:inline-flex;
+    align-items:center;
+
+    font-family:var(--font);
+    font-weight:700;
+    font-size:0.88rem;
+
+    cursor:pointer;
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.btn:not(:disabled):hover{
+    transform:translateY(-2px);
+}
+
+.btn:disabled{
+    opacity:0.38;
+    cursor:not-allowed;
+    transform:none !important;
+    box-shadow:none !important;
+    filter:grayscale(0.2);
+}
+
+.btn-primary{
+    background:linear-gradient(
+        135deg,
+        var(--accent-2),
+        var(--accent)
+    );
+
+    color:white;
+
+    box-shadow:
+        0 10px 24px rgba(79,70,229,0.22);
+}
+
+.btn-success{
+    background:var(--success);
+    color:white;
+
+    box-shadow:
+        0 10px 24px rgba(16,185,129,0.2);
+}
+
+.btn-danger{
+    background:#fef2f2;
+    color:var(--danger);
+
+    border:1px solid rgba(239,68,68,0.15);
+}
+
+/* ───────────────── Password ───────────────── */
+
+.strength-wrap{
+    margin-top:0.7rem;
+}
+
+.strength-bg{
+    height:6px;
+    background:#e2e8f0;
+    border-radius:999px;
+    overflow:hidden;
+}
+
+.strength-bar{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    transition:0.25s ease;
+}
+
+.password-rules{
+    margin-top:1rem;
+
+    background:#f8fafc;
+
+    border:1px solid var(--line);
+
+    border-radius:18px;
+
+    padding:1rem;
+
+    font-size:0.82rem;
+
+    color:var(--muted);
+
+    line-height:1.9;
+}
+
+.password-rules li.met{
+    color:var(--success);
+    font-weight:600;
+}
+
+/* ───────────────── Email ───────────────── */
+
+.email-box{
+    background:#f8fafc;
+    border:1px solid var(--line);
+
+    border-radius:20px;
+
+    padding:1rem;
+}
+
+/* ───────────────── Errors ───────────────── */
+
+.error{
+    font-size:0.78rem;
+    color:var(--danger);
+
+    display:flex;
+    align-items:center;
+    gap:0.35rem;
 }
 </style>
 @endsection
 
 @section('content')
-<div class="page-wrapper">
 
-    @if(session('info'))
-        <div class="alert-box alert-info">
-            <i class="ti ti-info-circle"></i> {{ session('info') }}
-        </div>
-    @endif
+<div class="profile-layout">
 
-    <div class="profile-grid">
+    {{-- SIDEBAR --}}
+    <div class="profile-sidebar">
 
-        {{-- ── Personal Info ── --}}
         <div class="card">
-            <div class="card-header">
-                <div class="card-header-icon"><i class="ti ti-user"></i></div>
-                <div class="card-header-title">Informations personnelles</div>
-            </div>
 
-            <form id="profile-form" method="POST" action="{{ route('profile.update-info') }}" enctype="multipart/form-data">
-                @csrf @method('PUT')
+            <div class="profile-sidebar-inner">
 
-                <div class="card-body">
+                <div class="avatar-wrap">
+                    <img
+                        src="{{ $user->profile_picture_url }}"
+                        alt="{{ $user->name }}"
+                        class="avatar"
+                        id="avatar-preview">
 
                     @if($user->profile_picture)
-                        <div class="avatar-row">
-                            <img src="{{ $user->profile_picture_url }}" alt="Photo de profil" class="avatar-img">
-                            <form method="POST" action="{{ route('profile.delete-picture') }}">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn-danger-sm">
-                                    <i class="ti ti-trash"></i> Supprimer la photo
-                                </button>
-                            </form>
-                        </div>
+                        <button
+                            type="button"
+                            class="avatar-delete-btn"
+                            title="Supprimer la photo"
+                            onclick="deletePicture()">&#x2715;</button>
                     @endif
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label">Photo de profil</label>
-                        <input type="file" class="form-input" name="profile_picture" id="profile_picture"
-                               accept="image/*" onchange="previewImage(event)">
-                        <div id="cropper-container" style="display:none;">
-                            <button type="button" class="cancel-photo-btn" onclick="cancelImage()">
-                                <i class="ti ti-x"></i> Annuler la photo
-                            </button>
-                            <img id="cropper-preview" style="max-width:100%;">
-                        </div>
-                        <input type="hidden" id="crop_x" name="crop_x">
-                        <input type="hidden" id="crop_y" name="crop_y">
-                        <input type="hidden" id="crop_width" name="crop_width">
-                        <input type="hidden" id="crop_height" name="crop_height">
-                    </div>
+                <div class="profile-name">
+                    {{ $user->name }}
+                </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="name">
-                            Nom complet <span class="form-label-note">(2–20 caractères)</span>
+                <div class="profile-role">
+                    @if($user->isAdmin())
+                        Administrateur
+                    @elseif($user->isTeacher())
+                        Enseignant
+                    @else
+                        Étudiant
+                    @endif
+                </div>
+
+                <div class="profile-divider"></div>
+
+                {{-- PHOTO FORM --}}
+                <form
+                    id="profile-form"
+                    method="POST"
+                    action="{{ route('profile.update-picture') }}"
+                    enctype="multipart/form-data">
+
+                    @csrf
+                    @method('PUT')
+
+                    <div class="upload-box">
+
+                        <label class="upload-trigger">
+
+                            <input
+                                type="file"
+                                name="profile_picture"
+                                id="profile_picture"
+                                accept="image/*"
+                                onchange="previewImage(event)">
+
+                            <i class="ti ti-camera-plus"></i>
+
+                            <p>
+                                Modifier la photo
+                            </p>
+
                         </label>
-                        <input type="text" class="form-input" name="name"
-                               value="{{ old('name', $user->name) }}"
-                               minlength="2" maxlength="20" required>
-                        @error('name') <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div> @enderror
+
                     </div>
 
-                </div>
+                    <div id="cropper-container" style="display:none;">
+                        <img id="cropper-preview">
+                    </div>
 
-                <div class="card-footer">
-                    <button class="btn-primary" type="submit">
-                        <i class="ti ti-check"></i> Enregistrer le nom
-                    </button>
-                </div>
-            </form>
-        </div>
+                    <input type="hidden" name="crop_x" id="crop_x">
+                    <input type="hidden" name="crop_y" id="crop_y">
+                    <input type="hidden" name="crop_width" id="crop_width">
+                    <input type="hidden" name="crop_height" id="crop_height">
 
-        {{-- ── Password ── --}}
-        <div class="card">
-            <div class="card-header">
-                <div class="card-header-icon"><i class="ti ti-lock"></i></div>
-                <div class="card-header-title">Changer le mot de passe</div>
+                    <div class="actions">
+
+                        <button
+                            type="submit"
+                            id="save-photo-btn"
+                            class="btn btn-primary"
+                            disabled>
+
+                            Sauvegarder
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+                {{-- DELETE FORM --}}
+                <form
+                    id="delete-picture-form"
+                    method="POST"
+                    action="{{ route('profile.delete-picture') }}"
+                    style="display:none;">
+
+                    @csrf
+                    @method('DELETE')
+
+                </form>
+
             </div>
 
-            <form method="POST" action="{{ route('profile.update-password') }}">
-                @csrf @method('PUT')
-
-                <div class="card-body">
-
-                    <div class="form-group">
-                        <label class="form-label">Mot de passe actuel</label>
-                        <input type="password" class="form-input" name="current_password" required>
-                        @error('current_password') <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div> @enderror
-                        <a href="{{ route('password.forgot') }}" class="forgot-link">Mot de passe oublié ?</a>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Nouveau mot de passe</label>
-                        <input type="password" class="form-input" name="new_password" id="new_password"
-                               required oninput="checkStrength(this.value)">
-                        <div class="strength-bar-wrap">
-                            <div class="strength-bar" id="strengthBar"></div>
-                        </div>
-                        <div class="password-requirements">
-                            <span style="font-size:0.75rem;color:var(--ink-4);">Votre mot de passe doit contenir :</span>
-                            <ul>
-                                <li class="req" id="req-length">Au moins 8 caractères</li>
-                                <li class="req" id="req-upper">Au moins 1 majuscule (A-Z)</li>
-                                <li class="req" id="req-lower">Au moins 1 minuscule (a-z)</li>
-                                <li class="req" id="req-digit">Au moins 1 chiffre (0-9)</li>
-                                <li class="req" id="req-special">Au moins 1 caractère spécial (@$!%*?&)</li>
-                            </ul>
-                        </div>
-                        @error('new_password') <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Confirmer le mot de passe</label>
-                        <input type="password" class="form-input" name="new_password_confirmation" required>
-                    </div>
-
-                </div>
-
-                <div class="card-footer">
-                    <button class="btn-success" type="submit">
-                        <i class="ti ti-key"></i> Modifier le mot de passe
-                    </button>
-                </div>
-            </form>
         </div>
 
     </div>
 
-    {{-- ── Email Change ── --}}
-    <div class="card">
-        <div class="card-header">
-            <div class="card-header-icon"><i class="ti ti-mail"></i></div>
-            <div class="card-header-title">Changer l'adresse email</div>
-        </div>
+    {{-- SETTINGS --}}
+    <div class="settings-column">
 
-        <div class="card-body" style="max-width: 520px;">
+        {{-- PERSONAL INFO --}}
+        <div class="card">
 
-            <div class="alert-box alert-info">
-                <i class="ti ti-info-circle"></i>
-                Un code de confirmation sera envoyé à votre <strong>nouvelle adresse email</strong>.
-                Email actuel : <strong>{{ $user->email }}</strong>
+            <div class="card-header">
+
+                <div class="card-icon">
+                    <i class="ti ti-user"></i>
+                </div>
+
+                <div>
+                    <div class="card-title">
+                        Informations personnelles
+                    </div>
+
+                    <div class="card-subtitle">
+                        Modifiez vos informations principales
+                    </div>
+                </div>
+
             </div>
 
-            @if($user->pending_email)
-                <div class="alert-box alert-warning">
-                    <i class="ti ti-clock"></i>
-                    Un code a été envoyé à <strong>{{ $user->pending_email }}</strong>. Entrez-le ci-dessous pour confirmer.
-                </div>
-            @endif
+            <div class="card-body">
 
-            @if(!session('email_code_sent') && !$user->pending_email)
-                <form method="POST" action="{{ route('profile.request-email-change') }}">
-                    @csrf
-                    <div class="form-group">
-                        <label class="form-label">Nouvelle adresse email</label>
-                        <input type="email" class="form-input" name="email"
-                               value="{{ old('email') }}" placeholder="nouvelle@email.com" required>
-                        @error('email') <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div> @enderror
-                    </div>
-                    <div style="margin-top:0.5rem;">
-                        <button type="submit" class="btn-warning">
-                            <i class="ti ti-mail-forward"></i> Envoyer le code
-                        </button>
-                    </div>
-                </form>
-            @endif
+                <form
+                    method="POST"
+                    action="{{ route('profile.update-info') }}"
+                    id="info-form">
 
-            @if(session('email_code_sent') || $user->pending_email)
-                <form method="POST" action="{{ route('profile.confirm-email-change') }}">
                     @csrf
-                    <div class="form-group">
-                        <label class="form-label">
-                            Code de confirmation <span class="form-label-note">(6 chiffres)</span>
-                        </label>
-                        <div class="email-code-box">
-                            <div style="font-size:0.82rem;color:var(--ink-3);">
-                                Code envoyé à <strong>{{ $user->pending_email }}</strong>
-                            </div>
-                            <input type="text" class="email-code-input" name="email_code"
-                                   maxlength="6" placeholder="000000" autocomplete="off" required>
+                    @method('PUT')
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                Nom complet
+                            </label>
+
+                            <input
+                                type="text"
+                                class="form-input"
+                                name="name"
+                                id="name-input"
+                                value="{{ old('name',$user->name) }}"
+                                minlength="2"
+                                maxlength="20"
+                                required>
+
+                            @error('name')
+                                <div class="error">
+                                    <i class="ti ti-alert-circle"></i>
+                                    {{ $message }}
+                                </div>
+                            @enderror
+
                         </div>
-                        @error('email_code') <div class="error" style="margin-top:0.4rem;"><i class="ti ti-alert-circle"></i> {{ $message }}</div> @enderror
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                Adresse email
+                            </label>
+
+                            <input
+                                type="email"
+                                class="form-input"
+                                value="{{ $user->email }}"
+                                disabled>
+
+                        </div>
+
                     </div>
-                    <div style="display:flex;gap:0.75rem;margin-top:0.5rem;flex-wrap:wrap;">
-                        <button type="submit" class="btn-success">
-                            <i class="ti ti-check"></i> Confirmer le changement
+
+                    <div class="actions">
+
+                        <button
+                            class="btn btn-primary"
+                            id="save-info-btn"
+                            disabled>
+
+                            Enregistrer
+
                         </button>
-                        <a href="#" class="btn-warning"
-                           onclick="event.preventDefault(); document.getElementById('resend-form').submit();">
-                            <i class="ti ti-refresh"></i> Renvoyer le code
-                        </a>
+
                     </div>
+
                 </form>
 
-                <form id="resend-form" method="POST" action="{{ route('profile.request-email-change') }}" style="display:none;">
-                    @csrf
-                    <input type="hidden" name="email" value="{{ $user->pending_email }}">
-                </form>
-            @endif
+            </div>
 
         </div>
+
+        {{-- PASSWORD --}}
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-icon">
+                    <i class="ti ti-lock"></i>
+                </div>
+
+                <div>
+                    <div class="card-title">
+                        Sécurité du compte
+                    </div>
+
+                    <div class="card-subtitle">
+                        Modifiez votre mot de passe
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <form
+                    method="POST"
+                    action="{{ route('profile.update-password') }}">
+
+                    @csrf
+                    @method('PUT')
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                Mot de passe actuel
+                            </label>
+
+                            <input
+                                type="password"
+                                class="form-input"
+                                name="current_password"
+                                id="current-password"
+                                oninput="checkPasswordForm()"
+                                required>
+
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                Nouveau mot de passe
+                            </label>
+
+                            <input
+                                type="password"
+                                class="form-input"
+                                name="new_password"
+                                id="new_password"
+                                oninput="checkStrength(this.value); checkPasswordForm();"
+                                required>
+
+                            <div class="strength-wrap">
+
+                                <div class="strength-bg">
+                                    <div class="strength-bar" id="strengthBar"></div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="password-rules">
+
+                        <ul>
+                            <li id="req-length">8 caractères minimum</li>
+                            <li id="req-upper">1 majuscule</li>
+                            <li id="req-lower">1 minuscule</li>
+                            <li id="req-digit">1 chiffre</li>
+                            <li id="req-special">1 caractère spécial</li>
+                        </ul>
+
+                    </div>
+
+                    <div class="actions">
+
+                        <button
+                            class="btn btn-success"
+                            id="save-password-btn"
+                            disabled>
+
+                            Modifier le mot de passe
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {{-- EMAIL --}}
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-icon">
+                    <i class="ti ti-mail"></i>
+                </div>
+
+                <div>
+                    <div class="card-title">
+                        Changer l'adresse email
+                    </div>
+
+                    <div class="card-subtitle">
+                        Validation par code de confirmation
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="email-box">
+
+                    <form
+                        method="POST"
+                        action="{{ route('profile.request-email-change') }}">
+
+                        @csrf
+
+                        <div class="form-group">
+
+                            <label class="form-label">
+                                Nouvelle adresse email
+                            </label>
+
+                            <input
+                                type="email"
+                                class="form-input"
+                                name="email"
+                                id="new-email-input"
+                                placeholder="nouvelle@email.com"
+                                oninput="checkEmailForm()"
+                                required>
+
+                        </div>
+
+                        <div class="actions">
+
+                            <button
+                                class="btn btn-primary"
+                                id="send-email-btn"
+                                disabled>
+
+                                Envoyer le code
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 <script>
-let cropper;
+let cropper = null;
 
-function previewImage(event) {
+/* ── Photo ── */
+
+function previewImage(event){
     const file = event.target.files[0];
-    if (!file) return;
-    const img       = document.getElementById('cropper-preview');
+    if(!file) return;
+
+    const objectUrl = URL.createObjectURL(file);
+
+    const img = document.getElementById('cropper-preview');
     const container = document.getElementById('cropper-container');
-    img.src = URL.createObjectURL(file);
+
+    img.src = objectUrl;
     container.style.display = 'block';
-    if (cropper) cropper.destroy();
-    cropper = new Cropper(img, { aspectRatio: 1, viewMode: 1, autoCropArea: 1 });
+
+    if(cropper){ cropper.destroy(); }
+
+    cropper = new Cropper(img, {
+        aspectRatio: 1,
+        viewMode: 1,
+        autoCropArea: 1,
+        responsive: true,
+    });
+
+    document.getElementById('save-photo-btn').disabled = false;
 }
 
-function cancelImage() {
-    document.getElementById('cropper-container').style.display = 'none';
-    if (cropper) { cropper.destroy(); cropper = null; }
-    document.getElementById('profile_picture').value = '';
-}
+document.getElementById('profile-form')
+.addEventListener('submit', function(){
+    if(!cropper) return;
 
-document.getElementById('profile-form').addEventListener('submit', function () {
-    if (cropper) {
-        const data = cropper.getData();
-        document.getElementById('crop_x').value      = Math.round(data.x);
-        document.getElementById('crop_y').value      = Math.round(data.y);
-        document.getElementById('crop_width').value  = Math.round(data.width);
-        document.getElementById('crop_height').value = Math.round(data.height);
-    }
+    const data = cropper.getData(true);
+
+    document.getElementById('crop_x').value      = Math.round(data.x);
+    document.getElementById('crop_y').value      = Math.round(data.y);
+    document.getElementById('crop_width').value  = Math.round(data.width);
+    document.getElementById('crop_height').value = Math.round(data.height);
 });
 
-function checkStrength(password) {
-    const bar  = document.getElementById('strengthBar');
-    const reqs = {
-        length:  { el: document.getElementById('req-length'),  test: password.length >= 8 },
-        upper:   { el: document.getElementById('req-upper'),   test: /[A-Z]/.test(password) },
-        lower:   { el: document.getElementById('req-lower'),   test: /[a-z]/.test(password) },
-        digit:   { el: document.getElementById('req-digit'),   test: /\d/.test(password) },
-        special: { el: document.getElementById('req-special'), test: /[\W_]/.test(password) },
-    };
+function deletePicture(){
+    document.getElementById('delete-picture-form').submit();
+}
+
+/* ── Personal info ── */
+
+const nameInput    = document.getElementById('name-input');
+const saveInfoBtn  = document.getElementById('save-info-btn');
+const originalName = nameInput ? nameInput.value : '';
+
+if(nameInput){
+    nameInput.addEventListener('input', function(){
+        const changed = this.value.trim() !== originalName.trim()
+                     && this.value.trim().length >= 2;
+        saveInfoBtn.disabled = !changed;
+    });
+}
+
+/* ── Password ── */
+
+const passwordChecks = {
+    length:  /^.{8,}$/,
+    upper:   /[A-Z]/,
+    lower:   /[a-z]/,
+    digit:   /\d/,
+    special: /[\W_]/
+};
+
+let passwordScore = 0;
+
+function checkStrength(password){
+    const bar = document.getElementById('strengthBar');
     let score = 0;
-    for (const key in reqs) {
-        const r = reqs[key];
-        r.el.classList.toggle('met', r.test);
-        if (r.test) score++;
-    }
+
+    Object.entries(passwordChecks).forEach(([key, regex]) => {
+        const el = document.getElementById('req-' + key);
+        if(regex.test(password)){
+            score++;
+            el.classList.add('met');
+        } else {
+            el.classList.remove('met');
+        }
+    });
+
+    passwordScore = score;
+
     bar.style.width = (score / 5 * 100) + '%';
-    if      (score <= 2) bar.style.background = '#e53935';
-    else if (score <= 4) bar.style.background = '#f59e0b';
-    else                 bar.style.background = '#10b981';
+
+    if(score <= 2)      bar.style.background = '#ef4444';
+    else if(score <= 4) bar.style.background = '#f59e0b';
+    else                bar.style.background = '#10b981';
+}
+
+function checkPasswordForm(){
+    const current = document.getElementById('current-password').value;
+    const btn     = document.getElementById('save-password-btn');
+
+    btn.disabled = !(current.length > 0 && passwordScore === 5);
+}
+
+/* ── Email ── */
+
+function checkEmailForm(){
+    const input = document.getElementById('new-email-input');
+    const btn   = document.getElementById('send-email-btn');
+
+    const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+    btn.disabled = !valid;
 }
 </script>
+
 @endsection

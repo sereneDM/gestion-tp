@@ -30,7 +30,7 @@ class LikeController extends Controller
                     Notification::createFor(
                         $post->user_id,
                         'post_liked', // ← was 'comment_liked', now distinct type
-                        '❤️ ' . auth()->user()->name . ' a aimé votre publication',
+                        auth()->user()->name . ' a aimé votre publication',
                         Str::limit($post->title, 80),
                         route('posts.show', $post->id),
                         $post->id
@@ -66,7 +66,7 @@ class LikeController extends Controller
                     Notification::createFor(
                         $comment->user_id,
                         'comment_liked',
-                        '❤️ ' . auth()->user()->name . ' a aimé votre commentaire',
+                        auth()->user()->name . ' a aimé votre commentaire',
                         Str::limit($comment->content, 80),
                         $anchor,
                         $comment->id

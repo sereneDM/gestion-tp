@@ -19,7 +19,7 @@ Route::delete('/profile/picture', [ProfileController::class, 'deletePicture'])
     ->name('profile.delete-picture')
     ->middleware('auth');
 Route::get('/users/search', [ProfileController::class, 'search'])->middleware('auth');
-
+Route::put('/profile/picture', [ProfileController::class, 'updatePicture'])->name('profile.update-picture');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

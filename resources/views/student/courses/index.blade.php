@@ -269,9 +269,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             </div>
             <h3>Aucun cours</h3>
             <p>Vous n'êtes inscrit à aucun cours pour le moment.</p>
-            <a href="{{ route('student.join-course.form') }}" class="btn-new">
-                <i class="ti ti-plus"></i> Rejoindre un cours
-            </a>
+            
         </div>
     @endif
 
