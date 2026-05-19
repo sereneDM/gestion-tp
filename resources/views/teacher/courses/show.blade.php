@@ -25,7 +25,6 @@
     --warning-bg: #fffbeb;
     --success:    #10b981;
     --success-bg: #ecfdf5;
-    --purple:     #7c3aed;
     --radius-sm:  6px;
     --radius-md:  10px;
     --radius-lg:  16px;
@@ -117,40 +116,65 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .tab-content { display: none; }
 .tab-content.active { display: block; }
 
-/* ── Join code box ── */
-.join-code-box {
+/* ── Teacher card ── */
+.teacher-card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-xl);
-    padding: 2rem;
-    text-align: center;
-    margin-bottom: 1.25rem;
+    padding: 1.5rem;
     box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
 }
-.join-code-label {
+.teacher-avatar {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--surface-2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
+.teacher-avatar-placeholder {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-bg), #dde4ff);
+    border: 3px solid var(--surface-2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--accent);
+    font-family: var(--font-serif);
+}
+.teacher-info { flex: 1; min-width: 0; }
+.teacher-label {
     font-size: 0.7rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--ink-4); margin-bottom: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    color: var(--ink-4); margin-bottom: 0.3rem;
 }
-.join-code {
-    font-size: 2.2rem; font-weight: 700;
-    font-family: monospace; letter-spacing: 0.15em;
-    color: var(--accent); margin-bottom: 1rem;
+.teacher-name {
+    font-size: 1rem; font-weight: 700;
+    color: var(--ink); letter-spacing: -0.01em;
 }
-.btn-copy {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.5rem 1.1rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--line);
-    background: var(--surface-2);
-    color: var(--ink-2);
-    font-size: 0.82rem; font-weight: 500;
-    font-family: var(--font-body);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
+.teacher-role-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    margin-top: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--accent-bg); color: var(--accent);
+    border-radius: 100px;
+    font-size: 0.72rem; font-weight: 600;
 }
-.btn-copy:hover { background: var(--surface-3); border-color: var(--line-2); }
-.btn-copy i { font-size: 14px; }
+.teacher-role-badge i { font-size: 11px; }
+.teacher-you-tag {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    margin-top: 0.35rem; margin-left: 0.4rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--success-bg); color: var(--success);
+    border-radius: 100px;
+    font-size: 0.72rem; font-weight: 600;
+}
 
 /* ── Stat tiles ── */
 .stat-grid {
@@ -174,12 +198,14 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 }
 .stat-tile-lbl { font-size: 0.78rem; color: var(--ink-3); margin-top: 0.4rem; }
 
+/* ── Description ── */
 .description-card {
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     padding: 1.25rem 1.5rem;
     box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
 }
 .card-label {
     font-size: 0.7rem; font-weight: 700;
@@ -187,6 +213,62 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     color: var(--ink-4); margin-bottom: 0.6rem;
 }
 .description-card p { font-size: 0.9rem; color: var(--ink-2); line-height: 1.7; }
+
+/* ── Join code — slim inline strip ── */
+.join-code-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+}
+.join-code-left { display: flex; flex-direction: column; gap: 0.25rem; }
+.join-code-label {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4);
+}
+.join-code {
+    font-size: 1.6rem; font-weight: 700;
+    font-family: monospace; letter-spacing: 0.15em;
+    color: var(--accent);
+}
+.join-code-actions { display: flex; gap: 0.6rem; align-items: center; flex-shrink: 0; }
+.btn-copy {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--ink-2);
+    font-size: 0.82rem; font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+.btn-copy:hover { background: var(--surface-3); border-color: var(--line-2); }
+.btn-copy i { font-size: 14px; }
+.btn-regen {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(245,158,11,0.25);
+    background: var(--warning-bg);
+    color: var(--warning);
+    font-size: 0.82rem; font-weight: 600;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+}
+.btn-regen:hover { background: #fef3c7; }
+.btn-regen i { font-size: 14px; }
 
 /* ── TP grid ── */
 .section-topbar {
@@ -207,7 +289,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     border-radius: 100px;
     padding: 0.1rem 0.5rem;
 }
-
 .btn-new {
     display: inline-flex; align-items: center; gap: 0.45rem;
     background: var(--success); color: white;
@@ -227,7 +308,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.25rem;
 }
-
 .tp-card {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -256,7 +336,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     flex: 1; min-width: 0;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-
 .badge {
     display: inline-flex; align-items: center; gap: 4px;
     padding: 0.18rem 0.6rem;
@@ -274,16 +353,12 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
     overflow: hidden; min-height: 2.5rem;
 }
-
 .tp-meta {
     display: flex; align-items: center; gap: 0.4rem;
     font-size: 0.78rem; color: var(--ink-4);
 }
 .tp-meta i { font-size: 13px; }
-
-/* TP card footer menu */
 .tp-footer { display: flex; justify-content: flex-end; margin-top: auto; position: relative; }
-
 .tp-menu-btn {
     background: var(--surface-2);
     border: 1px solid var(--line);
@@ -296,7 +371,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     transition: background 0.15s, color 0.15s;
 }
 .tp-menu-btn:hover { background: var(--surface-3); color: var(--ink); }
-
 .tp-dropdown {
     display: none;
     position: absolute;
@@ -385,6 +459,24 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 }
 .empty-state h3 { color: var(--ink-2); font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
 .empty-state p  { font-size: 0.875rem; max-width: 280px; margin: 0 auto; }
+.teacher-email-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ink-3);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+
+.teacher-email-link i {
+    font-size: 13px;
+}
+
+.teacher-email-link:hover {
+    color: var(--accent);
+}
 </style>
 @endsection
 
@@ -400,12 +492,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 <a href="{{ route('teacher.courses.edit', $course->id) }}?from=info">
                     <i class="ti ti-edit"></i> Modifier le cours
                 </a>
-                <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
-                    @csrf
-                    <button type="submit" onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')">
-                        <i class="ti ti-refresh"></i> Nouveau code
-                    </button>
-                </form>
                 <div class="page-dropdown-divider"></div>
                 <form method="POST" action="{{ route('teacher.courses.destroy', $course->id) }}">
                     @csrf @method('DELETE')
@@ -433,14 +519,33 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     {{-- Tab: Info --}}
     <div class="tab-content active" id="tab-info">
 
-        <div class="join-code-box">
-            <div class="join-code-label">Code d'accès au cours</div>
-            <div class="join-code" id="joinCode">{{ $course->join_code }}</div>
-            <button class="btn-copy" onclick="copyJoinCode()">
-                <i class="ti ti-copy"></i> Copier le code
-            </button>
+        {{-- Teacher card (you) at top --}}
+        <div class="teacher-card">
+            @if(auth()->user()->profile_picture)
+                <img
+                    src="{{ auth()->user()->profile_picture_url }}"
+                    alt="{{ auth()->user()->name }}"
+                    class="teacher-avatar">
+            @else
+                <div class="teacher-avatar-placeholder">
+                    {{ mb_strtoupper(mb_substr(auth()->user()->name, 0, 1)) }}
+                </div>
+            @endif
+            <div class="teacher-info">
+                <div class="teacher-label">Enseignant responsable</div>
+                <div class="teacher-name">{{ auth()->user()->name }}</div>
+                <div class="teacher-role-badge">
+    <i class="ti ti-school"></i> Enseignant
+</div>
+
+<a href="mailto:{{ auth()->user()->email }}" class="teacher-email-link">
+    <i class="ti ti-mail"></i>
+    {{ auth()->user()->email }}
+</a>
+            </div>
         </div>
 
+        {{-- Stats --}}
         <div class="stat-grid">
             <div class="stat-tile">
                 <div class="stat-tile-val">{{ $course->students->count() }}</div>
@@ -456,12 +561,33 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             </div>
         </div>
 
+        {{-- Description --}}
         @if($course->description)
             <div class="description-card">
                 <div class="card-label">Description</div>
                 <p>{{ $course->description }}</p>
             </div>
         @endif
+
+        {{-- Join code — slim inline strip at bottom --}}
+        <div class="join-code-box">
+            <div class="join-code-left">
+                <div class="join-code-label">Code d'accès au cours</div>
+                <div class="join-code" id="joinCode">{{ $course->join_code }}</div>
+            </div>
+            <div class="join-code-actions">
+                <button class="btn-copy" onclick="copyJoinCode()">
+                    <i class="ti ti-copy"></i> Copier
+                </button>
+                <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
+                    @csrf
+                    <button type="submit" class="btn-regen"
+                            onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')">
+                        <i class="ti ti-refresh"></i> Nouveau code
+                    </button>
+                </form>
+            </div>
+        </div>
 
     </div>
 
@@ -622,7 +748,12 @@ document.addEventListener('click', closeAllMenus);
 
 function copyJoinCode() {
     const code = document.getElementById('joinCode').textContent.trim();
-    navigator.clipboard.writeText(code).then(() => showToast('✓ Code copié : ' + code));
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.btn-copy');
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i class="ti ti-check"></i> Copié !';
+        setTimeout(() => btn.innerHTML = original, 2000);
+    });
 }
 
 function switchTab(tabName, event) {

@@ -46,6 +46,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     padding: 0.5rem 0 3rem;
 }
 
+/* ── Buttons ── */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -65,9 +66,9 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .btn-primary { background: var(--accent); color: white; box-shadow: 0 2px 8px rgba(61,90,254,0.3); }
 .btn-primary:hover { background: var(--accent-2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(61,90,254,0.35); }
 .btn-success { background: var(--success); color: white; box-shadow: 0 2px 8px rgba(16,185,129,0.3); }
-.btn-success:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(16,185,129,0.35); }
+.btn-success:hover { background: #059669; transform: translateY(-1px); }
 .btn-info { background: var(--info); color: white; box-shadow: 0 2px 8px rgba(14,165,233,0.3); }
-.btn-info:hover { background: #0284c7; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(14,165,233,0.35); }
+.btn-info:hover { background: #0284c7; transform: translateY(-1px); }
 .btn-danger { background: var(--danger-bg); color: var(--danger); }
 .btn-danger:hover { background: #fee2e2; }
 
@@ -79,12 +80,13 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     margin-bottom: 1.5rem;
 }
 
-.course-teacher-info {
-    font-size: 0.85rem;
-    color: var(--ink-3);
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
+.topbar-title {
+    font-size: 1.55rem;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.2;
 }
 
 /* ── Tabs ── */
@@ -116,12 +118,97 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+/* ── Teacher card (now at top) ── */
+.teacher-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.teacher-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--surface-2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
+
+.teacher-avatar-placeholder {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-bg), #dde4ff);
+    border: 3px solid var(--surface-2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--accent);
+    font-family: var(--font-serif);
+}
+
+.teacher-info { flex: 1; min-width: 0; }
+
+.teacher-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ink-4);
+    margin-bottom: 0.3rem;
+}
+
+.teacher-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+}
+
+.teacher-role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+.teacher-role-badge i { font-size: 11px; }
+
+.teacher-email-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ink-3);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.teacher-email-link i { font-size: 13px; }
+.teacher-email-link:hover { color: var(--accent); }
+
 /* ── Stats ── */
 .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.25rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
 }
 .info-card {
     background: var(--surface);
@@ -151,6 +238,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     border-radius: var(--radius-xl);
     padding: 1.5rem;
     box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
 }
 .course-desc-title {
     font-size: 0.75rem;
@@ -165,6 +253,54 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     font-size: 0.95rem;
     line-height: 1.6;
 }
+
+/* ── Join code box (now at bottom) ── */
+.join-code-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    padding: 1.75rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+}
+.join-code-left { display: flex; flex-direction: column; gap: 0.3rem; }
+.join-code-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-4);
+}
+.join-code {
+    font-size: 1.6rem;
+    font-weight: 700;
+    font-family: monospace;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+}
+.btn-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--ink-2);
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.btn-copy:hover { background: var(--surface-3); border-color: var(--line-2); }
+.btn-copy i { font-size: 14px; }
 
 /* ── TP grid ── */
 .tps-grid {
@@ -220,9 +356,9 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     flex-shrink: 0;
 }
 .status-badge i { font-size: 14px; }
-.status-pending   { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.2); }
-.status-submitted { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
-.status-graded    { background: var(--info-bg); color: var(--info); border: 1px solid rgba(14, 165, 233, 0.2); }
+.status-pending   { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.2); }
+.status-submitted { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
+.status-graded    { background: var(--info-bg); color: var(--info); border: 1px solid rgba(14,165,233,0.2); }
 
 .tp-description {
     color: var(--ink-3);
@@ -275,10 +411,8 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     transition: all 0.15s;
     box-shadow: var(--shadow-sm);
 }
-.course-menu-btn:hover {
-    background: var(--surface-2);
-    color: var(--ink);
-}
+.course-menu-btn:hover { background: var(--surface-2); color: var(--ink); }
+
 .course-menu-dropdown {
     display: none;
     position: absolute;
@@ -312,6 +446,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .course-menu-dropdown button i { font-size: 16px; }
 .course-menu-dropdown button:hover { background: var(--danger-bg); }
 
+/* ── Empty state ── */
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
@@ -334,41 +469,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 }
 .empty-state h3 { color: var(--ink-2); font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
 .empty-state p  { font-size: 0.875rem; max-width: 320px; margin: 0 auto; }
-
-/* ── Join code box ── */
-.join-code-box {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-xl);
-    padding: 2rem;
-    text-align: center;
-    margin-bottom: 1.25rem;
-    box-shadow: var(--shadow-sm);
-}
-.join-code-label {
-    font-size: 0.7rem; font-weight: 700;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    color: var(--ink-4); margin-bottom: 0.75rem;
-}
-.join-code {
-    font-size: 2.2rem; font-weight: 700;
-    font-family: monospace; letter-spacing: 0.15em;
-    color: var(--accent); margin-bottom: 1rem;
-}
-.btn-copy {
-    display: inline-flex; align-items: center; gap: 0.4rem;
-    padding: 0.5rem 1.1rem;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--line);
-    background: var(--surface-2);
-    color: var(--ink-2);
-    font-size: 0.82rem; font-weight: 500;
-    font-family: var(--font-body);
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-}
-.btn-copy:hover { background: var(--surface-3); border-color: var(--line-2); }
-.btn-copy i { font-size: 14px; }
 </style>
 @endsection
 
@@ -378,10 +478,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     {{-- Course header --}}
     <div class="topbar">
         <div>
-            <h1 class="page-heading">{{ $course->name }}</h1>
-            <div class="course-teacher-info">
-                <i class="ti ti-user"></i> Enseignant: {{ $course->teacher->name }}
-            </div>
+            <h1 class="topbar-title">{{ $course->name }}</h1>
         </div>
         <div style="position:relative;">
             <button class="course-menu-btn" onclick="toggleCourseMenu()">
@@ -402,24 +499,48 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     {{-- Tabs --}}
     <div class="tabs">
         <button class="tab active" onclick="switchTab('info', event)">
-            <i class="ti ti-info-circle" style="margin-right: 0.4rem; vertical-align: -2px;"></i> Informations
+            <i class="ti ti-info-circle" style="margin-right:0.4rem; vertical-align:-2px;"></i> Informations
         </button>
         <button class="tab" onclick="switchTab('tps', event)">
-            <i class="ti ti-file-text" style="margin-right: 0.4rem; vertical-align: -2px;"></i> Travaux Pratiques
+            <i class="ti ti-file-text" style="margin-right:0.4rem; vertical-align:-2px;"></i> Travaux Pratiques
         </button>
     </div>
 
     {{-- Tab: Info --}}
     <div class="tab-content active" id="tab-info">
 
-        <div class="join-code-box">
-            <div class="join-code-label">Code d'accès au cours</div>
-            <div class="join-code" id="joinCode">{{ $course->join_code }}</div>
-            <button class="btn-copy" onclick="copyJoinCode()">
-                <i class="ti ti-copy"></i> Copier le code
-            </button>
+        {{-- Teacher card — top --}}
+        @php $teacher = $course->teacher; @endphp
+        <div class="teacher-card">
+
+            @if($teacher->profile_picture)
+                <img
+                    src="{{ $teacher->profile_picture_url }}"
+                    alt="{{ $teacher->name }}"
+                    class="teacher-avatar">
+            @else
+                <div class="teacher-avatar-placeholder">
+                    {{ mb_strtoupper(mb_substr($teacher->name, 0, 1)) }}
+                </div>
+            @endif
+
+            <div class="teacher-info">
+                <div class="teacher-label">Enseignant responsable</div>
+                <div class="teacher-name">{{ $teacher->name }}</div>
+                <div class="teacher-role-badge">
+                    <i class="ti ti-school"></i> Enseignant
+                </div>
+                @if($teacher->show_email_publicly)
+                    <a href="mailto:{{ $teacher->email }}" class="teacher-email-link">
+                        <i class="ti ti-mail"></i>
+                        {{ $teacher->email }}
+                    </a>
+                @endif
+            </div>
+
         </div>
 
+        {{-- Stats --}}
         <div class="info-grid">
             <div class="info-card">
                 <div class="info-number">{{ $course->tps->count() }}</div>
@@ -435,12 +556,24 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             </div>
         </div>
 
+        {{-- Description --}}
         @if($course->description)
             <div class="course-desc-card">
                 <div class="course-desc-title">Description du cours</div>
                 <div class="course-desc-body">{{ $course->description }}</div>
             </div>
         @endif
+
+        {{-- Join code — bottom, inline layout --}}
+        <div class="join-code-box">
+            <div class="join-code-left">
+                <div class="join-code-label">Code d'accès au cours</div>
+                <div class="join-code" id="joinCode">{{ $course->join_code }}</div>
+            </div>
+            <button class="btn-copy" onclick="copyJoinCode()">
+                <i class="ti ti-copy"></i> Copier le code
+            </button>
+        </div>
 
     </div>
 
@@ -481,7 +614,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                             <i class="ti ti-calendar"></i>
                             Échéance: {{ $tp->due_date ? $tp->due_date->format('d/m/Y à H:i') : 'Non définie' }}
                         </div>
-                        
+
                         @if($hasSubmitted)
                             <div class="tp-meta">
                                 <i class="ti ti-upload"></i>
@@ -497,7 +630,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
                         <div class="tp-spacer"></div>
 
-                        <button class="btn {{ $isGraded ? 'btn-info' : ($hasSubmitted ? 'btn-success' : 'btn-primary') }}" style="width: 100%;">
+                        <button class="btn {{ $isGraded ? 'btn-info' : ($hasSubmitted ? 'btn-success' : 'btn-primary') }}" style="width:100%;">
                             @if($isGraded)
                                 <i class="ti ti-eye"></i> Voir ma note
                             @elseif($hasSubmitted)
@@ -540,7 +673,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     function switchTab(tabName, event) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        event.target.classList.add('active');
+        event.target.closest('.tab').classList.add('active');
         document.getElementById('tab-' + tabName).classList.add('active');
         history.replaceState(null, null, '#' + tabName);
     }
@@ -559,6 +692,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             });
         }
     });
+
     function copyJoinCode() {
         const code = document.getElementById('joinCode').textContent.trim();
         navigator.clipboard.writeText(code).then(() => {

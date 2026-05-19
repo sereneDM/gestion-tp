@@ -18,6 +18,7 @@ Route::put('/posts/{id}', [FeedController::class, 'update'])->name('posts.update
 Route::delete('/profile/picture', [ProfileController::class, 'deletePicture'])
     ->name('profile.delete-picture')
     ->middleware('auth');
+Route::put('/profile/privacy', [ProfileController::class, 'updatePrivacy'])->name('profile.update-privacy');
 Route::get('/users/search', [ProfileController::class, 'search'])->middleware('auth');
 Route::put('/profile/picture', [ProfileController::class, 'updatePicture'])->name('profile.update-picture');
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -31,11 +32,11 @@ Route::post('/setup-password', [AuthController::class, 'setupPassword'])
 
 Route::middleware('auth')->group(function () {
     // Post detail & comments
-Route::get('/posts/{id}', [FeedController::class, 'show'])->name('posts.show');
-Route::post('/posts/{id}/comments', [FeedController::class, 'storeComment'])->name('posts.comments.store');
-Route::delete('/comments/{id}', [FeedController::class, 'destroyComment'])->name('comments.destroy');
-Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
-Route::post('/comments/{comment}/like', [LikeController::class, 'toggleComment'])->name('comments.like');
+    Route::get('/posts/{id}', [FeedController::class, 'show'])->name('posts.show');
+    Route::post('/posts/{id}/comments', [FeedController::class, 'storeComment'])->name('posts.comments.store');
+    Route::delete('/comments/{id}', [FeedController::class, 'destroyComment'])->name('comments.destroy');
+    Route::post('/posts/{post}/like', [LikeController::class, 'toggle'])->name('posts.like');
+    Route::post('/comments/{comment}/like', [LikeController::class, 'toggleComment'])->name('comments.like');
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -98,7 +99,6 @@ Route::post('/comments/{comment}/like', [LikeController::class, 'toggleComment']
         Route::post('/attendance/save', [TeacherController::class, 'attendanceSave'])->name('attendance.save');
         Route::get('/statistics', [TeacherController::class, 'statistics'])->name('statistics');
     });
-
 });
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
@@ -122,12 +122,14 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/settings/reset', [SettingController::class, 'reset'])->name('settings.reset');
     Route::get('/statistics', [AdminController::class, 'statistics'])->name('statistics');
     Route::get('/system-logs', [AdminController::class, 'systemLogs'])->name('system-logs');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
 });
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
-//forgot password
+
+// Forgot password
 Route::get('/forgot-password', [AuthController::class, 'showForgotPasswordForm'])->name('password.forgot');
 Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{token}', [AuthController::class, 'showResetPasswordForm'])->name('password.reset');

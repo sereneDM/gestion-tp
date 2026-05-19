@@ -6,24 +6,15 @@
     <span class="tb-bc-current">Dashboard</span>
 @endsection
 
-@section('topbar-actions')
-    <a href="{{ route('admin.users.create') }}" class="tb-btn tb-btn-secondary">
-        <i class="ti ti-user-plus"></i> Nouvel utilisateur
-    </a>
-    <a href="{{ route('admin.classes.create') }}" class="tb-btn tb-btn-primary">
-        <i class="ti ti-plus"></i> Nouvelle classe
-    </a>
-@endsection
-
 @section('extra-styles')
 <style>
     .dash-grid {
         display: grid;
-        grid-template-columns: 1fr 320px;
+        grid-template-columns: 1fr 340px;
         gap: 20px;
     }
 
-    .quick-actions { display: flex; flex-direction: column; gap: 8px; }
+    .action-list { display: flex; flex-direction: column; gap: 6px; }
 
     .action-row {
         display: flex; align-items: center; gap: 14px;
@@ -49,62 +40,47 @@
     .action-row-text { flex: 1; }
     .action-row-text strong { display: block; font-size: 13px; font-weight: 700; }
     .action-row-text span { font-size: 11.5px; color: var(--ink-4); }
-    .action-row:hover .action-row-text span { color: inherit; opacity: .7; }
-
-    .sys-card { padding: 0; }
-    .sys-row {
-        display: flex; justify-content: space-between; align-items: center;
-        padding: 12px 20px;
-        border-bottom: 1px solid var(--line);
-        font-size: 12.5px;
-    }
-    .sys-row:last-child { border-bottom: none; }
-    .sys-key { color: var(--ink-3); }
-    .sys-val { font-weight: 600; color: var(--ink); }
-    .sys-ok { color: var(--success); }
-
-    .side-stack { display: flex; flex-direction: column; gap: 18px; }
 
     @media (max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
 </style>
 @endsection
 
 @section('content')
+<h1 class="page-title">Tableau de bord</h1>
+<p class="page-subtitle">Bienvenue, {{ Auth::user()->name }}. Vue d'ensemble de la plateforme.</p>
 
-{{-- ── Stat strip ──────────────────────────────────────── --}}
+{{-- Stat strip --}}
 <div class="stat-strip">
     <div class="stat-tile">
         <div class="stat-tile-label">Utilisateurs</div>
-        <div class="stat-tile-value">{{ $totalUsers ?? '—' }}</div>
-        <div class="stat-tile-sub">inscrits sur la plateforme</div>
+        <div class="stat-tile-value">{{ $totalUsers }}</div>
+        <div class="stat-tile-sub">inscrits au total</div>
     </div>
     <div class="stat-tile">
         <div class="stat-tile-label">Étudiants</div>
-        <div class="stat-tile-value">{{ $totalStudents ?? '—' }}</div>
-        <div class="stat-tile-sub">actifs</div>
+        <div class="stat-tile-value">{{ $totalStudents }}</div>
+        <div class="stat-tile-sub">comptes actifs</div>
     </div>
     <div class="stat-tile">
         <div class="stat-tile-label">Enseignants</div>
-        <div class="stat-tile-value">{{ $totalTeachers ?? '—' }}</div>
+        <div class="stat-tile-value">{{ $totalTeachers }}</div>
         <div class="stat-tile-sub">sur la plateforme</div>
     </div>
     <div class="stat-tile">
-        <div class="stat-tile-label">Classes</div>
-        <div class="stat-tile-value">{{ $totalClasses ?? '—' }}</div>
-        <div class="stat-tile-sub">actives</div>
+        <div class="stat-tile-label">Classes actives</div>
+        <div class="stat-tile-value">{{ $totalClasses }}</div>
+        <div class="stat-tile-sub">en cours</div>
     </div>
 </div>
 
-{{-- ── Main grid ───────────────────────────────────────── --}}
 <div class="dash-grid">
-
     {{-- Left: Quick actions --}}
     <div>
         <div class="card">
             <div class="card-header">
                 <div class="card-header-title"><i class="ti ti-bolt"></i> Actions rapides</div>
             </div>
-            <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+            <div style="padding: 16px;" class="action-list">
                 <a href="{{ route('admin.users.create') }}" class="action-row">
                     <div class="action-row-icon"><i class="ti ti-user-plus"></i></div>
                     <div class="action-row-text">
@@ -114,10 +90,18 @@
                     <i class="ti ti-chevron-right" style="color:var(--ink-4); font-size:16px;"></i>
                 </a>
                 <a href="{{ route('admin.users.index') }}" class="action-row">
-                    <div class="action-row-icon"><i class="ti ti-shield-lock"></i></div>
+                    <div class="action-row-icon"><i class="ti ti-users"></i></div>
                     <div class="action-row-text">
-                        <strong>Gérer les droits</strong>
-                        <span>Modifier les rôles et permissions</span>
+                        <strong>Gérer les utilisateurs</strong>
+                        <span>Modifier les rôles et accès</span>
+                    </div>
+                    <i class="ti ti-chevron-right" style="color:var(--ink-4); font-size:16px;"></i>
+                </a>
+                <a href="{{ route('admin.classes.create') }}" class="action-row">
+                    <div class="action-row-icon"><i class="ti ti-plus"></i></div>
+                    <div class="action-row-text">
+                        <strong>Créer une classe</strong>
+                        <span>Nouvelle classe et assignation</span>
                     </div>
                     <i class="ti ti-chevron-right" style="color:var(--ink-4); font-size:16px;"></i>
                 </a>
@@ -133,15 +117,23 @@
                     <div class="action-row-icon"><i class="ti ti-chart-bar"></i></div>
                     <div class="action-row-text">
                         <strong>Statistiques globales</strong>
-                        <span>Performances et rapports</span>
+                        <span>Performances et activité</span>
                     </div>
                     <i class="ti ti-chevron-right" style="color:var(--ink-4); font-size:16px;"></i>
                 </a>
                 <a href="{{ route('admin.system-logs') }}" class="action-row">
                     <div class="action-row-icon"><i class="ti ti-history"></i></div>
                     <div class="action-row-text">
-                        <strong>Logs d'activité</strong>
-                        <span>Journal des actions système</span>
+                        <strong>Journal d'activité</strong>
+                        <span>Logs des actions système</span>
+                    </div>
+                    <i class="ti ti-chevron-right" style="color:var(--ink-4); font-size:16px;"></i>
+                </a>
+                <a href="{{ route('admin.settings.index') }}" class="action-row">
+                    <div class="action-row-icon"><i class="ti ti-settings"></i></div>
+                    <div class="action-row-text">
+                        <strong>Paramètres système</strong>
+                        <span>Configuration de la plateforme</span>
                     </div>
                     <i class="ti ti-chevron-right" style="color:var(--ink-4); font-size:16px;"></i>
                 </a>
@@ -149,34 +141,41 @@
         </div>
     </div>
 
-    {{-- Right: System state --}}
-    <div class="side-stack">
-        <div class="card sys-card">
-            <div class="card-header">
-                <div class="card-header-title"><i class="ti ti-server"></i> État du système</div>
+    {{-- Right: Info --}}
+    <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="card" style="padding:20px;">
+            <div class="card-header-title" style="margin-bottom:14px; font-size:12px;">
+                <i class="ti ti-info-circle" style="color:var(--ink-4);"></i> Infos système
             </div>
-            <div class="sys-row">
-                <span class="sys-key">PHP</span>
-                <span class="sys-val">{{ PHP_VERSION }}</span>
+            @foreach([
+                ['PHP', PHP_VERSION],
+                ['Laravel', app()->version()],
+                ['Base de données', ucfirst(config('database.default'))],
+                ['Environnement', ucfirst(config('app.env'))],
+                ['Mode debug', config('app.debug') ? 'Activé ⚠️' : 'Désactivé ✓'],
+            ] as [$k, $v])
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); font-size:12.5px;">
+                <span style="color:var(--ink-3);">{{ $k }}</span>
+                <span style="font-weight:600; color:var(--ink);">{{ $v }}</span>
             </div>
-            <div class="sys-row">
-                <span class="sys-key">Laravel</span>
-                <span class="sys-val">{{ app()->version() }}</span>
-            </div>
-            <div class="sys-row">
-                <span class="sys-key">Environnement</span>
-                <span class="sys-val sys-ok">{{ ucfirst(config('app.env')) }}</span>
-            </div>
-            <div class="sys-row">
-                <span class="sys-key">Debug</span>
-                <span class="sys-val" style="color: {{ config('app.debug') ? 'var(--warning)' : 'var(--success)' }}">
-                    {{ config('app.debug') ? 'Activé' : 'Désactivé' }}
-                </span>
-            </div>
+            @endforeach
         </div>
 
-        
+        <div class="card" style="padding:20px; background:var(--accent-bg); border-color:rgba(61,90,254,.15);">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                <i class="ti ti-school" style="font-size:20px; color:var(--accent);"></i>
+                <span style="font-size:13px; font-weight:700; color:var(--accent);">Nom de la plateforme</span>
+            </div>
+            <div style="font-size:16px; font-weight:800; color:var(--ink); margin-bottom:6px;">
+                {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}
+            </div>
+            <div style="font-size:11.5px; color:var(--ink-3); line-height:1.5;">
+                {{ \App\Models\Setting::get('site_description', '') ?: 'Aucune description définie.' }}
+            </div>
+            <a href="{{ route('admin.settings.index') }}" style="display:inline-flex; align-items:center; gap:4px; margin-top:12px; font-size:12px; color:var(--accent); text-decoration:none; font-weight:600;">
+                <i class="ti ti-edit" style="font-size:13px;"></i> Modifier
+            </a>
+        </div>
     </div>
- 
 </div>
 @endsection

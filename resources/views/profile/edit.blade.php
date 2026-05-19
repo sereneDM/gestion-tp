@@ -480,6 +480,88 @@ body{
     align-items:center;
     gap:0.35rem;
 }
+
+/* ───────────────── Privacy toggle ───────────────── */
+
+.privacy-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: #f8fafc;
+    transition: border-color 0.2s, background 0.2s;
+}
+
+.privacy-toggle-row:has(input:checked) {
+    border-color: rgba(79, 70, 229, 0.3);
+    background: var(--accent-bg);
+}
+
+.privacy-toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.privacy-toggle-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.privacy-toggle-desc {
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+/* iOS-style toggle switch */
+.toggle-switch {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: #cbd5e1;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.25s ease;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    left: 3px;
+    top: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: transform 0.25s ease;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background: var(--accent);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(20px);
+}
 </style>
 @endsection
 
@@ -695,6 +777,68 @@ body{
             </div>
 
         </div>
+
+        {{-- PRIVACY (teachers only) --}}
+        @if($user->isTeacher())
+        <div class="card">
+
+            <div class="card-header">
+
+                <div class="card-icon">
+                    <i class="ti ti-shield"></i>
+                </div>
+
+                <div>
+                    <div class="card-title">
+                        Confidentialité
+                    </div>
+
+                    <div class="card-subtitle">
+                        Gérez ce que les étudiants peuvent voir
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <form
+                    method="POST"
+                    action="{{ route('profile.update-privacy') }}">
+
+                    @csrf
+                    @method('PUT')
+
+                    <div class="privacy-toggle-row">
+
+                        <div class="privacy-toggle-info">
+                            <div class="privacy-toggle-title">
+                                Afficher mon email aux étudiants
+                            </div>
+                            <div class="privacy-toggle-desc">
+                                Votre adresse email sera visible sur la page de vos cours
+                            </div>
+                        </div>
+
+                        <label class="toggle-switch">
+                            <input
+                                type="checkbox"
+                                name="show_email_publicly"
+                                value="1"
+                                id="show-email-toggle"
+                                {{ $user->show_email_publicly ? 'checked' : '' }}
+                                onchange="this.form.submit()">
+                            <span class="toggle-slider"></span>
+                        </label>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+        @endif
 
         {{-- PASSWORD --}}
         <div class="card">

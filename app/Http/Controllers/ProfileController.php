@@ -241,4 +241,13 @@ class ProfileController extends Controller
             'is_teacher' => $u->isTeacher(),
         ]));
     }
+    public function updatePrivacy(Request $request)
+{
+    $user = Auth::user();
+    
+    $user->show_email_publicly = $request->has('show_email_publicly');
+    $user->save();
+
+    return back()->with('success', 'Paramètres de confidentialité mis à jour.');
+}
 }

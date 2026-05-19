@@ -26,6 +26,7 @@ class User extends Authenticatable
         'role',  // ADD THIS LINE
         'must_reset_password', 
         'profile_picture', // NEW
+        'show_email_publicly', // NEW
     ];
 
     /**
