@@ -136,10 +136,9 @@
         {{-- Search --}}
         <div class="filter-search-wrap">
             <i class="ti ti-search"></i>
-            <input type="text" name="search" class="filter-search"
+            <input type="text" name="search" id="search-input" class="filter-search"
                    placeholder="Nom ou adresse e-mail…"
-                   value="{{ request('search') }}"
-                   oninput="document.getElementById('filter-form').submit()">
+                   value="{{ request('search') }}">
         </div>
 
         {{-- Role tabs --}}
@@ -168,12 +167,17 @@
         </div>
 
         {{-- Sort --}}
-        <select name="sort" class="filter-sort" onchange="this.form.submit()">
-            <option value="name"       {{ request('sort', 'name') === 'name'       ? 'selected' : '' }}>Trier : Nom A–Z</option>
-            <option value="name_desc"  {{ request('sort') === 'name_desc'          ? 'selected' : '' }}>Trier : Nom Z–A</option>
-            <option value="newest"     {{ request('sort') === 'newest'             ? 'selected' : '' }}>Trier : Plus récents</option>
-            <option value="oldest"     {{ request('sort') === 'oldest'             ? 'selected' : '' }}>Trier : Plus anciens</option>
+        <select name="sort" id="sort-select" class="filter-sort">
+            <option value="name"       {{ request('sort', 'name') === 'name'      ? 'selected' : '' }}>Trier : Nom A–Z</option>
+            <option value="name_desc"  {{ request('sort') === 'name_desc'         ? 'selected' : '' }}>Trier : Nom Z–A</option>
+            <option value="newest"     {{ request('sort') === 'newest'            ? 'selected' : '' }}>Trier : Plus récents</option>
+            <option value="oldest"     {{ request('sort') === 'oldest'            ? 'selected' : '' }}>Trier : Plus anciens</option>
         </select>
+
+        {{-- Submit button --}}
+        <button type="submit" class="tb-btn tb-btn-primary" style="white-space:nowrap;">
+            <i class="ti ti-search"></i> Filtrer
+        </button>
 
         {{-- Reset --}}
         @if(request()->hasAny(['search', 'role', 'sort']))
@@ -269,4 +273,23 @@
         </table>
     </div>
 </div>
+
+<script>
+    // Debounce search: waits 400ms after the user stops typing before submitting
+    const searchInput = document.getElementById('search-input');
+    const sortSelect  = document.getElementById('sort-select');
+    let debounceTimer;
+
+    searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            document.getElementById('filter-form').submit();
+        }, 400);
+    });
+
+    // Sort auto-submits immediately on change (single deliberate action, not typing)
+    sortSelect.addEventListener('change', () => {
+        document.getElementById('filter-form').submit();
+    });
+</script>
 @endsection
