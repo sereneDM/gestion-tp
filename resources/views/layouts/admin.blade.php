@@ -3,226 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Admin') — {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
-
+    <title>@yield('title', 'Administration') — {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
     <style>
+        /* ─── Reset & Base ─── */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-            --accent:       #3d5afe;
-            --accent-2:     #5271ff;
-            --accent-bg:    #eef1ff;
-            --accent-muted: rgba(61,90,254,.15);
-            --ink:   #0d1117;
-            --ink-2: #3d4550;
-            --ink-3: #6b7585;
-            --ink-4: #9aa3af;
-            --surface:   #ffffff;
-            --surface-2: #f5f6f8;
-            --surface-3: #eef0f3;
-            --line:   #e8ebef;
-            --line-2: #d1d6dd;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger:  #e53935;
-            --sb-bg:        #0d1117;
-            --sb-border:    rgba(255,255,255,.07);
-            --sb-text:      rgba(255,255,255,.45);
-            --sb-text-hover:rgba(255,255,255,.85);
-            --sb-active-bg: rgba(61,90,254,.22);
-            --sb-active-tx: #c7d2fe;
-            --sb-active-ic: #818cf8;
-            --sb-width:     220px;
-            --topbar-h:  52px;
-            --radius-sm: 6px;
-            --radius-md: 10px;
-            --radius-lg: 16px;
-            --radius-xl: 22px;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-            --shadow-md: 0 4px 16px rgba(0,0,0,.07);
-            --font: 'DM Sans', sans-serif;
-            --font-serif: 'DM Serif Display', serif;
+            --accent:      #3d5afe;
+            --accent-2:    #2a46f5;
+            --accent-bg:   #eef1ff;
+            --success:     #10b981;
+            --success-bg:  #ecfdf5;
+            --warning:     #f59e0b;
+            --danger:      #e53935;
+            --ink:         #0f172a;
+            --ink-2:       #1e293b;
+            --ink-3:       #475569;
+            --ink-4:       #94a3b8;
+            --surface:     #ffffff;
+            --surface-2:   #f8fafc;
+            --surface-3:   #f1f5f9;
+            --line:        #e2e8f0;
+            --line-2:      #cbd5e1;
+            --shadow-sm:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+            --shadow-md:   0 4px 12px rgba(0,0,0,.08);
+            --radius-sm:   6px;
+            --radius-md:   10px;
+            --radius-lg:   14px;
+            --sidebar-w:   240px;
+            --topbar-h:    56px;
         }
 
-        html, body { height: 100%; }
         body {
-            font-family: var(--font);
-            font-size: 14px;
-            color: var(--ink-2);
+            font-family: 'Inter', sans-serif;
             background: var(--surface-2);
+            color: var(--ink);
+            min-height: 100vh;
             display: flex;
         }
 
-        /* ── Sidebar ── */
-        .sb {
-            width: var(--sb-width);
+        /* ─── SIDEBAR ─── */
+        .sidebar {
+            width: var(--sidebar-w);
             min-height: 100vh;
-            background: var(--sb-bg);
+            background: var(--surface);
+            border-right: 1px solid var(--line);
             display: flex;
             flex-direction: column;
-            flex-shrink: 0;
             position: fixed;
-            top: 0; left: 0; bottom: 0;
+            top: 0; left: 0;
             z-index: 100;
+            box-shadow: var(--shadow-sm);
         }
 
-        .sb-brand {
-            padding: 18px 16px 16px;
-            border-bottom: 1px solid var(--sb-border);
-            display: flex; align-items: center; gap: 10px;
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 18px;
+            height: var(--topbar-h);
+            border-bottom: 1px solid var(--line);
             text-decoration: none;
-        }
-
-        .sb-logo {
-            width: 30px; height: 30px;
-            background: var(--accent);
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
-        .sb-logo i { color: white; font-size: 16px; }
 
-        .sb-wordmark {
-            font-size: 13px; font-weight: 700;
-            color: white; letter-spacing: .02em;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .sb-wordmark span { color: var(--sb-active-ic); }
-
-        .sb-section {
-            padding: 14px 16px 5px;
-            font-size: 9px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .1em;
-            color: rgba(255,255,255,.22);
+        .sidebar-brand-icon {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 15px;
+            flex-shrink: 0;
         }
 
-        .sb-nav { padding: 0 8px; display: flex; flex-direction: column; gap: 1px; }
+        .sidebar-brand-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
-        .sb-item {
-            display: flex; align-items: center; gap: 9px;
+        /* Nav sections */
+        .sidebar-nav {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .nav-section-label {
+            font-size: 9.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--ink-4);
+            padding: 10px 8px 4px;
+            margin-top: 6px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: 8px 10px;
             border-radius: var(--radius-sm);
             text-decoration: none;
-            color: var(--sb-text);
-            font-size: 13px; font-weight: 500;
-            transition: background .15s, color .15s;
+            color: var(--ink-3);
+            font-size: 12.5px;
+            font-weight: 500;
+            transition: background 0.15s, color 0.15s;
             position: relative;
         }
-        .sb-item i { font-size: 17px; width: 20px; flex-shrink: 0; }
-        .sb-item:hover { background: rgba(255,255,255,.06); color: var(--sb-text-hover); }
-        .sb-item.active { background: var(--sb-active-bg); color: var(--sb-active-tx); font-weight: 600; }
-        .sb-item.active i { color: var(--sb-active-ic); }
-        .sb-item.active::before {
-            content: '';
-            position: absolute; left: 0; top: 6px; bottom: 6px;
-            width: 3px; background: var(--accent);
-            border-radius: 0 3px 3px 0;
+
+        .nav-link i {
+            font-size: 16px;
+            flex-shrink: 0;
+            width: 18px;
+            text-align: center;
         }
 
-        .sb-divider { height: 1px; background: var(--sb-border); margin: 8px 16px; }
-
-        .sb-bottom {
-            margin-top: auto;
-            padding: 12px 8px;
-            border-top: 1px solid var(--sb-border);
+        .nav-link:hover {
+            background: var(--surface-3);
+            color: var(--ink-2);
         }
 
-        .sb-user {
-            display: flex; align-items: center; gap: 9px;
+        .nav-link.active {
+            background: var(--accent-bg);
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .nav-link.active i { color: var(--accent); }
+
+        .nav-badge {
+            margin-left: auto;
+            font-size: 9px;
+            font-weight: 800;
+            background: var(--accent);
+            color: white;
+            padding: 1px 6px;
+            border-radius: 100px;
+        }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 12px 10px;
+            border-top: 1px solid var(--line);
+            flex-shrink: 0;
+        }
+
+        .user-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: 8px 10px;
             border-radius: var(--radius-sm);
         }
 
-        .sb-avatar {
+        .user-avatar {
             width: 30px; height: 30px;
             border-radius: 50%;
-            overflow: hidden;
+            background: var(--accent-bg);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent);
             flex-shrink: 0;
-            background: linear-gradient(135deg, #3d5afe, #7c3aed);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 11px; font-weight: 700; color: white;
         }
-        .sb-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        .sb-user-meta { display: flex; flex-direction: column; min-width: 0; flex: 1; }
-        .sb-user-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .sb-user-role { font-size: 10px; color: rgba(255,255,255,.3); }
+        .user-name  { font-size: 12px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-role  { font-size: 10px; color: var(--ink-4); }
 
-        .sb-bottom-actions { display: flex; gap: 4px; }
-        .sb-icon-btn {
-            width: 28px; height: 28px;
-            border-radius: 6px;
-            border: 1px solid rgba(255,255,255,.1);
-            background: rgba(255,255,255,.05);
-            color: rgba(255,255,255,.4);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 14px;
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 6px;
+            padding: 7px 10px;
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--ink-3);
+            font-size: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
             text-decoration: none;
-            transition: background .15s, color .15s;
+            transition: background 0.15s, color 0.15s, border-color 0.15s;
         }
-        .sb-icon-btn:hover { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); }
 
-        /* ── Main wrapper ── */
-        .admin-main {
-            margin-left: var(--sb-width);
+        .logout-btn:hover {
+            background: #fff0f0;
+            color: var(--danger);
+            border-color: rgba(229,57,53,.2);
+        }
+
+        /* ─── MAIN AREA ─── */
+        .main-wrap {
+            margin-left: var(--sidebar-w);
             flex: 1;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            min-height: 100vh;
         }
 
-        /* ── Topbar ── */
+        /* ─── TOPBAR ─── */
         .topbar {
             height: var(--topbar-h);
             background: var(--surface);
             border-bottom: 1px solid var(--line);
             display: flex;
             align-items: center;
+            gap: 0;
             padding: 0 24px;
-            gap: 10px;
-            position: sticky; top: 0; z-index: 50;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: var(--shadow-sm);
         }
 
+        /* Breadcrumb */
         .tb-breadcrumb {
-            display: flex; align-items: center; gap: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tb-bc-page {
+            font-size: 12.5px;
+            color: var(--ink-4);
+            font-weight: 500;
+        }
+
+        .tb-bc-sep { font-size: 12px; color: var(--line-2); }
+
+        .tb-bc-current {
+            font-size: 12.5px;
+            color: var(--ink-2);
+            font-weight: 700;
+        }
+
+        /* Topbar actions — right side, visually separated */
+        .tb-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 16px;
+            border-left: 1px solid var(--line);
+            margin-left: 16px;
+            flex-shrink: 0;
+        }
+
+        .tb-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
             font-size: 12px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: background 0.15s, box-shadow 0.15s;
+            white-space: nowrap;
         }
-        .tb-bc-root { color: var(--ink-4); }
-        .tb-bc-sep { color: var(--line-2); font-size: 16px; line-height: 1; }
-        .tb-bc-page { color: var(--ink-3); }
-        .tb-bc-current { color: var(--ink); font-weight: 600; }
 
-        .tb-spacer { flex: 1; }
-
-        .tb-actions { display: flex; align-items: center; gap: 8px; }
-
-        /* ── Flash Messages ── */
-        .flash {
-            margin: 20px 28px 0;
-            padding: 11px 16px;
-            border-radius: var(--radius-md);
-            font-size: 13px; font-weight: 600;
-            display: flex; align-items: center; gap: 8px;
+        .tb-btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 2px 6px rgba(61,90,254,.25);
         }
-        .flash-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
-        .flash-error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-        /* ── Page content ── */
-        .admin-content { padding: 28px; flex: 1; }
+        .tb-btn-primary:hover {
+            background: var(--accent-2);
+            box-shadow: 0 3px 10px rgba(61,90,254,.35);
+        }
 
-        /* ── Shared utilities ── */
+        .tb-btn-secondary {
+            background: var(--surface);
+            color: var(--ink-2);
+            border-color: var(--line);
+        }
+
+        .tb-btn-secondary:hover { background: var(--surface-3); }
+
+        /* ─── PAGE CONTENT ─── */
+        .page-content {
+            padding: 28px 28px 48px;
+            flex: 1;
+        }
+
+        /* ─── Typography ─── */
         .page-title {
-            font-family: var(--font-serif);
-            font-size: 1.75rem;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
             color: var(--ink);
-            margin-bottom: .25rem;
+            margin-bottom: 4px;
         }
-        .page-subtitle { color: var(--ink-4); font-size: .875rem; margin-bottom: 1.75rem; }
 
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--ink-4);
+            margin-bottom: 24px;
+        }
+
+        /* ─── Card ─── */
         .card {
             background: var(--surface);
             border: 1px solid var(--line);
@@ -231,236 +329,348 @@
         }
 
         .card-header {
-            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
             border-bottom: 1px solid var(--line);
-            display: flex; align-items: center; gap: 8px;
+            background: var(--surface-2);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         }
-        .card-header-title {
-            font-size: 13px; font-weight: 700; color: var(--ink);
-            display: flex; align-items: center; gap: 6px; flex: 1;
-        }
-        .card-header-title i { color: var(--ink-4); font-size: 16px; }
 
-        .admin-table { width: 100%; border-collapse: collapse; }
+        .card-header-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .card-header-title i { color: var(--ink-4); font-size: 15px; }
+
+        /* ─── Forms ─── */
+        .form-group { margin-bottom: 1.25rem; }
+
+        .label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--ink-3);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid var(--line-2);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            font-family: inherit;
+            color: var(--ink);
+            background: var(--surface);
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-bg);
+        }
+
+        textarea.input { min-height: 90px; resize: vertical; line-height: 1.6; }
+
+        .error {
+            font-size: 12px;
+            color: var(--danger);
+            margin-top: 4px;
+        }
+
+        /* ─── Buttons ─── */
+        .btn-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            text-decoration: none;
+            border: 1px solid transparent;
+            transition: background .15s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 2px 6px rgba(61,90,254,.25);
+        }
+
+        .btn-primary:hover { background: var(--accent-2); }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--ink-2);
+            border-color: var(--line);
+        }
+
+        .btn-secondary:hover { background: var(--surface-3); }
+
+        /* ─── Table ─── */
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
         .admin-table th {
-            padding: 10px 20px;
             text-align: left;
-            font-size: 10px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .05em;
+            padding: 10px 16px;
+            font-size: 10.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
             color: var(--ink-4);
             background: var(--surface-2);
             border-bottom: 1px solid var(--line);
+            white-space: nowrap;
         }
+
         .admin-table td {
-            padding: 13px 20px;
-            font-size: 13px; color: var(--ink-2);
+            padding: 13px 16px;
             border-bottom: 1px solid var(--line);
+            color: var(--ink-2);
             vertical-align: middle;
         }
-        .admin-table tr:last-child td { border-bottom: none; }
-        .admin-table tr:hover td { background: var(--surface-2); }
 
+        .admin-table tbody tr:last-child td { border-bottom: none; }
+        .admin-table tbody tr:hover td { background: var(--surface-2); }
+
+        /* ─── Badges ─── */
         .badge {
-            display: inline-flex; align-items: center;
-            padding: .25rem .65rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 10px;
             border-radius: 100px;
-            font-size: 10.5px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .02em;
+            font-size: 11px;
+            font-weight: 700;
         }
-        .badge-student  { background: #eef1ff; color: var(--accent); }
-        .badge-teacher  { background: #fffbeb; color: #b45309; }
-        .badge-admin    { background: #fef2f2; color: #dc2626; }
-        .badge-active   { background: #ecfdf5; color: #065f46; }
-        .badge-archived { background: #fef2f2; color: #991b1b; }
-        .badge-graded   { background: #ecfdf5; color: #065f46; }
-        .badge-pending  { background: #fffbeb; color: #92400e; }
+
+        .badge-active   { background: var(--success-bg); color: var(--success); }
+        .badge-archived { background: var(--surface-3);  color: var(--ink-4); }
+        .badge-student  { background: #eff6ff; color: #3b82f6; }
+        .badge-teacher  { background: #fff7ed; color: #f97316; }
+        .badge-admin    { background: var(--accent-bg); color: var(--accent); }
+
+        /* ─── Action icon buttons ─── */
+        .actions { display: flex; align-items: center; gap: 4px; }
 
         .btn-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             width: 30px; height: 30px;
             border-radius: var(--radius-sm);
             border: 1px solid var(--line);
             background: var(--surface);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--ink-3); cursor: pointer;
-            transition: all .2s; text-decoration: none;
+            color: var(--ink-3);
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .15s;
         }
-        .btn-icon i { font-size: 14px; }
-        .btn-icon:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-bg); }
-        .btn-icon.danger:hover { border-color: var(--danger); color: var(--danger); background: #fef2f2; }
 
-        .actions { display: flex; gap: 6px; align-items: center; }
+        .btn-icon:hover          { background: var(--surface-3); color: var(--ink); border-color: var(--line-2); }
+        .btn-icon.danger:hover   { background: #fff0f0; color: var(--danger); border-color: rgba(229,57,53,.25); }
 
+        /* ─── Stat strip ─── */
         .stat-strip {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
             gap: 14px;
-            margin-bottom: 22px;
+            margin-bottom: 24px;
         }
+
         .stat-tile {
             background: var(--surface);
             border: 1px solid var(--line);
-            border-radius: var(--radius-md);
-            padding: 16px 18px;
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
             box-shadow: var(--shadow-sm);
         }
-        .stat-tile-label {
-            font-size: 10px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .05em;
-            color: var(--ink-4); margin-bottom: 6px;
-        }
-        .stat-tile-value { font-size: 26px; font-weight: 800; color: var(--ink); line-height: 1; margin-bottom: 4px; }
-        .stat-tile-sub { font-size: 11px; color: var(--ink-4); }
 
-        .form-group { margin-bottom: 1.4rem; }
-        .label {
-            display: block; font-size: 10.5px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: .05em;
-            color: var(--ink-4); margin-bottom: .45rem;
-        }
-        .input {
-            width: 100%; padding: .7rem 1rem;
-            border: 1px solid var(--line);
+        .stat-tile-label { font-size: 11px; font-weight: 700; color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px; }
+        .stat-tile-value { font-size: 2rem; font-weight: 800; color: var(--ink); letter-spacing: -0.04em; line-height: 1; margin-bottom: 4px; }
+        .stat-tile-sub   { font-size: 11px; color: var(--ink-4); }
+
+        /* ─── Flash messages ─── */
+        .flash {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
             border-radius: var(--radius-md);
-            background: var(--surface-2);
-            color: var(--ink); font-family: var(--font); font-size: .9rem;
-            transition: all .2s;
+            margin-bottom: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.5;
         }
-        .input:focus { outline: none; border-color: var(--accent); background: var(--surface); box-shadow: 0 0 0 3px var(--accent-bg); }
-        textarea.input { min-height: 100px; resize: vertical; }
-        .error { color: var(--danger); font-size: 11px; margin-top: .35rem; font-weight: 600; }
 
-        .btn-group { display: flex; gap: 1rem; margin-top: 2rem; }
-        .btn {
-            flex: 1; padding: .8rem;
-            border-radius: var(--radius-md);
-            font-family: var(--font); font-weight: 700; font-size: .875rem;
-            cursor: pointer; text-align: center; text-decoration: none;
-            border: 1px solid transparent; transition: all .2s;
-            display: inline-flex; align-items: center; justify-content: center; gap: .4rem;
-        }
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-primary:hover { background: var(--accent-2); box-shadow: 0 4px 12px rgba(61,90,254,.2); }
-        .btn-secondary { background: var(--surface); color: var(--ink-3); border-color: var(--line); }
-        .btn-secondary:hover { background: var(--surface-2); color: var(--ink); }
+        .flash-success { background: var(--success-bg); color: #065f46; border: 1px solid rgba(16,185,129,.2); }
+        .flash-error   { background: #fef2f2;           color: #991b1b; border: 1px solid rgba(229,57,53,.2); }
 
-        /* topbar action buttons */
-        .tb-btn {
-            display: inline-flex; align-items: center; gap: 6px;
-            padding: 7px 14px;
-            border-radius: var(--radius-md);
-            font-family: var(--font);
-            font-size: 12px; font-weight: 700;
-            cursor: pointer; text-decoration: none;
-            border: 1px solid transparent;
-            transition: all .2s;
-        }
-        .tb-btn i { font-size: 14px; }
-        .tb-btn-secondary { background: var(--surface); color: var(--ink-3); border-color: var(--line); }
-        .tb-btn-secondary:hover { background: var(--surface-2); color: var(--ink); }
-        .tb-btn-primary { background: var(--accent); color: white; }
-        .tb-btn-primary:hover { background: var(--accent-2); }
-
-        @yield('extra-styles')
+        /* ─── Utilities ─── */
+        .main-col, .side-col {}
     </style>
-
-    @yield('head')
+    @yield('extra-styles')
 </head>
 <body>
 
-{{-- ── SIDEBAR ── --}}
-<aside class="sb">
-    <a href="{{ route('admin.dashboard') }}" class="sb-brand">
-        <div class="sb-logo"><i class="ti ti-command"></i></div>
-        <span class="sb-wordmark">Admin<span>Panel</span></span>
-    </a>
+    {{-- ═══════════════ SIDEBAR ═══════════════ --}}
+    <aside class="sidebar">
 
-    <div class="sb-section">Aperçu</div>
-    <nav class="sb-nav">
-        <a href="{{ route('admin.dashboard') }}" class="sb-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-            <i class="ti ti-layout-dashboard"></i> Dashboard
+        {{-- Brand --}}
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-brand">
+            <div class="sidebar-brand-icon"><i class="ti ti-code"></i></div>
+            <span class="sidebar-brand-name">{{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</span>
         </a>
-        <a href="{{ route('admin.statistics') }}" class="sb-item {{ request()->routeIs('admin.statistics') ? 'active' : '' }}">
-            <i class="ti ti-chart-bar"></i> Statistiques
-        </a>
-    </nav>
 
-    <div class="sb-section">Gestion</div>
-    <nav class="sb-nav">
-        <a href="{{ route('admin.users.index') }}" class="sb-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-            <i class="ti ti-users"></i> Utilisateurs
-        </a>
-        <a href="{{ route('admin.classes.index') }}" class="sb-item {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
-            <i class="ti ti-books"></i> Classes
-        </a>
-    </nav>
+        {{-- Navigation --}}
+        <nav class="sidebar-nav">
 
-    <div class="sb-section">Système</div>
-    <nav class="sb-nav">
-        <a href="{{ route('admin.system-logs') }}" class="sb-item {{ request()->routeIs('admin.system-logs') ? 'active' : '' }}">
-            <i class="ti ti-history"></i> Journal d'activité
-        </a>
-        <a href="{{ route('admin.settings.index') }}" class="sb-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-            <i class="ti ti-settings"></i> Paramètres
-        </a>
-    </nav>
+            {{-- Overview --}}
+            <div class="nav-section-label">Vue d'ensemble</div>
 
-    <div class="sb-divider"></div>
-
-    <div class="sb-bottom">
-        <div class="sb-user">
-            <div class="sb-avatar">
-                @if(Auth::user()->profile_picture)
-                    <img src="{{ asset('storage/' . Auth::user()->profile_picture) }}" alt="">
-                @else
-                    {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
-                @endif
-            </div>
-            <div class="sb-user-meta">
-                <span class="sb-user-name">{{ Auth::user()->name }}</span>
-                <span class="sb-user-role">Administrateur</span>
-            </div>
-        </div>
-        <div style="display:flex; gap:4px; padding:4px 10px 0;">
-            <a href="{{ route('admin.profile') }}" class="sb-icon-btn" title="Mon profil">
-                <i class="ti ti-user"></i>
+            <a href="{{ route('admin.dashboard') }}"
+               class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <i class="ti ti-layout-dashboard"></i>
+                Tableau de bord
             </a>
-            <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="sb-icon-btn" title="Déconnexion">
-                <i class="ti ti-logout"></i>
+
+            <a href="{{ route('admin.statistics') }}"
+               class="nav-link {{ request()->routeIs('admin.statistics') ? 'active' : '' }}">
+                <i class="ti ti-chart-bar"></i>
+                Statistiques
             </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">@csrf</form>
+
+            {{-- Gestion des utilisateurs --}}
+            <div class="nav-section-label">Utilisateurs</div>
+
+            <a href="{{ route('admin.users.index') }}"
+               class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <i class="ti ti-users"></i>
+                Tous les utilisateurs
+            </a>
+
+            <a href="{{ route('admin.users.index', ['role' => 'student']) }}"
+               class="nav-link {{ request()->routeIs('admin.users.index') && request('role') === 'student' ? 'active' : '' }}">
+                <i class="ti ti-school"></i>
+                Étudiants
+            </a>
+
+            <a href="{{ route('admin.users.index', ['role' => 'teacher']) }}"
+               class="nav-link {{ request()->routeIs('admin.users.index') && request('role') === 'teacher' ? 'active' : '' }}">
+                <i class="ti ti-chalkboard"></i>
+                Enseignants
+            </a>
+
+            {{-- Gestion des cours --}}
+            <div class="nav-section-label">Cours & Classes</div>
+
+            <a href="{{ route('admin.classes.index') }}"
+               class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
+                <i class="ti ti-books"></i>
+                Tous les cours
+            </a>
+
+            {{-- Système --}}
+            <div class="nav-section-label">Système</div>
+
+            <a href="{{ route('admin.system-logs') }}"
+               class="nav-link {{ request()->routeIs('admin.system-logs') ? 'active' : '' }}">
+                <i class="ti ti-history"></i>
+                Journal d'activité
+            </a>
+
+            <a href="{{ route('admin.settings.index') }}"
+               class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                <i class="ti ti-settings"></i>
+                Paramètres système
+            </a>
+
+        </nav>
+
+        {{-- Footer --}}
+        <div class="sidebar-footer">
+            <div class="user-row">
+                <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                <div style="min-width:0;">
+                    <div class="user-name">{{ Auth::user()->name }}</div>
+                    <div class="user-role">Administrateur</div>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('logout') }}" style="margin-top:0;">
+                @csrf
+                <button type="submit" class="logout-btn">
+                    <i class="ti ti-logout" style="font-size:14px;"></i>
+                    Se déconnecter
+                </button>
+            </form>
         </div>
-    </div>
-</aside>
 
-{{-- ── MAIN ── --}}
-<div class="admin-main">
+    </aside>
 
-    <header class="topbar">
-        <div class="tb-breadcrumb">
-            <span class="tb-bc-root">Admin</span>
-            @hasSection('breadcrumb')
-                <span class="tb-bc-sep">/</span>
+    {{-- ═══════════════ MAIN ═══════════════ --}}
+    <div class="main-wrap">
+
+        {{-- Topbar --}}
+        <header class="topbar">
+            <nav class="tb-breadcrumb" aria-label="Fil d'Ariane">
                 @yield('breadcrumb')
+            </nav>
+
+            {{-- Action buttons — separated by a border from the breadcrumb --}}
+            @hasSection('topbar-actions')
+                <div class="tb-actions">
+                    @yield('topbar-actions')
+                </div>
+            @endif
+        </header>
+
+        {{-- Flash messages --}}
+        <div style="padding: 0 28px;">
+            @if(session('success'))
+                <div class="flash flash-success" style="margin-top: 20px;">
+                    <i class="ti ti-circle-check" style="font-size:16px; flex-shrink:0; margin-top:1px;"></i>
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('error'))
+                <div class="flash flash-error" style="margin-top: 20px;">
+                    <i class="ti ti-alert-circle" style="font-size:16px; flex-shrink:0; margin-top:1px;"></i>
+                    {{ session('error') }}
+                </div>
             @endif
         </div>
-        <div class="tb-spacer"></div>
-        <div class="tb-actions">
-            @yield('topbar-actions')
-        </div>
-    </header>
 
-    @if(session('success'))
-        <div class="flash flash-success"><i class="ti ti-circle-check"></i> {{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-        <div class="flash flash-error"><i class="ti ti-alert-circle"></i> {{ session('error') }}</div>
-    @endif
+        {{-- Page content --}}
+        <main class="page-content">
+            @yield('content')
+        </main>
 
-    <main class="admin-content">
-        @yield('content')
-    </main>
-</div>
+    </div>
 
-@yield('scripts')
 </body>
 </html>

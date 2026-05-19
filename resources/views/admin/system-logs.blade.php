@@ -3,117 +3,181 @@
 @section('title', 'Journal d\'activité')
 
 @section('breadcrumb')
+    <span class="tb-bc-page">Système</span>
+    <span class="tb-bc-sep">/</span>
     <span class="tb-bc-current">Journal d'activité</span>
 @endsection
 
 @section('extra-styles')
 <style>
-    .filter-bar {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
+    /* ── Filter card ── */
+    .filter-card {
         background: var(--surface);
         border: 1px solid var(--line);
-        border-radius: var(--radius-md);
-        padding: 12px 16px;
-        margin-bottom: 20px;
+        border-radius: var(--radius-lg);
+        padding: 16px 20px;
+        margin-bottom: 22px;
         box-shadow: var(--shadow-sm);
     }
 
-    .filter-wrap {
-        position: relative;
-        flex: 1;
-        min-width: 200px;
+    .filter-card-title {
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--ink-4);
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
     }
-    .filter-wrap i {
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns: 1fr auto auto auto;
+        gap: 8px;
+        align-items: end;
+    }
+
+    @media (max-width: 780px) {
+        .filter-grid { grid-template-columns: 1fr 1fr; }
+        .filter-grid .filter-search { grid-column: span 2; }
+        .filter-grid .filter-actions { grid-column: span 2; }
+    }
+
+    .filter-field { display: flex; flex-direction: column; gap: 5px; }
+
+    .filter-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--ink-4);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+    }
+
+    .filter-input-wrap { position: relative; }
+    .filter-input-wrap .fi-icon {
         position: absolute;
-        left: 10px;
-        top: 50%;
+        left: 10px; top: 50%;
         transform: translateY(-50%);
-        font-size: 15px;
+        font-size: 14px;
         color: var(--ink-4);
         pointer-events: none;
     }
+
     .filter-input {
         width: 100%;
         padding: 7px 10px 7px 32px;
         border: 1px solid var(--line-2);
         border-radius: var(--radius-sm);
-        font-size: 13px;
+        font-size: 12.5px;
         font-family: inherit;
         background: var(--surface-2);
         color: var(--ink);
-        transition: border-color .2s;
+        transition: border-color .2s, box-shadow .2s;
     }
-    .filter-input:focus { outline: none; border-color: var(--accent); }
+
+    .filter-input.no-icon { padding-left: 10px; }
+
+    .filter-input:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+
     .filter-input::placeholder { color: var(--ink-4); }
 
-    .filter-date {
-        padding: 7px 10px;
-        border: 1px solid var(--line-2);
-        border-radius: var(--radius-sm);
-        font-size: 13px;
-        font-family: inherit;
-        background: var(--surface-2);
-        color: var(--ink);
-        transition: border-color .2s;
+    .filter-actions {
+        display: flex;
+        align-items: flex-end;
+        gap: 6px;
     }
-    .filter-date:focus { outline: none; border-color: var(--accent); }
 
     .filter-submit {
         display: inline-flex; align-items: center; gap: 5px;
-        padding: 7px 14px;
+        padding: 8px 16px;
         border-radius: var(--radius-sm);
         border: none;
         background: var(--accent);
         color: white;
-        font-size: 12.5px; font-weight: 700;
+        font-size: 12px; font-weight: 700;
         font-family: inherit; cursor: pointer;
-        transition: background .2s;
+        box-shadow: 0 2px 6px rgba(61,90,254,.25);
+        transition: background .15s;
+        white-space: nowrap;
     }
     .filter-submit:hover { background: var(--accent-2); }
 
     .filter-reset {
         display: inline-flex; align-items: center; gap: 5px;
-        padding: 7px 12px;
+        padding: 8px 12px;
         border-radius: var(--radius-sm);
         border: 1px solid var(--line);
         background: var(--surface);
         color: var(--ink-3);
-        font-size: 12.5px; font-weight: 600;
+        font-size: 12px; font-weight: 600;
         font-family: inherit; cursor: pointer;
         text-decoration: none;
         transition: background .15s;
+        white-space: nowrap;
     }
-    .filter-reset:hover { background: var(--surface-2); }
+    .filter-reset:hover { background: var(--surface-3); }
 
-    /* Timeline */
+    /* Active filter pills */
+    .filter-pills {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+    }
+
+    .filter-pill-label { font-size: 11px; color: var(--ink-4); font-weight: 600; }
+
+    .filter-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 10px;
+        background: var(--accent-bg);
+        color: var(--accent);
+        border-radius: 100px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    /* ── Timeline ── */
     .timeline {
         position: relative;
         padding-left: 2rem;
     }
+
     .timeline::before {
         content: "";
         position: absolute;
-        left: 0.75rem; top: 0; bottom: 0;
+        left: 0.6rem; top: 0; bottom: 0;
         width: 2px;
-        background: var(--line);
+        background: linear-gradient(to bottom, var(--accent-bg), var(--line) 30%, var(--line));
+        border-radius: 2px;
     }
 
     .timeline-item {
         position: relative;
-        padding-bottom: 1.5rem;
+        padding-bottom: 1.25rem;
     }
+
+    .timeline-item:last-child { padding-bottom: 0; }
 
     .timeline-dot {
         position: absolute;
-        left: -1.25rem;
-        top: 0.3rem;
-        width: 12px; height: 12px;
+        left: -1.43rem;
+        top: 0.8rem;
+        width: 10px; height: 10px;
         border-radius: 50%;
         background: var(--accent);
-        border: 3px solid var(--surface-2);
+        border: 2px solid var(--surface);
         box-shadow: 0 0 0 2px var(--accent-bg);
         z-index: 1;
     }
@@ -122,24 +186,28 @@
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: var(--radius-md);
-        padding: 1rem 1.25rem;
-        box-shadow: var(--shadow-sm);
-        transition: border-color .2s, transform .15s;
+        padding: 12px 16px;
+        transition: border-color .15s, box-shadow .15s;
     }
-    .activity-card:hover { border-color: var(--accent); transform: translateX(3px); }
+
+    .activity-card:hover {
+        border-color: rgba(61,90,254,.3);
+        box-shadow: 0 2px 8px rgba(61,90,254,.07);
+    }
 
     .activity-top {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 6px;
-        gap: 1rem;
+        gap: 12px;
+        margin-bottom: 8px;
     }
 
     .activity-desc {
         font-weight: 700;
         color: var(--ink);
         font-size: 13px;
+        line-height: 1.4;
     }
 
     .activity-time {
@@ -147,33 +215,62 @@
         color: var(--ink-4);
         white-space: nowrap;
         flex-shrink: 0;
+        padding-top: 2px;
     }
 
     .activity-meta {
-        font-size: 12px;
-        color: var(--ink-3);
         display: flex;
         align-items: center;
-        gap: 1rem;
+        gap: 12px;
         flex-wrap: wrap;
     }
-    .activity-meta span { display: flex; align-items: center; gap: 4px; }
 
-    /* Pagination */
+    .meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11.5px;
+        color: var(--ink-4);
+    }
+
+    .meta-chip i { font-size: 13px; }
+
+    /* ── Result info bar ── */
+    .results-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+
+    .results-count {
+        font-size: 12px;
+        color: var(--ink-4);
+        font-weight: 500;
+    }
+
+    .results-count strong { color: var(--ink-2); font-weight: 800; }
+
+    /* ── Pagination ── */
     .pagination-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 1.5rem;
-        padding-top: 1rem;
+        margin-top: 24px;
+        padding-top: 16px;
         border-top: 1px solid var(--line);
         font-size: 12.5px;
         color: var(--ink-4);
+        flex-wrap: wrap;
+        gap: 10px;
     }
-    .pagination-controls { display: flex; gap: 4px; align-items: center; }
+
+    .pagination-controls { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+
     .page-btn {
-        display: inline-flex; align-items: center; gap: 4px;
-        padding: 6px 12px;
+        display: inline-flex; align-items: center; justify-content: center;
+        min-width: 32px; height: 32px;
+        padding: 0 8px;
         border-radius: var(--radius-sm);
         border: 1px solid var(--line);
         background: var(--surface);
@@ -182,61 +279,102 @@
         text-decoration: none;
         transition: background .15s, border-color .15s;
     }
-    .page-btn:hover { background: var(--surface-2); }
-    .page-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-    .page-btn.disabled { opacity: .4; pointer-events: none; }
 
-    .result-count {
-        display: inline-flex; align-items: center; gap: 5px;
-        padding: 3px 10px;
-        background: var(--surface-2);
-        border: 1px solid var(--line);
-        border-radius: 100px;
-        font-size: 11px; color: var(--ink-3);
+    .page-btn:hover { background: var(--surface-3); }
+    .page-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 2px 6px rgba(61,90,254,.25); }
+    .page-btn.disabled { opacity: .35; pointer-events: none; }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: var(--ink-4);
     }
+
+    .empty-state i { font-size: 2.5rem; display: block; margin-bottom: 1rem; opacity: .35; }
+    .empty-state h3 { font-size: 14px; font-weight: 700; color: var(--ink-3); margin-bottom: 6px; }
+    .empty-state p  { font-size: 13px; }
 </style>
 @endsection
 
 @section('content')
-<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+<div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
     <h1 class="page-title">Journal d'activité</h1>
-    <span class="result-count">
-        <i class="ti ti-list" style="font-size:12px;"></i>
-        {{ $activities->total() }} entrée(s)
-    </span>
 </div>
 <p class="page-subtitle">Historique complet des actions effectuées sur la plateforme.</p>
 
-{{-- Filter bar --}}
-<form method="GET" action="{{ route('admin.system-logs') }}" class="filter-bar">
-    <div class="filter-wrap">
-        <i class="ti ti-search"></i>
-        <input type="text" name="search" class="filter-input"
-               placeholder="Rechercher par utilisateur ou action..."
-               value="{{ request('search') }}">
+{{-- ── Filter Card ── --}}
+<div class="filter-card">
+    <div class="filter-card-title">
+        <i class="ti ti-filter" style="font-size:13px;"></i> Filtrer les entrées
     </div>
 
-    <div style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-4);">
-        <i class="ti ti-calendar" style="font-size:14px;"></i>
-        Du
+    <form method="GET" action="{{ route('admin.system-logs') }}">
+        <div class="filter-grid">
+
+            {{-- Search --}}
+            <div class="filter-field filter-search">
+                <div class="filter-label">Recherche</div>
+                <div class="filter-input-wrap">
+                    <i class="ti ti-search fi-icon"></i>
+                    <input type="text" name="search" class="filter-input"
+                           placeholder="Utilisateur, action, ressource…"
+                           value="{{ request('search') }}">
+                </div>
+            </div>
+
+            {{-- Date from --}}
+            <div class="filter-field">
+                <div class="filter-label">Du</div>
+                <input type="date" name="date_from" class="filter-input no-icon" value="{{ request('date_from') }}">
+            </div>
+
+            {{-- Date to --}}
+            <div class="filter-field">
+                <div class="filter-label">Au</div>
+                <input type="date" name="date_to" class="filter-input no-icon" value="{{ request('date_to') }}">
+            </div>
+
+            {{-- Actions --}}
+            <div class="filter-actions">
+                <button type="submit" class="filter-submit">
+                    <i class="ti ti-search" style="font-size:13px;"></i> Filtrer
+                </button>
+                @if(request()->hasAny(['search', 'date_from', 'date_to']))
+                    <a href="{{ route('admin.system-logs') }}" class="filter-reset">
+                        <i class="ti ti-x" style="font-size:13px;"></i> Effacer
+                    </a>
+                @endif
+            </div>
+        </div>
+
+        {{-- Active filters pills --}}
+        @if(request()->hasAny(['search', 'date_from', 'date_to']))
+            <div class="filter-pills">
+                <span class="filter-pill-label">Filtres actifs :</span>
+                @if(request('search'))
+                    <span class="filter-pill"><i class="ti ti-search" style="font-size:11px;"></i> "{{ request('search') }}"</span>
+                @endif
+                @if(request('date_from'))
+                    <span class="filter-pill"><i class="ti ti-calendar" style="font-size:11px;"></i> Du {{ \Carbon\Carbon::parse(request('date_from'))->format('d/m/Y') }}</span>
+                @endif
+                @if(request('date_to'))
+                    <span class="filter-pill"><i class="ti ti-calendar" style="font-size:11px;"></i> Au {{ \Carbon\Carbon::parse(request('date_to'))->format('d/m/Y') }}</span>
+                @endif
+            </div>
+        @endif
+    </form>
+</div>
+
+{{-- Results bar --}}
+<div class="results-bar">
+    <div class="results-count">
+        <strong>{{ $activities->total() }}</strong> entrée(s) trouvée(s)
+        — Page <strong>{{ $activities->currentPage() }}</strong> sur <strong>{{ $activities->lastPage() }}</strong>
     </div>
-    <input type="date" name="date_from" class="filter-date" value="{{ request('date_from') }}">
+</div>
 
-    <div style="font-size:12px; color:var(--ink-4);">au</div>
-    <input type="date" name="date_to" class="filter-date" value="{{ request('date_to') }}">
-
-    <button type="submit" class="filter-submit">
-        <i class="ti ti-filter" style="font-size:13px;"></i> Filtrer
-    </button>
-
-    @if(request()->hasAny(['search', 'date_from', 'date_to']))
-        <a href="{{ route('admin.system-logs') }}" class="filter-reset">
-            <i class="ti ti-x" style="font-size:13px;"></i> Réinitialiser
-        </a>
-    @endif
-</form>
-
-{{-- Timeline --}}
+{{-- Timeline card --}}
 <div class="card" style="padding: 24px; overflow: hidden;">
     @if($activities->count() > 0)
         <div class="timeline">
@@ -246,28 +384,29 @@
                     <div class="activity-card">
                         <div class="activity-top">
                             <div class="activity-desc">{{ $activity->description }}</div>
-                            <div class="activity-time">
-                                <span title="{{ $activity->created_at->format('d/m/Y H:i:s') }}">
-                                    {{ $activity->created_at->diffForHumans() }}
-                                </span>
+                            <div class="activity-time" title="{{ $activity->created_at->format('d/m/Y H:i:s') }}">
+                                {{ $activity->created_at->diffForHumans() }}
                             </div>
                         </div>
                         <div class="activity-meta">
-                            <span>
+                            <span class="meta-chip">
                                 <i class="ti ti-user"></i>
                                 {{ $activity->causer?->name ?? 'Système' }}
                                 @if($activity->causer)
-                                    <span style="color:var(--ink-4);">· {{ $activity->causer->email }}</span>
+                                    <span style="color:var(--line-2);">·</span>
+                                    <span style="color:var(--ink-4);">{{ $activity->causer->email }}</span>
                                 @endif
                             </span>
                             @if($activity->subject_type)
-                                <span>
+                                <span class="meta-chip">
                                     <i class="ti ti-box"></i>
                                     {{ class_basename($activity->subject_type) }}
-                                    @if($activity->subject_id) #{{ $activity->subject_id }} @endif
+                                    @if($activity->subject_id)
+                                        <span style="color:var(--ink-4);">#{{ $activity->subject_id }}</span>
+                                    @endif
                                 </span>
                             @endif
-                            <span>
+                            <span class="meta-chip">
                                 <i class="ti ti-clock"></i>
                                 {{ $activity->created_at->format('d/m/Y à H:i') }}
                             </span>
@@ -279,39 +418,33 @@
 
         {{-- Pagination --}}
         <div class="pagination-row">
-            <span>Page {{ $activities->currentPage() }} sur {{ $activities->lastPage() }}</span>
-
+            <span>Page {{ $activities->currentPage() }} / {{ $activities->lastPage() }}</span>
             <div class="pagination-controls">
                 @if($activities->onFirstPage())
                     <span class="page-btn disabled"><i class="ti ti-arrow-left"></i></span>
                 @else
-                    <a href="{{ $activities->previousPageUrl() }}" class="page-btn">
-                        <i class="ti ti-arrow-left"></i>
-                    </a>
+                    <a href="{{ $activities->previousPageUrl() }}" class="page-btn"><i class="ti ti-arrow-left"></i></a>
                 @endif
 
                 @foreach(range(max(1, $activities->currentPage() - 2), min($activities->lastPage(), $activities->currentPage() + 2)) as $p)
-                    <a href="{{ $activities->url($p) }}"
-                       class="page-btn {{ $p === $activities->currentPage() ? 'active' : '' }}">
-                        {{ $p }}
-                    </a>
+                    <a href="{{ $activities->url($p) }}" class="page-btn {{ $p === $activities->currentPage() ? 'active' : '' }}">{{ $p }}</a>
                 @endforeach
 
                 @if($activities->hasMorePages())
-                    <a href="{{ $activities->nextPageUrl() }}" class="page-btn">
-                        <i class="ti ti-arrow-right"></i>
-                    </a>
+                    <a href="{{ $activities->nextPageUrl() }}" class="page-btn"><i class="ti ti-arrow-right"></i></a>
                 @else
                     <span class="page-btn disabled"><i class="ti ti-arrow-right"></i></span>
                 @endif
             </div>
         </div>
     @else
-        <div style="text-align:center; padding:4rem; color:var(--ink-4);">
-            <i class="ti ti-history" style="font-size:2.5rem; display:block; margin-bottom:1rem; opacity:.4;"></i>
-            <div style="font-weight:600; margin-bottom:6px;">Aucune activité trouvée</div>
+        <div class="empty-state">
+            <i class="ti ti-history"></i>
+            <h3>Aucune activité trouvée</h3>
             @if(request()->hasAny(['search', 'date_from', 'date_to']))
-                <div style="font-size:13px;">Essayez d'ajuster vos filtres.</div>
+                <p>Essayez d'ajuster vos filtres ou <a href="{{ route('admin.system-logs') }}" style="color:var(--accent);">réinitialisez-les</a>.</p>
+            @else
+                <p>Aucun journal d'activité enregistré pour le moment.</p>
             @endif
         </div>
     @endif
