@@ -32,12 +32,43 @@ class AdminController extends Controller
     }
 
     // Show list of all users — hides the currently logged-in admin
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::where('id', '!=', Auth::id())
-                     ->orderBy('role')
-                     ->orderBy('name')
-                     ->get();
+        $query = User::where('id', '!=', Auth::id());
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        // Apply role filter
+        if ($request->filled('role')) {
+            $query->where('role', $request->input('role'));
+        }
+
+        // Apply sorting
+        $sort = $request->input('sort', 'name');
+        switch ($sort) {
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'newest':
+                $query->orderBy('created_at', 'desc');
+                break;
+            case 'oldest':
+                $query->orderBy('created_at', 'asc');
+                break;
+            case 'name':
+            default:
+                $query->orderBy('name', 'asc');
+                break;
+        }
+
+        $users = $query->get();
 
         return view('admin.users.index', compact('users'));
     }
