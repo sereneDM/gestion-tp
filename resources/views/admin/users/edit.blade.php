@@ -5,11 +5,11 @@
 @section('breadcrumb')
     <a href="{{ route('admin.users.index') }}" class="tb-bc-page" style="text-decoration:none;">Utilisateurs</a>
     <span class="tb-bc-sep">/</span>
-    <span class="tb-bc-current">{{ $user->name }}</span>
+    <span class="tb-bc-current">Modifier</span>
 @endsection
 
 @section('content')
-<div style="max-width: 560px;">
+<div style="max-width: 560px; margin: 0 auto;">
     <h1 class="page-title">Modifier le profil</h1>
     <p class="page-subtitle">Mise à jour des informations de l'utilisateur.</p>
 

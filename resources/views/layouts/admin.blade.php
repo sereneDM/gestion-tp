@@ -317,24 +317,158 @@
         </header>
 
         <div style="padding: 0 28px;">
-            @if(session('success'))
-                <div class="flash flash-success" style="margin-top:20px;">
-                    <i class="ti ti-circle-check" style="font-size:16px; flex-shrink:0; margin-top:1px;"></i>
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if(session('error'))
-                <div class="flash flash-error" style="margin-top:20px;">
-                    <i class="ti ti-alert-circle" style="font-size:16px; flex-shrink:0; margin-top:1px;"></i>
-                    {{ session('error') }}
-                </div>
-            @endif
-        </div>
+
 
         <main class="page-content">
             @yield('content')
         </main>
     </div>
+
+<script>
+function customConfirm(message, icon) {
+    return new Promise((resolve) => {
+        const modal     = document.getElementById('confirm-modal');
+        const msgEl     = document.getElementById('confirm-message');
+        const iconEl    = document.getElementById('confirm-icon');
+        const okBtn     = document.getElementById('confirm-ok');
+        const cancelBtn = document.getElementById('confirm-cancel');
+
+        msgEl.textContent    = message;
+        iconEl.innerHTML     = icon || '<i class="ti ti-alert-triangle"></i>';
+        modal.style.display  = 'flex';
+
+        const cleanup = () => { modal.style.display = 'none'; };
+        okBtn.onclick     = () => { cleanup(); resolve(true); };
+        cancelBtn.onclick = () => { cleanup(); resolve(false); };
+        modal.onclick     = (e) => { if (e.target === modal) { cleanup(); resolve(false); } };
+    });
+}
+
+function pickIcon(msg) {
+    const m = msg.toLowerCase();
+    if (m.includes('supprimer') || m.includes('irréversible'))
+        return '<i class="ti ti-trash" style="color:#e53935"></i>';
+    return '<i class="ti ti-alert-triangle" style="color:#e53935"></i>';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('form[onsubmit]').forEach(form => {
+        const original = form.getAttribute('onsubmit');
+        if (!original.includes('confirm(')) return;
+        const match   = original.match(/confirm\(['"](.+?)['"]\)/);
+        const message = match ? match[1] : 'Êtes-vous sûr ?';
+        const icon    = pickIcon(message);
+        form.removeAttribute('onsubmit');
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const confirmed = await customConfirm(message, icon);
+            if (confirmed) form.submit();
+        });
+    });
+});
+</script>
+
+{{-- Confirm modal --}}
+<div id="confirm-modal"
+     style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.45);
+            backdrop-filter:blur(4px); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:18px;
+                padding:2rem; max-width:380px; width:90%; text-align:center;
+                box-shadow:0 20px 60px rgba(0,0,0,0.12); animation:popIn 0.2s ease;">
+        <div id="confirm-icon"
+             style="width:52px; height:52px; border-radius:14px; background:#fff0f0;
+                    display:flex; align-items:center; justify-content:center;
+                    margin:0 auto 1rem; font-size:24px; color:#e53935;">
+            <i class="ti ti-alert-triangle"></i>
+        </div>
+        <div id="confirm-message"
+             style="color:#1e293b; font-size:0.9rem; margin-bottom:1.5rem; line-height:1.6;"></div>
+        <div style="display:flex; gap:0.6rem; justify-content:center;">
+            <button id="confirm-cancel"
+                    style="padding:0.55rem 1.2rem; border:1px solid #e2e8f0; border-radius:9px;
+                           background:#ffffff; color:#475569; font-size:0.875rem; cursor:pointer;
+                           font-family:inherit; transition:background 0.15s;"
+                    onmouseover="this.style.background='#f8fafc'"
+                    onmouseout="this.style.background='#ffffff'">
+                Annuler
+            </button>
+            <button id="confirm-ok"
+                    style="padding:0.55rem 1.2rem; border:none; border-radius:9px;
+                           background:#e53935; color:#ffffff; font-size:0.875rem;
+                           font-weight:600; cursor:pointer; font-family:inherit; transition:background 0.15s;"
+                    onmouseover="this.style.background='#c62828'"
+                    onmouseout="this.style.background='#e53935'">
+                Confirmer
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+@keyframes popIn {
+    from { transform: scale(0.88); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+</style>
+
+{{-- Toast container --}}
+<div id="toast-container"
+     style="position:fixed; bottom:2rem; right:2rem; z-index:9999;
+            display:flex; flex-direction:column; gap:0.6rem;
+            align-items:flex-end; pointer-events:none;"></div>
+
+{{-- Session toasts --}}
+@if(session('success'))
+    <div class="toast-bar toast-success" data-toast style="opacity:0;">
+        <i class="ti ti-circle-check"></i> {{ session('success') }}
+    </div>
+@endif
+@if(session('error'))
+    <div class="toast-bar toast-error" data-toast style="opacity:0;">
+        <i class="ti ti-circle-x"></i> {{ session('error') }}
+    </div>
+@endif
+
+<style>
+/* Toast styles */
+.toast-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 340px;
+    padding: 0.7rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-family: 'Inter', sans-serif;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.toast-success {
+    background: #ecfdf5;
+    border: 1px solid rgba(16,185,129,0.25);
+    color: #065f46;
+}
+.toast-error {
+    background: #fff0f0;
+    border: 1px solid rgba(229,57,53,0.25);
+    color: #991b1b;
+}
+</style>
+
+<script>
+// Move session toasts into fixed container
+document.querySelectorAll('[data-toast]').forEach(toast => {
+    toast.remove();
+    document.getElementById('toast-container').appendChild(toast);
+    requestAnimationFrame(() => toast.style.opacity = '1');
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3500);
+});
+</script>
 
 </body>
 </html>

@@ -3,8 +3,6 @@
 @section('title', 'Utilisateurs')
 
 @section('breadcrumb')
-    <span class="tb-bc-page">Gestion</span>
-    <span class="tb-bc-sep">/</span>
     <span class="tb-bc-current">Utilisateurs</span>
 @endsection
 
@@ -174,11 +172,6 @@
             <option value="oldest"     {{ request('sort') === 'oldest'            ? 'selected' : '' }}>Trier : Plus anciens</option>
         </select>
 
-        {{-- Submit button --}}
-        <button type="submit" class="tb-btn tb-btn-primary" style="white-space:nowrap;">
-            <i class="ti ti-search"></i> Filtrer
-        </button>
-
         {{-- Reset --}}
         @if(request()->hasAny(['search', 'role', 'sort']))
             <a href="{{ route('admin.users.index') }}" class="filter-reset">
@@ -247,8 +240,8 @@
                                     <i class="ti ti-edit"></i>
                                 </a>
                                 @if(Auth::id() !== $user->id)
-                                    <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}"
-                                          onsubmit="return confirm('Supprimer cet utilisateur ?')">
+                                    <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" style="display:inline;"
+                                          onsubmit="return confirm('Supprimer l\'utilisateur &quot;{{ $user->name }}&quot; ? Cette action est irréversible.')">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn-icon danger" title="Supprimer">
                                             <i class="ti ti-trash"></i>

@@ -9,7 +9,7 @@
 @endsection
 
 @section('content')
-<div style="max-width: 560px;">
+<div style="max-width: 560px; margin: 0 auto;">
     <h1 class="page-title">Nouvel utilisateur</h1>
     <p class="page-subtitle">Enregistrez un étudiant, enseignant ou administrateur.</p>
 
