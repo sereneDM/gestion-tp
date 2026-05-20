@@ -379,7 +379,7 @@
                 <div class="custom-select-wrap" id="teacher-select-wrap">
                     <div class="custom-select-display" id="teacher-display" tabindex="0" role="combobox">
                         @if($selectedTeacher)
-                            <div class="custom-select-avatar">{{ strtoupper(substr($selectedTeacher->name,0,1)) }}</div>
+                            <div class="custom-select-avatar">{{ mb_strtoupper(mb_substr($selectedTeacher->name,0,1)) }}</div>
                             <span id="teacher-label">{{ $selectedTeacher->name }}</span>
                         @else
                             <i class="ti ti-user-circle" style="font-size:18px; color:var(--ink-4);"></i>
@@ -406,7 +406,7 @@
                                      data-value="{{ $teacher->id }}"
                                      data-name="{{ $teacher->name }}">
                                     <div class="custom-select-avatar" style="flex-shrink:0;">
-                                        {{ strtoupper(substr($teacher->name,0,1)) }}
+                                        {{ mb_strtoupper(mb_substr($teacher->name,0,1)) }}
                                     </div>
                                     <span class="opt-name">{{ $teacher->name }}</span>
                                     <i class="ti ti-check opt-check"></i>
@@ -461,7 +461,7 @@
                                        value="{{ $student->id }}"
                                        id="student_{{ $student->id }}"
                                        {{ in_array($student->id, $selectedStudents) ? 'checked' : '' }}>
-                                <div class="student-avatar">{{ strtoupper(substr($student->name,0,1)) }}</div>
+                                <div class="student-avatar">{{ mb_strtoupper(mb_substr($student->name,0,1)) }}</div>
                                 <div class="student-info">
                                     <div class="student-name">{{ $student->name }}</div>
                                     <div class="student-email">{{ $student->email }}</div>

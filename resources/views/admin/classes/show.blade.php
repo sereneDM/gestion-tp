@@ -370,19 +370,12 @@
 @section('content')
 <div class="show-page">
 
-    {{-- Page title + status --}}
+    {{-- Page title --}}
     <div style="margin-bottom: 1.5rem;">
         <h1 class="page-title" style="margin-bottom: 0.5rem;">{{ $class->name }}</h1>
-        <div style="display:flex; align-items:center; gap:10px;">
-            @if($class->status === 'active')
-                <span class="badge badge-active">Active</span>
-            @else
-                <span class="badge badge-archived">Archivée</span>
-            @endif
-            <span style="color:var(--ink-4); font-size:12.5px;">
-                Créée le {{ $class->created_at->format('d/m/Y à H:i') }}
-            </span>
-        </div>
+        <span style="color:var(--ink-4); font-size:12.5px;">
+            Créée le {{ $class->created_at->format('d/m/Y à H:i') }}
+        </span>
     </div>
 
     {{-- Tabs --}}
@@ -402,7 +395,7 @@
         {{-- Teacher card --}}
         <div class="teacher-card">
             <div class="teacher-avatar-placeholder">
-                {{ $class->teacher ? strtoupper(substr($class->teacher->name, 0, 1)) : '?' }}
+                {{ $class->teacher ? mb_strtoupper(mb_substr($class->teacher->name, 0, 1)) : '?' }}
             </div>
             <div class="teacher-info">
                 <div class="teacher-micro-label">Enseignant responsable</div>
@@ -428,10 +421,10 @@
                 <div class="sstat-lbl">Étudiants inscrits</div>
             </div>
             <div class="sstat-tile">
-                <div class="sstat-val" style="font-size:1rem; color:{{ $class->status === 'active' ? 'var(--success)' : 'var(--ink-4)' }};">
+                <div class="sstat-lbl">Statut du cours</div>
+                <div class="sstat-val" style="font-size:1rem; color:{{ $class->status === 'active' ? 'var(--success)' : 'var(--ink-4)' }}; margin-top: 0.35rem;">
                     {{ $class->status === 'active' ? 'Active' : 'Archivée' }}
                 </div>
-                <div class="sstat-lbl">Statut du cours</div>
             </div>
         </div>
 
@@ -512,7 +505,7 @@
                                 <td>
                                     <div class="student-name-cell">
                                         <div class="student-av">
-                                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                                            {{ mb_strtoupper(mb_substr($student->name, 0, 1)) }}
                                         </div>
                                         <span style="font-weight:700; color:var(--ink);">{{ $student->name }}</span>
                                     </div>

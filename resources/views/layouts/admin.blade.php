@@ -292,7 +292,7 @@
         <div class="sidebar-footer">
             {{-- Clicking the user card → profile page --}}
             <a href="{{ route('admin.profile') }}" class="user-card">
-                <div class="user-avatar">{{ strtoupper(substr(Auth::user()->name, 0, 1)) }}</div>
+                <div class="user-avatar">{{ mb_strtoupper(mb_substr(Auth::user()->name, 0, 1)) }}</div>
                 <div style="min-width:0; flex:1;">
                     <div class="user-name">{{ Auth::user()->name }}</div>
                     <div class="user-role">Administrateur</div>

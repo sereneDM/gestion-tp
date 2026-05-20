@@ -3,8 +3,6 @@
 @section('title', 'Supervision des Classes')
 
 @section('breadcrumb')
-    <span class="tb-bc-page">Gestion</span>
-    <span class="tb-bc-sep">/</span>
     <span class="tb-bc-current">Cours</span>
 @endsection
 

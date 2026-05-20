@@ -203,7 +203,7 @@
                         <td>
                             <div style="display:flex; align-items:center; gap:10px;">
                                 <div style="width:32px; height:32px; border-radius:50%; background:var(--accent-bg); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0;">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    {{ mb_strtoupper(mb_substr($user->name, 0, 1)) }}
                                 </div>
                                 <div>
                                     <div style="font-weight:700; color:var(--ink); font-size:13px;">{{ $user->name }}</div>
