@@ -1,215 +1,173 @@
-# Class Diagram
+# Diagramme de Classes
 
-This project uses **Mermaid** for the class diagram.
+Ce diagramme présente les principales classes du système de gestion des TP.
 
-Mermaid is the best fit for this repository because it is text-based, easy to maintain in Git, renders directly in many Markdown viewers, and does not require extra tooling such as Java, Graphviz, or a UML desktop application.
+Les classes `Administrateur`, `Etudiant` et `Enseignant` sont représentées comme des spécialisations de la classe `Utilisateur`. Dans l'implémentation Laravel, ces rôles sont stockés dans l'attribut `role` de la table `users`.
 
 ```mermaid
 classDiagram
-    direction LR
+    direction TB
 
-    class User {
+    class Utilisateur {
         +int id
-        +string name
+        +string nom
         +string email
-        +string password
+        +string mot_de_passe
         +string role
-        +bool must_reset_password
-        +string profile_picture
-        +bool show_email_publicly
-        +isStudent()
-        +isTeacher()
-        +isAdmin()
-        +teachingClasses()
-        +classes()
-        +enrolledClasses()
-        +getProfilePictureUrlAttribute()
+        +seConnecter()
+        +seDeconnecter()
+        +modifierProfil()
+        +estAdministrateur()
+        +estEtudiant()
+        +estEnseignant()
     }
 
-    class ClassModel {
+    class Administrateur {
+        +gererUtilisateurs()
+        +gererClasses()
+        +gererParametres()
+        +consulterStatistiques()
+    }
+
+    class Etudiant {
+        +rejoindreClasse()
+        +consulterCours()
+        +consulterTP()
+        +soumettreTP()
+        +consulterProgression()
+    }
+
+    class Enseignant {
+        +creerClasse()
+        +modifierClasse()
+        +creerTP()
+        +corrigerSoumission()
+        +faireAppel()
+        +publierAnnonce()
+    }
+
+    class Classe {
         +int id
-        +string name
+        +string nom
         +text description
-        +int teacher_id
-        +string join_code
-        +string status
-        +generateUniqueJoinCode()
-        +regenerateJoinCode()
-        +teacher()
-        +students()
-        +tps()
-        +scopeActive()
-        +scopeOwnedBy()
+        +string code_inscription
+        +string statut
+        +genererCodeInscription()
+        +regenererCodeInscription()
+        +activer()
+        +archiver()
+        +ajouterEtudiant()
+        +retirerEtudiant()
     }
 
     class TP {
         +int id
-        +string title
+        +string titre
         +text description
-        +int teacher_id
-        +int class_id
-        +datetime due_date
-        +string status
-        +array attachments
-        +teacher()
-        +class()
-        +submissions()
+        +datetime date_limite
+        +string statut
+        +array pieces_jointes
+        +publier()
+        +modifier()
+        +fermer()
+        +ajouterPieceJointe()
     }
 
-    class Submission {
+    class Soumission {
         +int id
-        +int tp_id
-        +int student_id
-        +text content
-        +array attachments
-        +decimal grade
-        +text teacher_comment
-        +string status
-        +datetime submitted_at
-        +tp()
-        +student()
+        +text contenu
+        +array pieces_jointes
+        +decimal note
+        +text commentaire_enseignant
+        +string statut
+        +datetime date_soumission
+        +deposer()
+        +modifier()
+        +noter()
+        +ajouterCommentaire()
     }
 
-    class Attendance {
+    class Presence {
         +int id
-        +int student_id
-        +int class_id
-        +int teacher_id
         +date date
-        +string status
-        +text notes
-        +student()
-        +class()
-        +teacher()
+        +string statut
+        +text remarques
+        +marquerPresent()
+        +marquerAbsent()
+        +marquerRetard()
+        +modifierStatut()
     }
 
-    class Post {
+    class Publication {
         +int id
-        +int user_id
-        +int class_id
-        +int tp_id
         +string type
-        +string title
-        +text content
-        +string attachment
-        +user()
-        +class()
-        +tp()
-        +comments()
-        +likes()
-        +isLikedBy()
-        +visibleToStudent()
+        +string titre
+        +text contenu
+        +string piece_jointe
+        +publier()
+        +modifier()
+        +supprimer()
     }
 
-    class Comment {
+    class Commentaire {
         +int id
-        +int post_id
-        +int user_id
-        +int parent_id
-        +text content
-        +user()
-        +post()
-        +replies()
-        +parent()
-        +likes()
-        +isLikedBy()
-    }
-
-    class Like {
-        +int id
-        +int user_id
-        +int likeable_id
-        +string likeable_type
-        +likeable()
+        +text contenu
+        +ajouter()
+        +modifier()
+        +supprimer()
     }
 
     class Notification {
         +int id
-        +int user_id
         +string type
-        +string title
+        +string titre
         +text message
-        +string link
-        +int related_id
-        +bool is_read
-        +user()
-        +markAsRead()
-        +createFor()
+        +string lien
+        +bool est_lue
+        +creer()
+        +marquerCommeLue()
     }
 
-    class NotificationSetting {
+    class Parametre {
         +int id
-        +int user_id
-        +int class_id
-        +bool new_tp_notifications
-        +bool submission_graded_notifications
-        +bool new_submission_notifications
-        +bool post_notifications
-        +bool student_joined_notifications
-        +bool comment_notifications
-        +bool like_notifications
-        +bool comment_like_notifications
-        +user()
-        +courseClass()
-        +getFor()
-        +shouldNotify()
-    }
-
-    class Setting {
-        +int id
-        +string key
-        +text value
+        +string cle
+        +text valeur
         +string type
         +text description
-        +get()
-        +set()
+        +obtenir()
+        +definir()
+        +modifier()
     }
 
-    class ClassStudent {
-        <<pivot>>
-        +int id
-        +int class_id
-        +int student_id
-    }
+    Administrateur --|> Utilisateur
+    Etudiant --|> Utilisateur
+    Enseignant --|> Utilisateur
 
-    class Likeable {
-        <<polymorphic>>
-    }
+    Enseignant "1" --> "0..*" Classe : enseigne
+    Etudiant "0..*" --> "0..*" Classe : inscrit
 
-    User "1" --> "0..*" ClassModel : teaches
-    User "0..*" -- "0..*" ClassModel : enrolls via ClassStudent
-    ClassStudent --> User : student_id
-    ClassStudent --> ClassModel : class_id
+    Classe "1" --> "0..*" TP : contient
+    Enseignant "1" --> "0..*" TP : propose
 
-    ClassModel "1" --> "0..*" TP : has
-    TP "0..*" --> "1" User : teacher
-    TP "0..*" --> "1" ClassModel : class
-    TP "1" --> "0..*" Submission : receives
-    Submission "0..*" --> "1" User : student
+    TP "1" --> "0..*" Soumission : recoit
+    Etudiant "1" --> "0..*" Soumission : depose
 
-    Attendance "0..*" --> "1" User : student
-    Attendance "0..*" --> "1" User : teacher
-    Attendance "0..*" --> "1" ClassModel : class
+    Classe "1" --> "0..*" Presence : possede
+    Etudiant "1" --> "0..*" Presence : concerne
 
-    Post "0..*" --> "1" User : author
-    Post "0..*" --> "0..1" ClassModel : class
-    Post "0..*" --> "0..1" TP : related TP
-    Post "1" --> "0..*" Comment : comments
+    Utilisateur "1" --> "0..*" Publication : publie
+    Classe "1" --> "0..*" Publication : contient
+    Publication "1" --> "0..*" Commentaire : contient
+    Utilisateur "1" --> "0..*" Commentaire : ecrit
 
-    Comment "0..*" --> "1" User : author
-    Comment "0..*" --> "1" Post : post
-    Comment "0..*" --> "0..1" Comment : parent
-
-    User "1" --> "0..*" Notification : receives
-    NotificationSetting "0..*" --> "1" User : user
-    NotificationSetting "0..*" --> "0..1" ClassModel : class
-
-    Like "0..*" --> "1" User : user
-    Like "0..*" --> "1" Likeable : likeable
-    Post ..|> Likeable
-    Comment ..|> Likeable
+    Utilisateur "1" --> "0..*" Notification : recoit
+    Administrateur "1" --> "0..*" Parametre : configure
 ```
 
-## Scope
+## Description
 
-This diagram focuses on the domain and persistence layer in `app/Models`. Controllers, mail classes, providers, and views are not included because they would make the diagram harder to read without adding much value to the core data model.
+Le diagramme montre les classes principales du système et leurs relations. `Utilisateur` est la classe générale utilisée pour l'authentification. Les classes `Administrateur`, `Etudiant` et `Enseignant` héritent de `Utilisateur` afin de représenter les différents rôles du système.
+
+Une `Classe` est créée et gérée par un `Enseignant`. Un `Etudiant` peut être inscrit dans plusieurs classes. Une classe contient plusieurs `TP`, et chaque TP peut recevoir plusieurs `Soumission`. Le suivi des présences est représenté par la classe `Presence`.
+
+Les classes `Publication`, `Commentaire` et `Notification` représentent la partie communication du système. La classe `Parametre` représente les paramètres généraux configurés par l'administrateur.

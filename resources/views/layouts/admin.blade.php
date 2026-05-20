@@ -470,5 +470,7 @@ document.querySelectorAll('[data-toast]').forEach(toast => {
 });
 </script>
 
+@yield('extra-scripts')
+
 </body>
 </html>

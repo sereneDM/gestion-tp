@@ -11,9 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('notification_settings', function (Blueprint $table) {
-            //
-        });
+        // This migration is empty - the column was already added in the previous migration
+        // Keeping this for migration history integrity
     }
 
     /**
@@ -21,8 +20,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('notification_settings', function (Blueprint $table) {
-            //
-        });
+        // No-op - column removal is handled by the previous migration
     }
 };

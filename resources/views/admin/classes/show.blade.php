@@ -387,10 +387,10 @@
 
     {{-- Tabs --}}
     <div class="stabs">
-        <button class="stab active" data-tab="info" onclick="switchTab(this)">
+        <button class="stab active" onclick="switchTab('info', event)">
             <i class="ti ti-info-circle"></i> Informations
         </button>
-        <button class="stab" data-tab="students" onclick="switchTab(this)">
+        <button class="stab" onclick="switchTab('students', event)">
             <i class="ti ti-users"></i> Étudiants
             <span style="background:var(--surface-3); border:1px solid var(--line); border-radius:100px; padding:1px 7px; font-size:10.5px; font-weight:700; color:var(--ink-4);">{{ $class->students->count() }}</span>
         </button>
@@ -546,23 +546,30 @@
 
 @section('extra-scripts')
 <script>
-/* ── Tab switching — uses data-tab attribute, no argument ambiguity ── */
-function switchTab(btn) {
-    const name = btn.dataset.tab;
+/* ── Tab switching — consistent with student/teacher views ── */
+function switchTab(tabName, event) {
     document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.stab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + name).classList.add('active');
-    history.replaceState(null, null, '?tab=' + name);
+    event.target.closest('.stab').classList.add('active');
+    document.getElementById('tab-' + tabName).classList.add('active');
+    history.replaceState(null, null, '?tab=' + tabName);
 }
 
 /* Restore tab from URL */
-(function () {
+document.addEventListener('DOMContentLoaded', function () {
     const tabParam = new URLSearchParams(window.location.search).get('tab');
-    if (!tabParam) return;
-    const btn = document.querySelector('.stab[data-tab="' + tabParam + '"]');
-    if (btn) switchTab(btn);
-})();
+    const validTabs = ['info', 'students'];
+    if (tabParam && validTabs.includes(tabParam)) {
+        document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.stab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-' + tabParam).classList.add('active');
+        document.querySelectorAll('.stab').forEach(t => {
+            if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + tabParam + "'")) {
+                t.classList.add('active');
+            }
+        });
+    }
+});
 
 /* ── Copy join code — uses admin showToast ── */
 function copyCode() {
