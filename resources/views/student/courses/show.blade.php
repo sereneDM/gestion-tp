@@ -118,6 +118,10 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+/* resume tab helpers */
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
 /* ── Teacher card (now at top) ── */
 .teacher-card {
     background: var(--surface);
@@ -504,6 +508,9 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
         <button class="tab" onclick="switchTab('tps', event)">
             <i class="ti ti-file-text" style="margin-right:0.4rem; vertical-align:-2px;"></i> Travaux Pratiques
         </button>
+        <button class="tab" onclick="switchTab('resume', event)">
+            <i class="ti ti-brain" style="margin-right:0.4rem; vertical-align:-2px;"></i> Résumé IA
+        </button>
     </div>
 
     {{-- Tab: Info --}}
@@ -653,6 +660,57 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
     </div>
 
+    {{-- Tab: Résumé IA --}}
+    <div class="tab-content" id="tab-resume">
+
+        <div class="course-desc-card">
+            <div class="course-desc-title">Résumé IA</div>
+            <div style="margin-top:10px;">
+                <form id="resume-form" enctype="multipart/form-data" method="POST" onsubmit="return false;">
+                    @csrf
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <div>
+                            <label class="course-desc-title" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:6px;">Fichier PDF</label>
+                            <input type="file" name="pdf" accept="application/pdf" required style="width:100%;">
+                        </div>
+                        <div>
+                            <label class="course-desc-title" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:6px;">Requête (optionnelle)</label>
+                            <input type="text" name="query" placeholder="Ex: expliquer les formules clés" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--line-2);">
+                        </div>
+                        <div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <button type="submit" class="btn btn-primary" id="resume-submit">
+                                    <i class="ti ti-arrow-right" id="resume-submit-icon"></i> Générer le résumé
+                                </button>
+                                @if(!empty($course->course_doc_id))
+                                    <button type="button" class="btn btn-primary" id="resume-use-uploaded" data-docid="{{ $course->course_doc_id }}">
+                                        <i class="ti ti-cloud-upload"></i> Utiliser le PDF du cours
+                                    </button>
+                                @endif
+                            </div>
+                        </div>
+                        <div id="resume-error" style="display:none; color:var(--danger); font-weight:700;"></div>
+                    </div>
+                </form>
+
+                <div id="resume-result" style="display:none; margin-top:16px;">
+                    <div class="course-desc-card">
+                        <h3 id="resume-title" class="teacher-name"></h3>
+                        <p id="resume-overview" class="course-desc-body" style="margin-top:6px;"></p>
+                        <span id="resume-difficulty" class="teacher-role-badge" style="margin-top:8px; display:inline-block;"></span>
+                    </div>
+
+                    <div id="resume-chapters" style="margin-top:12px;"></div>
+
+                    <div id="resume-terms" style="margin-top:12px;"></div>
+
+                    <div id="resume-formulas" style="margin-top:12px;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
 </div>
 @endsection
 
@@ -680,7 +738,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
     document.addEventListener('DOMContentLoaded', function () {
         const fragment = window.location.hash.replace('#', '');
-        const validTabs = ['info', 'tps'];
+        const validTabs = ['info', 'tps', 'resume'];
         if (fragment && validTabs.includes(fragment)) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -690,6 +748,195 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                     t.classList.add('active');
                 }
             });
+        }
+
+        // Small helper to escape HTML when rendering results
+        function escapeHtml(str) {
+            if (!str && str !== 0) return '';
+            return String(str).replace(/[&<>"']/g, function (s) {
+                return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[s];
+            });
+        }
+
+        // Resume form handler
+        const resumeForm = document.getElementById('resume-form');
+        const resumeEndpoint = @json(route('student.summarize.upload'));
+        if (resumeForm) {
+            resumeForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const submitBtn = document.getElementById('resume-submit');
+                const submitIcon = document.getElementById('resume-submit-icon');
+                const errorEl = document.getElementById('resume-error');
+                const resultEl = document.getElementById('resume-result');
+                const chaptersEl = document.getElementById('resume-chapters');
+                const termsEl = document.getElementById('resume-terms');
+                const formulasEl = document.getElementById('resume-formulas');
+
+                errorEl.style.display = 'none';
+                resultEl.style.display = 'none';
+                chaptersEl.innerHTML = '';
+                termsEl.innerHTML = '';
+                formulasEl.innerHTML = '';
+
+                submitBtn.disabled = true;
+                submitIcon.classList.add('spin');
+
+                const fd = new FormData(resumeForm);
+
+                try {
+                    const res = await fetch(resumeEndpoint, {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        body: fd,
+                    });
+
+                    if (!res.ok) {
+                        let jsonErr = {};
+                        try { jsonErr = await res.json(); } catch (e) {}
+                        throw new Error(jsonErr.error || res.statusText || 'Erreur du serveur');
+                    }
+
+                    const data = await res.json();
+
+                    document.getElementById('resume-title').textContent = data.title || '';
+                    document.getElementById('resume-overview').textContent = data.overview || '';
+                    document.getElementById('resume-difficulty').textContent = data.difficulty || '';
+
+                    // chapters
+                    if (Array.isArray(data.chapters)) {
+                        data.chapters.forEach(ch => {
+                            const card = document.createElement('div');
+                            card.className = 'course-desc-card';
+                            const title = ch.title || '';
+                            const summary = ch.summary || '';
+                            let html = `<h4 style="font-size:1.05rem; font-weight:700; margin-bottom:6px;">${escapeHtml(title)}</h4>`;
+                            html += `<p style="color:var(--ink-2); margin-bottom:8px;">${escapeHtml(summary)}</p>`;
+                            if (Array.isArray(ch.key_concepts) && ch.key_concepts.length) {
+                                html += '<ul style="color:var(--ink-3); margin-top:6px; padding-left:18px;">' + ch.key_concepts.map(k=>`<li>${escapeHtml(k)}</li>`).join('') + '</ul>';
+                            }
+                            card.innerHTML = html;
+                            chaptersEl.appendChild(card);
+                        });
+                    }
+
+                    // key terms
+                    if (data.key_terms && Object.keys(data.key_terms).length) {
+                        const dl = document.createElement('dl');
+                        Object.entries(data.key_terms).forEach(([t, d]) => {
+                            const dt = document.createElement('dt'); dt.textContent = t; dt.style.fontWeight = '700';
+                            const dd = document.createElement('dd'); dd.textContent = d; dd.style.marginLeft = '12px'; dd.style.color = 'var(--ink-3)';
+                            dl.appendChild(dt); dl.appendChild(dd);
+                        });
+                        termsEl.appendChild(dl);
+                    }
+
+                    // formulas
+                    if (Array.isArray(data.formulas) && data.formulas.length) {
+                        const wrap = document.createElement('div');
+                        wrap.innerHTML = '<h4 class="course-desc-title">Formulas</h4>' + data.formulas.map(f=>`<pre style="background:var(--surface-2); padding:10px; border-radius:8px; font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
+                        formulasEl.appendChild(wrap);
+                    }
+
+                    resultEl.style.display = 'block';
+
+                } catch (err) {
+                    console.error(err);
+                    errorEl.textContent = err.message || 'Erreur lors du traitement. Le service RAG est peut-être indisponible.';
+                    errorEl.style.display = 'block';
+                } finally {
+                    submitBtn.disabled = false;
+                    submitIcon.classList.remove('spin');
+                }
+            });
+
+            // handle use uploaded doc button
+            const useBtn = document.getElementById('resume-use-uploaded');
+            if (useBtn) {
+                useBtn.addEventListener('click', async function () {
+                    const docId = this.dataset.docid;
+                    const queryInput = resumeForm.querySelector('input[name="query"]');
+                    const q = queryInput ? queryInput.value : '';
+                    const submitIcon = document.getElementById('resume-submit-icon');
+                    const submitBtn = document.getElementById('resume-submit');
+                    const errorEl = document.getElementById('resume-error');
+                    const resultEl = document.getElementById('resume-result');
+                    const chaptersEl = document.getElementById('resume-chapters');
+                    const termsEl = document.getElementById('resume-terms');
+                    const formulasEl = document.getElementById('resume-formulas');
+
+                    errorEl.style.display = 'none';
+                    resultEl.style.display = 'none';
+                    chaptersEl.innerHTML = '';
+                    termsEl.innerHTML = '';
+                    formulasEl.innerHTML = '';
+
+                    submitBtn.disabled = true;
+                    submitIcon.classList.add('spin');
+
+                    try {
+                        const res = await fetch(resumeEndpoint, {
+                            method: 'POST',
+                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                            body: JSON.stringify({ doc_id: docId, query: q })
+                        });
+
+                        if (!res.ok) {
+                            let jsonErr = {};
+                            try { jsonErr = await res.json(); } catch (e) {}
+                            throw new Error(jsonErr.error || res.statusText || 'Erreur du serveur');
+                        }
+
+                        const data = await res.json();
+
+                        document.getElementById('resume-title').textContent = data.title || '';
+                        document.getElementById('resume-overview').textContent = data.overview || '';
+                        document.getElementById('resume-difficulty').textContent = data.difficulty || '';
+
+                        if (Array.isArray(data.chapters)) {
+                            data.chapters.forEach(ch => {
+                                const card = document.createElement('div');
+                                card.className = 'course-desc-card';
+                                const title = ch.title || '';
+                                const summary = ch.summary || '';
+                                let html = `<h4 style="font-size:1.05rem; font-weight:700; margin-bottom:6px;">${escapeHtml(title)}</h4>`;
+                                html += `<p style="color:var(--ink-2); margin-bottom:8px;">${escapeHtml(summary)}</p>`;
+                                if (Array.isArray(ch.key_concepts) && ch.key_concepts.length) {
+                                    html += '<ul style="color:var(--ink-3); margin-top:6px; padding-left:18px;">' + ch.key_concepts.map(k=>`<li>${escapeHtml(k)}</li>`).join('') + '</ul>';
+                                }
+                                card.innerHTML = html;
+                                chaptersEl.appendChild(card);
+                            });
+                        }
+
+                        if (data.key_terms && Object.keys(data.key_terms).length) {
+                            const dl = document.createElement('dl');
+                            Object.entries(data.key_terms).forEach(([t, d]) => {
+                                const dt = document.createElement('dt'); dt.textContent = t; dt.style.fontWeight = '700';
+                                const dd = document.createElement('dd'); dd.textContent = d; dd.style.marginLeft = '12px'; dd.style.color = 'var(--ink-3)';
+                                dl.appendChild(dt); dl.appendChild(dd);
+                            });
+                            termsEl.appendChild(dl);
+                        }
+
+                        if (Array.isArray(data.formulas) && data.formulas.length) {
+                            const wrap = document.createElement('div');
+                            wrap.innerHTML = '<h4 class="course-desc-title">Formulas</h4>' + data.formulas.map(f=>`<pre style="background:var(--surface-2); padding:10px; border-radius:8px; font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
+                            formulasEl.appendChild(wrap);
+                        }
+
+                        resultEl.style.display = 'block';
+
+                    } catch (err) {
+                        console.error(err);
+                        errorEl.textContent = err.message || 'Erreur lors du traitement. Le service RAG est peut-être indisponible.';
+                        errorEl.style.display = 'block';
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitIcon.classList.remove('spin');
+                    }
+                });
+            }
         }
     });
 

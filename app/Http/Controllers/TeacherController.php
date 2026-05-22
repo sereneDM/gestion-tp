@@ -13,6 +13,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 class TeacherController extends Controller
@@ -39,6 +40,7 @@ class TeacherController extends Controller
         $request->validate([
             'name'        => 'required|string|max:50',
             'description' => 'nullable|string',
+            'course_pdf'  => 'nullable|file|mimes:pdf|max:51200',
         ]);
 
         $course = ClassModel::create([
@@ -48,6 +50,28 @@ class TeacherController extends Controller
             'status'      => 'active',
         ]);
 
+        // handle optional course PDF upload and send to RAG ingestion
+        if ($request->hasFile('course_pdf')) {
+            $file = $request->file('course_pdf');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('course_pdfs', $filename, 'public');
+            $docId = (string) \Illuminate\Support\Str::uuid();
+            $course->course_pdf = $path;
+            $course->course_doc_id = $docId;
+            $course->save();
+
+            try {
+                $response = Http::timeout(180)
+                    ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
+                    ->post(config('services.rag.url') . '/process', [
+                        'doc_id' => $docId,
+                        'query'  => 'ingest document',
+                    ]);
+                // ignore failure; students can still upload their own PDF
+            } catch (\Exception $e) {
+                // swallow errors but could log
+            }
+        }
         return redirect()->route('teacher.courses.show', $course->id)
                          ->with('success', 'Cours créé avec succès! Partagez le code avec vos étudiants.');
     }
@@ -75,6 +99,7 @@ class TeacherController extends Controller
             'name'        => 'required|string|max:50',
             'description' => 'nullable|string',
             'status'      => 'required|in:active,archived',
+            'course_pdf'  => 'nullable|file|mimes:pdf|max:51200',
         ]);
 
         $course->update([
@@ -83,6 +108,27 @@ class TeacherController extends Controller
             'status'      => $request->status,
         ]);
 
+        // handle course PDF upload on update
+        if ($request->hasFile('course_pdf')) {
+            $file = $request->file('course_pdf');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $path = $file->storeAs('course_pdfs', $filename, 'public');
+            $docId = (string) \Illuminate\Support\Str::uuid();
+            $course->course_pdf = $path;
+            $course->course_doc_id = $docId;
+            $course->save();
+
+            try {
+                Http::timeout(180)
+                    ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
+                    ->post(config('services.rag.url') . '/process', [
+                        'doc_id' => $docId,
+                        'query'  => 'ingest document',
+                    ]);
+            } catch (\Exception $e) {
+                // ignore
+            }
+        }
         $from = $request->input('from', 'info');
         return redirect(route('teacher.courses.show', $course->id) . '?tab=' . $from)
                          ->with('success', 'Cours mis à jour avec succès!');

@@ -16,6 +16,8 @@ class ClassModel extends Model
         'teacher_id',
         'join_code',
         'status',
+        'course_pdf',
+        'course_doc_id',
     ];
 
     // Automatically generate join code when creating a class

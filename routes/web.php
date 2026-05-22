@@ -11,6 +11,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\FeedController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\PdfSummaryController;
 
 
 Route::put('/tps/{id}/submit', [StudentController::class, 'updateSubmission'])->name('student.tps.update-submission');
@@ -57,8 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/notification-settings', [NotificationController::class, 'settings'])->name('notification-settings');
     Route::post('/notification-settings', [NotificationController::class, 'updateSettings'])->name('notification-settings.update');
 
+    // PDF summarizer (moved under student routes)
+
     // Student routes
     Route::prefix('student')->name('student.')->group(function () {
+        // Student PDF summarizer (POST only — students upload or query by doc_id)
+        Route::post('/summarize/upload', [PdfSummaryController::class, 'upload'])->name('summarize.upload');
         Route::get('/dashboard', [StudentController::class, 'dashboard'])->name('dashboard');
         Route::get('/join-course', [StudentController::class, 'showJoinCourse'])->name('join-course.form');
         Route::post('/join-course', [StudentController::class, 'joinCourse'])->name('join-course');

@@ -154,7 +154,7 @@ select.form-input {
             </div>
         </div>
 
-        <form method="POST" action="{{ route('teacher.courses.update', $course->id) }}">
+        <form method="POST" action="{{ route('teacher.courses.update', $course->id) }}" enctype="multipart/form-data">
             @csrf @method('PUT')
             <input type="hidden" name="from" value="{{ request()->query('from', 'info') }}">
 
@@ -186,6 +186,19 @@ select.form-input {
                         <option value="archived" {{ old('status', $course->status) === 'archived' ? 'selected' : '' }}>Archivé</option>
                     </select>
                     @error('status')
+                        <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="course_pdf">Fichier du cours (PDF) <span style="color:var(--ink-4);font-weight:400;text-transform:none;letter-spacing:0;">(optionnel)</span></label>
+                    <x-file-upload id="course_pdf" name="course_pdf" accept=".pdf" hint="PDF uniquement · max 50 Mo" :required="false" />
+                    @if($course->course_pdf)
+                        <div style="margin-top:6px; font-size:0.9rem; color:var(--ink-3);">
+                            Fichier actuel: <a href="{{ asset('storage/' . $course->course_pdf) }}" target="_blank">Voir le PDF</a>
+                        </div>
+                    @endif
+                    @error('course_pdf')
                         <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div>
                     @enderror
                 </div>

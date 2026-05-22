@@ -175,7 +175,7 @@ textarea.form-input { min-height: 110px; resize: vertical; line-height: 1.6; }
             </div>
         </div>
 
-        <form method="POST" action="{{ route('teacher.courses.store') }}">
+        <form method="POST" action="{{ route('teacher.courses.store') }}" enctype="multipart/form-data">
             @csrf
 
             <div class="form-card-body">
@@ -202,6 +202,14 @@ textarea.form-input { min-height: 110px; resize: vertical; line-height: 1.6; }
                     <textarea class="form-input" id="description" name="description"
                               placeholder="Décrivez brièvement ce cours...">{{ old('description') }}</textarea>
                     @error('description')
+                        <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="course_pdf">Fichier du cours (PDF) <span style="color:var(--ink-4);font-weight:400;text-transform:none;letter-spacing:0;">(optionnel)</span></label>
+                    <x-file-upload id="course_pdf" name="course_pdf" accept=".pdf" hint="PDF uniquement · max 50 Mo" :required="false" />
+                    @error('course_pdf')
                         <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div>
                     @enderror
                 </div>
