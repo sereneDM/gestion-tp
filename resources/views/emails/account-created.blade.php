@@ -116,13 +116,13 @@
 <body>
     <div class="email-container">
         <div class="header">
-            <h1>🎓 Bienvenue sur la Plateforme TP</h1>
+            <h1>🎓 Bienvenue sur la {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</h1>
         </div>
 
         <div class="content">
             <h2>Bonjour {{ $userName }},</h2>
             
-            <p>Un compte a été créé pour vous sur la Plateforme de Gestion des Travaux Pratiques.</p>
+            <p>Un compte a été créé pour vous sur {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}.</p>
 
             <div class="role-badge role-{{ $userRole }}">
                 Rôle: {{ $userRole === 'student' ? 'Étudiant' : 'Enseignant' }}
@@ -170,7 +170,7 @@
 
         <div class="footer">
             <p>Si vous n'êtes pas à l'origine de cette demande, veuillez ignorer cet email.</p>
-            <p>© {{ date('Y') }} Plateforme de Gestion des TP - Tous droits réservés</p>
+            <p>© {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }} - Tous droits réservés</p>
         </div>
     </div>
 </body>

@@ -14,7 +14,8 @@
 
 @section('extra-styles')
 <style>
-    .settings-wrapper { max-width: 820px; }
+    .settings-wrapper { max-width: 820px; margin: 0 auto; text-align: center; }
+    .settings-wrapper .page-title, .settings-wrapper .page-subtitle { margin-left: auto; margin-right: auto; }
 
     .settings-section {
         background: var(--surface);
@@ -197,7 +198,7 @@
                     </div>
                     <input type="text" name="site_name" class="settings-input"
                            value="{{ $settings['general']['site_name']['value'] }}"
-                           placeholder="Plateforme de Gestion des TP">
+                           placeholder="{{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}">
                 </div>
                 <div class="settings-row">
                     <div>

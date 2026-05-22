@@ -55,7 +55,7 @@
             </div>
         </div>
         <div class="footer">
-            <p>© {{ date('Y') }} Plateforme de Gestion des TP</p>
+            <p>© {{ date('Y') }} {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</p>
         </div>
     </div>
 </body>

@@ -59,8 +59,8 @@
 
         .sidebar-brand-name {
             font-size: 12.5px; font-weight: 800; color: var(--ink);
-            letter-spacing: -0.02em; white-space: nowrap;
-            overflow: hidden; text-overflow: ellipsis;
+            letter-spacing: -0.02em; display: inline-block; max-width: 140px;
+            white-space: normal; word-break: break-word;
         }
 
         .sidebar-nav {

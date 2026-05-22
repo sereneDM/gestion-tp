@@ -23,7 +23,7 @@
 <body>
     <div class="container">
         <h2>🔐 Réinitialisation de mot de passe</h2>
-        <p>Vous avez demandé une réinitialisation de votre mot de passe sur la Plateforme TP.</p>
+        <p>Vous avez demandé une réinitialisation de votre mot de passe sur la {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}.</p>
         <p>Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe :</p>
 
         <a href="{{ $resetLink }}" class="btn">Réinitialiser mon mot de passe</a>
@@ -32,7 +32,7 @@
         <p>Si vous n'avez pas demandé cette réinitialisation, ignorez cet email.</p>
 
         <div class="footer">
-            Plateforme de Gestion des TP
+            {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}
         </div>
     </div>
 </body>
