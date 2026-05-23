@@ -25,7 +25,7 @@
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        color: var(--ink-4);
+        color: var(--ink);
         margin-bottom: 12px;
         display: flex;
         align-items: center;
@@ -292,7 +292,7 @@
     }
 
     .empty-state i { font-size: 2.5rem; display: block; margin-bottom: 1rem; opacity: .35; }
-    .empty-state h3 { font-size: 14px; font-weight: 700; color: var(--ink-3); margin-bottom: 6px; }
+    .empty-state h3 { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
     .empty-state p  { font-size: 13px; }
 </style>
 @endsection
