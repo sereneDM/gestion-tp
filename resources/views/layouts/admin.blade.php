@@ -275,7 +275,7 @@
                 <i class="ti ti-users"></i> Gérer les utilisateurs
             </a>
 
-            <div class="nav-section-label">Cours & Classes</div>
+            <div class="nav-section-label">Cours</div>
             <a href="{{ route('admin.classes.index') }}" class="nav-link {{ request()->routeIs('admin.classes.*') ? 'active' : '' }}">
                 <i class="ti ti-books"></i> Tous les cours
             </a>
