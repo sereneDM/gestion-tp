@@ -127,7 +127,6 @@
 @endsection
 
 @section('content')
-    {{ Breadcrumbs::render('student.progress') }}
 
 
     <div class="stats-grid">

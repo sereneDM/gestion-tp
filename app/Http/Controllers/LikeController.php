@@ -4,80 +4,80 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Comment;
-use App\Models\Like;
 use App\Models\Notification;
 use App\Models\NotificationSetting;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class LikeController extends Controller
 {
     public function toggle(Post $post)
     {
-        $userId   = auth()->id();
-        $existing = $post->likes()->where('user_id', $userId)->first();
-
-        if ($existing) {
-            $existing->delete();
-            $liked = false;
-        } else {
-            $post->likes()->create(['user_id' => $userId]);
-            $liked = true;
-
-            // Notify post author (not self)
-            if ($userId !== $post->user_id) {
-                if (NotificationSetting::shouldNotify($post->user_id, $post->class_id, 'like')) {
-                    Notification::createFor(
-                        $post->user_id,
-                        'post_liked', // ← was 'comment_liked', now distinct type
-                        auth()->user()->name . ' a aimé votre publication',
-                        Str::limit($post->title, 80),
-                        route('posts.show', $post->id),
-                        $post->id
-                    );
-                }
-            }
-        }
-
-        return response()->json([
-            'liked' => $liked,
-            'count' => $post->likes()->count(),
-        ]);
+        return $this->handleToggle($post, 'post');
     }
 
     public function toggleComment(Comment $comment)
     {
-        $userId   = auth()->id();
-        $existing = $comment->likes()->where('user_id', $userId)->first();
+        return $this->handleToggle($comment, 'comment');
+    }
+
+    protected function handleToggle($likeable, string $type)
+    {
+        $userId   = Auth::id();
+        $existing = $likeable->likes()->where('user_id', $userId)->first();
 
         if ($existing) {
             $existing->delete();
             $liked = false;
         } else {
-            $comment->likes()->create(['user_id' => $userId]);
+            $likeable->likes()->create(['user_id' => $userId]);
             $liked = true;
-
-            // Notify comment author (not self)
-            if ($userId !== $comment->user_id) {
-                $post   = $comment->post;
-                $anchor = route('posts.show', $post->id) . '#comment-' . $comment->id;
-
-                if (NotificationSetting::shouldNotify($comment->user_id, $post->class_id, 'comment_like')) {
-                    Notification::createFor(
-                        $comment->user_id,
-                        'comment_liked',
-                        auth()->user()->name . ' a aimé votre commentaire',
-                        Str::limit($comment->content, 80),
-                        $anchor,
-                        $comment->id
-                    );
-                }
-            }
+            $this->sendLikeNotification($likeable, $type, $userId);
         }
 
         return response()->json([
             'liked' => $liked,
-            'count' => $comment->likes()->count(),
+            'count' => $likeable->likes()->count(),
         ]);
+    }
+
+    protected function sendLikeNotification($likeable, string $type, int $userId): void
+    {
+        if ($userId === $likeable->user_id) {
+            return;
+        }
+
+        if ($type === 'post') {
+            if (! NotificationSetting::shouldNotify($likeable->user_id, $likeable->class_id, 'like')) {
+                return;
+            }
+
+            Notification::createFor(
+                $likeable->user_id,
+                'post_liked',
+                Auth::user()->name . ' a aimé votre publication',
+                Str::limit($likeable->title ?? '', 80),
+                route('posts.show', $likeable->id),
+                $likeable->id
+            );
+
+            return;
+        }
+
+        $post   = $likeable->post;
+        $anchor = route('posts.show', $post->id) . '#comment-' . $likeable->id;
+
+        if (! NotificationSetting::shouldNotify($likeable->user_id, $post->class_id, 'comment_like')) {
+            return;
+        }
+
+        Notification::createFor(
+            $likeable->user_id,
+            'comment_liked',
+            Auth::user()->name . ' a aimé votre commentaire',
+            Str::limit($likeable->content ?? '', 80),
+            $anchor,
+            $likeable->id
+        );
     }
 }

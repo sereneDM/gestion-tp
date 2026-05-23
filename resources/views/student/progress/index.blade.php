@@ -192,8 +192,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 @section('content')
 <div class="page-wrapper">
 
-    {{ Breadcrumbs::render('student.progress') }}
-
     <h1 class="page-heading">Ma progression</h1>
 
     <div class="stats-grid">

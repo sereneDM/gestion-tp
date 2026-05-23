@@ -48,6 +48,19 @@ margin: 0 auto;
 padding: 0.5rem 0 2rem;
 align-items: start;
 }
+.feed-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.feed-heading {
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+}
 /* ── Sidebar ── */
 .sidebar {
 position: sticky;
@@ -311,6 +324,9 @@ color: var(--ink-4);
 
     {{-- ── MAIN FEED ── --}}
     <div class="feed-main">
+        <div class="feed-topbar">
+            <h1 class="feed-heading">Fil d'actualité</h1>
+        </div>
         <div class="post-list">
             @forelse($posts as $post)
                 <article class="post-card type-{{ $post->type }}"

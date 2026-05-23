@@ -784,11 +784,16 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 const fd = new FormData(resumeForm);
 
                 try {
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 590000);
+
                     const res = await fetch(resumeEndpoint, {
                         method: 'POST',
                         credentials: 'same-origin',
                         body: fd,
+                        signal: controller.signal,
                     });
+                    clearTimeout(timeoutId);
 
                     if (!res.ok) {
                         let jsonErr = {};

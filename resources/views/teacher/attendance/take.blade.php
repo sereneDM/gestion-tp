@@ -45,6 +45,14 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
 .page-wrapper { max-width: 780px; margin: 0 auto; padding: 0.5rem 0 3rem; }
 
+.page-heading {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 1rem;
+}
+
 /* ── Date pill ── */
 .date-pill {
     display: inline-flex; align-items: center; gap: 0.5rem;
@@ -164,6 +172,8 @@ input[type="radio"] { display: none; }
 
 @section('content')
 <div class="page-wrapper">
+
+    <h1 class="page-heading">Prendre les présences — {{ $class->name }}</h1>
 
     <div class="date-pill">
         <i class="ti ti-calendar"></i>

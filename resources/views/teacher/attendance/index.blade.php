@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Gestion de la Présence')
-@section('page-title', 'Gestion de la Présence')
+@section('title', 'Prendre les présences')
+@section('page-title', 'Prendre les présences')
 
 @section('breadcrumbs')
     {{ Breadcrumbs::render('teacher.attendance.index') }}
@@ -40,6 +40,18 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     max-width: 520px;
     margin: 2rem auto;
     padding: 0 0 3rem;
+}
+
+.topbar {
+    margin-bottom: 1.5rem;
+}
+
+.page-heading {
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 0.6rem;
 }
 
 .form-card {
@@ -124,12 +136,14 @@ select.form-input {
 
 @section('content')
 <div class="form-wrapper">
+    <div class="topbar">
+        <h1 class="page-heading">Prendre les présences</h1>
+    </div>
     <div class="form-card">
 
         <div class="form-card-header">
             <div class="form-card-icon"><i class="ti ti-calendar-check"></i></div>
             <div>
-                <div class="form-card-title">Prendre les présences</div>
                 <div class="form-card-subtitle">Sélectionnez un cours et une date</div>
             </div>
         </div>

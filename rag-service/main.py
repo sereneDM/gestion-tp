@@ -10,7 +10,7 @@ model = SentenceTransformer("BAAI/bge-m3")
 client = chromadb.PersistentClient(path="./db")
 collection = client.get_or_create_collection("courses")
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-OLLAMA_MODEL = "qwen2.5:14b"
+OLLAMA_MODEL = "llama3.2:3b"
 
 def extract_text(pdf_bytes: bytes) -> str:
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
@@ -35,21 +35,44 @@ def embed(texts: list[str]) -> list[list[float]]:
     return model.encode(sanitized, batch_size=16).tolist()
 
 async def call_ollama(prompt: str) -> str:
-    async with httpx.AsyncClient(timeout=120) as c:
+    async with httpx.AsyncClient(timeout=600) as c:
         try:
             r = await c.post(OLLAMA_URL,
                 json={"model": OLLAMA_MODEL, "prompt": prompt, "stream": False})
             r.raise_for_status()
             body = r.json()
-            if "response" not in body:
-                raise RuntimeError(f"Ollama reply missing response field: {body}")
-            return body["response"]
-        except httpx.TimeoutException as e:
-            raise RuntimeError(f"Ollama request timed out: {e}") from e
-        except httpx.RequestError as e:
-            raise RuntimeError(f"Ollama request failed: {e}") from e
+            return body.get("response", "")
         except Exception as e:
-            raise RuntimeError(f"Ollama error: {e}") from e
+            raise RuntimeError(f"Ollama error: {e}")
+
+
+def extract_json(raw: str) -> dict:
+    # strip markdown fences
+    cleaned = re.sub(r"```json|```", "", raw).strip()
+
+    # try direct parse first
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        pass
+
+    # try to find JSON object inside the text
+    match = re.search(r'\{.*\}', cleaned, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group())
+        except json.JSONDecodeError:
+            pass
+
+    # return a safe fallback so it never 500s
+    return {
+        "title": "Résumé généré",
+        "overview": cleaned[:500] if cleaned else "Aucun contenu extrait.",
+        "chapters": [],
+        "formulas": [],
+        "key_terms": {},
+        "difficulty": "intermediate"
+    }
 
 SCHEMA = """{"title":"...","overview":"2-3 sentences","chapters":[{"title":"...","key_concepts":["..."],"summary":"..."}],"formulas":["..."],"key_terms":{"term":"definition"},"difficulty":"beginner|intermediate|advanced"}"""
 
@@ -108,8 +131,7 @@ async def process_pdf(
 
     try:
         raw = await call_ollama(build_prompt(relevant))
-        cleaned = re.sub(r"```json|```", "", raw).strip()
-        return json.loads(cleaned)
+        return extract_json(raw)
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=502, content={"error": str(e)})
@@ -138,8 +160,7 @@ async def query_doc(payload: dict):
     relevant = results['documents'][0]
     try:
         raw = await call_ollama(build_prompt(relevant))
-        cleaned = re.sub(r"```json|```", "", raw).strip()
-        return json.loads(cleaned)
+        return extract_json(raw)
     except Exception as e:
         traceback.print_exc()
         return JSONResponse(status_code=502, content={"error": str(e)})

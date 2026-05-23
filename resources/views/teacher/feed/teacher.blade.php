@@ -826,7 +826,7 @@ select.form-input {
     <div class="feed-main">
 
         <div class="feed-topbar">
-            <h1 class="feed-heading">Publications</h1>
+            <h1 class="feed-heading">Fil d'actualité</h1>
             <button type="button" id="open-post-modal" class="btn-new">
                 <i class="ti ti-pencil"></i> Nouvelle publication
             </button>
