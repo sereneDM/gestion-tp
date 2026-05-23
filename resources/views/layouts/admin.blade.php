@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Administration') — {{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -153,7 +153,7 @@
         .tb-btn-secondary:hover { background: var(--surface-3); }
 
         .page-content { padding: 28px 28px 48px; flex: 1; }
-        .page-title    { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.03em; color: var(--ink); margin-bottom: 4px; }
+        .page-title    { font-family: 'DM Serif Display', serif; font-size: 1.65rem; color: var(--ink); letter-spacing: -0.01em; margin-bottom: 12px; }
         .page-subtitle { font-size: 13px; color: var(--ink-4); margin-bottom: 24px; }
 
         /* Card */
