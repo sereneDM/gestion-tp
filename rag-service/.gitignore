@@ -1,0 +1,2 @@
+rag-service/models/*.gguf
+rag-service/db/
