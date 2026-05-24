@@ -1,166 +1,87 @@
-from fastapi import FastAPI, UploadFile, File, Form
-from fastapi.responses import JSONResponse
-import fitz  # PyMuPDF
-import chromadb
-from sentence_transformers import SentenceTransformer
-import httpx, json, re, traceback
+import os
+import sys
+from pypdf import PdfReader
+from llama_cpp import Llama
 
-app = FastAPI()
-model = SentenceTransformer("BAAI/bge-m3")
-client = chromadb.PersistentClient(path="./db")
-collection = client.get_or_create_collection("courses")
-OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
-OLLAMA_MODEL = "llama3.2:3b"
+def extract_text_from_pdf(pdf_path):
+    """Extracts text from all pages of the target PDF file."""
+    if not os.path.exists(pdf_path):
+        raise FileNotFoundError(f"Could not find the PDF at: {pdf_path}")
+        
+    reader = PdfReader(pdf_path)
+    full_text = ""
+    for page in reader.pages:
+        text = page.extract_text()
+        if text:
+            full_text += text + "\n"
+    return full_text
 
-def extract_text(pdf_bytes: bytes) -> str:
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    return "\n".join(page.get_text() for page in doc)
+def generate_resume_from_course(pdf_path, model_path, custom_query=None):
+    # 1. Extract content from your course PDF
+    course_content = extract_text_from_pdf(pdf_path)
+    
+    # Trim content safely to fit inside the context window
+    max_chars = 4000
+    if len(course_content) > max_chars:
+        course_content = course_content[:max_chars]
 
-def chunk_with_overlap(text: str, size=800, overlap=150) -> list[str]:
-    if not text:
-        return []
-    words = text.split()
-    chunks, i = [], 0
-    while i < len(words):
-        chunk = " ".join(words[i:i+size])
-        if chunk.strip():
-            chunks.append(chunk)
-        i += size - overlap
-    return chunks
+    # Adjust the instructions if Laravel passes a specific question/request
+    if custom_query:
+        user_instruction = f"Based on the course material below, answer this request: {custom_query}"
+    else:
+        user_instruction = "Please generate a professional resume section (Summary, Technical Skills, and Projects) based ONLY on the skills and knowledge taught in this course text."
 
-def embed(texts: list[str]) -> list[list[float]]:
-    sanitized = [str(t) if t is not None else "" for t in texts]
-    if not sanitized:
-        return []
-    return model.encode(sanitized, batch_size=16).tolist()
+    # 2. Structure the prompt cleanly for Llama 3.2 Instruct
+    prompt = f"""<|start_header_id|>system<|end_header_id|>
+You are a professional assistant specialized in analyzing course materials and structuring resumes.<|eot_id|><|start_header_id|>user<|end_header_id|>
 
-async def call_ollama(prompt: str) -> str:
-    async with httpx.AsyncClient(timeout=600) as c:
-        try:
-            r = await c.post(OLLAMA_URL,
-                json={"model": OLLAMA_MODEL, "prompt": prompt, "stream": False})
-            r.raise_for_status()
-            body = r.json()
-            return body.get("response", "")
-        except Exception as e:
-            raise RuntimeError(f"Ollama error: {e}")
+Here is the course material:
+---
+{course_content}
+---
 
+{user_instruction}<|eot_id|><|start_header_id|>assistant<|end_header_id|>"""
 
-def extract_json(raw: str) -> dict:
-    # strip markdown fences
-    cleaned = re.sub(r"```json|```", "", raw).strip()
-
-    # try direct parse first
-    try:
-        return json.loads(cleaned)
-    except json.JSONDecodeError:
-        pass
-
-    # try to find JSON object inside the text
-    match = re.search(r'\{.*\}', cleaned, re.DOTALL)
-    if match:
-        try:
-            return json.loads(match.group())
-        except json.JSONDecodeError:
-            pass
-
-    # return a safe fallback so it never 500s
-    return {
-        "title": "Résumé généré",
-        "overview": cleaned[:500] if cleaned else "Aucun contenu extrait.",
-        "chapters": [],
-        "formulas": [],
-        "key_terms": {},
-        "difficulty": "intermediate"
-    }
-
-SCHEMA = """{"title":"...","overview":"2-3 sentences","chapters":[{"title":"...","key_concepts":["..."],"summary":"..."}],"formulas":["..."],"key_terms":{"term":"definition"},"difficulty":"beginner|intermediate|advanced"}"""
-
-def build_prompt(chunks: list[str]) -> str:
-    context = "\n\n---\n\n".join(chunks)
-    return f"""You are an academic summarizer. Respond ONLY with valid JSON matching this schema. No markdown, no explanation.
-
-Schema: {SCHEMA}
-
-Content:
-{context}
-
-JSON:"""
-
-@app.post("/process")
-async def process_pdf(
-    file: UploadFile = File(...),
-    doc_id: str = Form(...),
-    query: str = Form(default="summarize this document")
-):
-    pdf_bytes = await file.read()
-    text = extract_text(pdf_bytes)
-    if not text or not text.strip():
-        return JSONResponse(status_code=422, content={"error": "PDF text extraction failed or document contains no extractable text."})
-
-    chunks = chunk_with_overlap(text)
-    if not chunks:
-        return JSONResponse(status_code=422, content={"error": "Document produced no text chunks for embedding."})
-
-    embeddings = embed(chunks)
-    if not embeddings:
-        return JSONResponse(status_code=422, content={"error": "Embedding generation failed for document chunks."})
-
-    existing = collection.get(where={"doc_id": doc_id})
-    if not existing.get("ids"):
-        collection.add(
-            documents=chunks,
-            embeddings=embeddings,
-            ids=[f"{doc_id}_{i}" for i in range(len(chunks))],
-            metadatas=[{"doc_id": doc_id} for _ in chunks]
-        )
-
-    query_vecs = embed([query])
-    if not query_vecs:
-        return JSONResponse(status_code=422, content={"error": "Query embedding failed."})
-    query_vec = query_vecs[0]
-
-    results = collection.query(
-        query_embeddings=[query_vec],
-        n_results=8,
-        where={"doc_id": doc_id}
+    # 3. Load the local model directly from your hard drive
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file not found at: {model_path}. Please verify the path.")
+        
+    # n_ctx sets the token context window.
+    # Note: If you ever want GPU acceleration later, add: n_gpu_layers=-1
+    llm = Llama(
+        model_path=model_path,
+        n_ctx=2048,
+        verbose=False
     )
-    if not results or not results.get("documents") or not results["documents"][0]:
-        return JSONResponse(status_code=404, content={"error": "No relevant content found for this document."})
-    relevant = results["documents"][0]
 
-    try:
-        raw = await call_ollama(build_prompt(relevant))
-        return extract_json(raw)
-    except Exception as e:
-        traceback.print_exc()
-        return JSONResponse(status_code=502, content={"error": str(e)})
-
-
-@app.post('/query')
-async def query_doc(payload: dict):
-    doc_id = payload.get('doc_id')
-    query = payload.get('query', 'summarize this document')
-    if not doc_id:
-        return JSONResponse(status_code=400, content={"error": "doc_id required"})
-
-    query_vecs = embed([query])
-    if not query_vecs:
-        return JSONResponse(status_code=422, content={"error": "Query embedding failed."})
-    query_vec = query_vecs[0]
-
-    results = collection.query(
-        query_embeddings=[query_vec],
-        n_results=8,
-        where={"doc_id": doc_id}
+    # 4. Generate the response
+    response = llm(
+        prompt,
+        max_tokens=1024,
+        temperature=0.3,
+        stop=["<|eot_id|>"]
     )
-    if not results or not results.get('documents') or not results['documents'][0]:
-        return JSONResponse(status_code=404, content={"error": "No documents found for this doc_id"})
 
-    relevant = results['documents'][0]
+    return response['choices'][0]['text']
+
+if __name__ == "__main__":
+    # Get the exact absolute directory of this main.py file
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    
+    # Dynamically build absolute paths so Laravel can never lose them
+    MODEL_FILE = os.path.join(BASE_DIR, "models", "llama-3.2-3b-instruct-q4_k_m.gguf")
+    COURSE_PDF = os.path.join(BASE_DIR, "test_sample.pdf")
+    
+    # Capture any string sent from Laravel/CLI argument
+    query_argument = sys.argv[1] if len(sys.argv) > 1 else None
+
     try:
-        raw = await call_ollama(build_prompt(relevant))
-        return extract_json(raw)
+        output_text = generate_resume_from_course(COURSE_PDF, MODEL_FILE, custom_query=query_argument)
+        
+        # Print the final result cleanly so Laravel can capture the stream
+        print(output_text.strip())
+        
     except Exception as e:
-        traceback.print_exc()
-        return JSONResponse(status_code=502, content={"error": str(e)})
+        # Crucial for debugging: this will show up in your Laravel logs
+        print(f"Error executing RAG service: {str(e)}", file=sys.stderr)
+        sys.exit(1)
