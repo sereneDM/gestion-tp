@@ -128,6 +128,8 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/statistics', [AdminController::class, 'statistics'])->name('statistics');
     Route::get('/system-logs', [AdminController::class, 'systemLogs'])->name('system-logs');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile');
+    Route::delete('/classes', [ClassController::class, 'bulkDestroy'])->name('classes.bulk-destroy');
+    Route::delete('/users', [AdminController::class, 'bulkDestroy'])->name('users.bulk-destroy');
 });
 
 Route::get('/', function () {

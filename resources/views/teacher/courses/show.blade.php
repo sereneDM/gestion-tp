@@ -582,7 +582,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
                     @csrf
                     <button type="submit" class="btn-regen"
-                            onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')">
+                            onclick="return confirm('Générer un nouveau code? L'ancien ne fonctionnera plus.')">
                         <i class="ti ti-refresh"></i> Nouveau code
                     </button>
                 </form>

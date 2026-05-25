@@ -16,10 +16,10 @@ use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 class ProfileController extends Controller
 {
     public function edit()
-    {
-        $user = Auth::user();
-        return view('profile.edit', compact('user'));
-    }
+{
+    $user = Auth::user();
+    return view('profile.edit', compact('user'));
+}
 
     public function updateInfo(Request $request)
     {

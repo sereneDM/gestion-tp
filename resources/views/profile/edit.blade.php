@@ -1,7 +1,11 @@
-@extends('layouts.app')
+@extends(Auth::user()->isAdmin() ? 'layouts.admin' : 'layouts.app')
 
 @section('title', 'Mon Profil')
 @section('page-title', 'Paramètres du Profil')
+
+@section('breadcrumb')
+    <span class="tb-bc-current">Mon Profil</span>
+@endsection
 
 @section('extra-styles')
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -83,16 +87,18 @@ body{
     box-shadow:var(--shadow);
 }
 
-.card-header{
+.profile-layout .card-header{
     padding:1.3rem 1.5rem;
     border-bottom:1px solid var(--line);
 
-    display:flex;
-    align-items:center;
+    display:flex !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
     gap:0.75rem;
+    background: var(--card) !important;
 }
 
-.card-icon{
+.profile-layout .card-icon{
     width:42px;
     height:42px;
 
@@ -115,13 +121,13 @@ body{
         0 8px 20px rgba(79,70,229,0.2);
 }
 
-.card-title{
+.profile-layout .card-title{
     font-size:0.95rem;
     font-weight:700;
     letter-spacing:-0.02em;
 }
 
-.card-subtitle{
+.profile-layout .card-subtitle{
     margin-top:2px;
     color:var(--muted);
     font-size:0.78rem;
@@ -566,6 +572,11 @@ body{
 @endsection
 
 @section('content')
+
+@if(Auth::user()->isAdmin())
+    <h1 class="page-title">Mon Profil</h1>
+    <p class="page-subtitle">Gérez vos informations personnelles et la sécurité de votre compte.</p>
+@endif
 
 <div class="profile-layout">
 

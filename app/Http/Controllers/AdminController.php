@@ -279,4 +279,21 @@ class AdminController extends Controller
 
         return view('admin.system-logs', compact('activities'));
     }
+    public function bulkDestroy(Request $request)
+{
+    $ids = $request->input('ids', []);
+
+    if (empty($ids)) {
+        return redirect()->route('admin.users.index')
+                         ->with('error', 'Aucun utilisateur sélectionné.');
+    }
+
+    // Prevent deleting yourself
+    $ids = array_filter($ids, fn($id) => $id != Auth::id());
+
+    User::whereIn('id', $ids)->delete();
+
+    return redirect()->route('admin.users.index')
+                     ->with('success', count($ids) . ' utilisateur(s) supprimé(s) avec succès!');
+}
 }

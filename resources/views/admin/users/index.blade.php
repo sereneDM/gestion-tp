@@ -119,6 +119,73 @@
     }
 
     .result-line strong { color: var(--ink-2); font-weight: 700; }
+
+    /* ── Checkbox column ── */
+    .cb-cell {
+        width: 36px;
+        padding-left: 16px !important;
+        padding-right: 4px !important;
+    }
+
+    .row-checkbox,
+    .select-all-cb {
+        width: 15px;
+        height: 15px;
+        accent-color: var(--accent);
+        cursor: pointer;
+    }
+
+    /* ── Bulk action bar ── */
+    .bulk-bar {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        background: var(--accent-bg);
+        border: 1px solid rgba(61,90,254,.2);
+        border-radius: var(--radius-md);
+        padding: 9px 14px;
+        margin-bottom: 14px;
+        font-size: 12.5px;
+        color: var(--accent);
+        font-weight: 600;
+        animation: slideDown .15s ease;
+    }
+
+    .bulk-bar.visible { display: flex; }
+
+    @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .bulk-bar-count { flex: 1; }
+
+    .btn-bulk-delete {
+        display: inline-flex; align-items: center; gap: 5px;
+        padding: 6px 14px;
+        border-radius: var(--radius-sm);
+        border: none;
+        background: var(--danger);
+        color: white;
+        font-size: 12px; font-weight: 700;
+        font-family: inherit; cursor: pointer;
+        transition: background .15s;
+    }
+    .btn-bulk-delete:hover { background: #c62828; }
+    .btn-bulk-delete i { font-size: 14px; }
+
+    .btn-bulk-cancel {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 6px 10px;
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(61,90,254,.2);
+        background: transparent;
+        color: var(--accent);
+        font-size: 12px; font-weight: 600;
+        font-family: inherit; cursor: pointer;
+        transition: background .15s;
+    }
+    .btn-bulk-cancel:hover { background: rgba(61,90,254,.08); }
 </style>
 @endsection
 
@@ -185,11 +252,30 @@
     </div>
 </form>
 
+{{-- Bulk action bar --}}
+<div class="bulk-bar" id="bulk-bar">
+    <span class="bulk-bar-count" id="bulk-count-label">0 sélectionné(s)</span>
+    <form method="POST" action="{{ route('admin.users.bulk-destroy') }}" id="bulk-delete-form" style="display:contents;">
+        @csrf
+        @method('DELETE')
+        <div id="bulk-ids-container"></div>
+        <button type="submit" class="btn-bulk-delete" id="btn-bulk-delete">
+            <i class="ti ti-trash"></i> Supprimer la sélection
+        </button>
+    </form>
+    <button type="button" class="btn-bulk-cancel" onclick="clearSelection()">
+        <i class="ti ti-x" style="font-size:12px;"></i> Annuler
+    </button>
+</div>
+
 <div class="card" style="overflow: hidden;">
     <div style="overflow-x: auto;">
         <table class="admin-table">
             <thead>
                 <tr>
+                    <th class="cb-cell">
+                        <input type="checkbox" class="select-all-cb" id="select-all" title="Tout sélectionner">
+                    </th>
                     <th>Utilisateur</th>
                     <th>Rôle actuel</th>
                     <th>Changer le rôle</th>
@@ -197,9 +283,17 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="users-tbody">
                 @forelse($users as $user)
-                    <tr>
+                    <tr data-user-id="{{ $user->id }}">
+                        <td class="cb-cell">
+                            @if(Auth::id() !== $user->id)
+                                <input type="checkbox"
+                                       class="row-checkbox"
+                                       value="{{ $user->id }}"
+                                       title="Sélectionner {{ $user->name }}">
+                            @endif
+                        </td>
                         <td>
                             <div style="display:flex; align-items:center; gap:10px;">
                                 <div style="width:32px; height:32px; border-radius:50%; background:var(--accent-bg); display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--accent); flex-shrink:0;">
@@ -253,7 +347,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" style="text-align:center; padding:4rem; color:var(--ink-4);">
+                        <td colspan="6" style="text-align:center; padding:4rem; color:var(--ink-4);">
                             <i class="ti ti-users" style="font-size:2rem; display:block; margin-bottom:.75rem; opacity:.4;"></i>
                             Aucun utilisateur trouvé
                             @if(request()->hasAny(['search', 'role']))
@@ -268,7 +362,7 @@
 </div>
 
 <script>
-    // Debounce search: waits 400ms after the user stops typing before submitting
+    // ── Filter: debounce search + sort auto-submit ──
     const searchInput = document.getElementById('search-input');
     const sortSelect  = document.getElementById('sort-select');
     let debounceTimer;
@@ -280,9 +374,73 @@
         }, 400);
     });
 
-    // Sort auto-submits immediately on change (single deliberate action, not typing)
     sortSelect.addEventListener('change', () => {
         document.getElementById('filter-form').submit();
+    });
+
+    // ── Multi-select logic ──
+    const selectAll   = document.getElementById('select-all');
+    const bulkBar     = document.getElementById('bulk-bar');
+    const countLabel  = document.getElementById('bulk-count-label');
+    const idsContainer = document.getElementById('bulk-ids-container');
+    const bulkDeleteForm = document.getElementById('bulk-delete-form');
+
+    function getChecked() {
+        return [...document.querySelectorAll('.row-checkbox:checked')];
+    }
+
+    function updateBulkBar() {
+        const checked = getChecked();
+        if (checked.length > 0) {
+            bulkBar.classList.add('visible');
+            countLabel.textContent = checked.length + ' utilisateur(s) sélectionné(s)';
+
+            // Rebuild hidden inputs
+            idsContainer.innerHTML = '';
+            checked.forEach(cb => {
+                const inp = document.createElement('input');
+                inp.type  = 'hidden';
+                inp.name  = 'ids[]';
+                inp.value = cb.value;
+                idsContainer.appendChild(inp);
+            });
+        } else {
+            bulkBar.classList.remove('visible');
+            idsContainer.innerHTML = '';
+        }
+
+        // Update select-all state
+        const allCbs = [...document.querySelectorAll('.row-checkbox')];
+        selectAll.indeterminate = checked.length > 0 && checked.length < allCbs.length;
+        selectAll.checked       = allCbs.length > 0 && checked.length === allCbs.length;
+    }
+
+    selectAll.addEventListener('change', () => {
+        document.querySelectorAll('.row-checkbox').forEach(cb => {
+            cb.checked = selectAll.checked;
+        });
+        updateBulkBar();
+    });
+
+    document.getElementById('users-tbody').addEventListener('change', e => {
+        if (e.target.classList.contains('row-checkbox')) updateBulkBar();
+    });
+
+    function clearSelection() {
+        document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = false);
+        selectAll.checked = false;
+        selectAll.indeterminate = false;
+        updateBulkBar();
+    }
+
+    // Confirm before bulk delete
+    bulkDeleteForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const count = getChecked().length;
+        customConfirm(
+            `Supprimer ${count} utilisateur(s) ? Cette action est irréversible.`,
+            '<i class="ti ti-trash" style="color:#e53935"></i>'
+        ).then(ok => { if (ok) this.submit(); });
     });
 </script>
 @endsection

@@ -49,12 +49,11 @@ class ClassController extends Controller
         ]);
 
         $class = ClassModel::create([
-            'name' => $validated['name'],
-            'description' => $validated['description'],
-            'teacher_id' => $validated['teacher_id'],
-            'status' => 'active',
-            'join_code' => strtoupper(bin2hex(random_bytes(3))), // Generate random code
-        ]);
+    'name' => $validated['name'],
+    'description' => $validated['description'],
+    'teacher_id' => $validated['teacher_id'],
+    'status' => 'active',
+]);
 
         if (isset($validated['students'])) {
             $class->students()->attach($validated['students']);
@@ -109,4 +108,18 @@ class ClassController extends Controller
         return redirect()->route('admin.classes.index')
                          ->with('success', 'Classe supprimée avec succès!');
     }
+    public function bulkDestroy(Request $request)
+{
+    $ids = $request->input('ids', []);
+
+    if (empty($ids)) {
+        return redirect()->route('admin.classes.index')
+                         ->with('error', 'Aucun cours sélectionné.');
+    }
+
+    ClassModel::whereIn('id', $ids)->delete();
+
+    return redirect()->route('admin.classes.index')
+                     ->with('success', count($ids) . ' cours supprimé(s) avec succès!');
+}
 }
