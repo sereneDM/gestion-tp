@@ -175,6 +175,18 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     border-radius: 100px;
     font-size: 0.72rem; font-weight: 600;
 }
+.teacher-email-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--ink-3);
+    text-decoration: none;
+    transition: color 0.15s;
+}
+.teacher-email-link i { font-size: 13px; }
+.teacher-email-link:hover { color: var(--accent); }
 
 /* ── Stat tiles ── */
 .stat-grid {
@@ -213,6 +225,41 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     color: var(--ink-4); margin-bottom: 0.6rem;
 }
 .description-card p { font-size: 0.9rem; color: var(--ink-2); line-height: 1.7; }
+
+/* ── Course PDF ── */
+.pdf-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 1.25rem;
+}
+.pdf-card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem;
+}
+.pdf-card-label {
+    font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--ink-4);
+    display: flex; align-items: center; gap: 0.4rem;
+}
+.pdf-card-label i { font-size: 14px; }
+.pdf-download-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2); border: 1px solid var(--line);
+    color: var(--ink-2); font-size: 0.78rem; font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+}
+.pdf-download-btn i { font-size: 13px; }
+.pdf-download-btn:hover { background: var(--surface-3); border-color: var(--line-2); }
 
 /* ── Join code — slim inline strip ── */
 .join-code-box {
@@ -459,24 +506,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 }
 .empty-state h3 { color: var(--ink-2); font-size: 1rem; font-weight: 600; margin-bottom: 0.4rem; }
 .empty-state p  { font-size: 0.875rem; max-width: 280px; margin: 0 auto; }
-.teacher-email-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin-top: 0.5rem;
-    font-size: 0.82rem;
-    color: var(--ink-3);
-    text-decoration: none;
-    transition: color 0.15s;
-}
-
-.teacher-email-link i {
-    font-size: 13px;
-}
-
-.teacher-email-link:hover {
-    color: var(--accent);
-}
 </style>
 @endsection
 
@@ -535,13 +564,12 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 <div class="teacher-label">Enseignant responsable</div>
                 <div class="teacher-name">{{ auth()->user()->name }}</div>
                 <div class="teacher-role-badge">
-    <i class="ti ti-school"></i> Enseignant
-</div>
-
-<a href="mailto:{{ auth()->user()->email }}" class="teacher-email-link">
-    <i class="ti ti-mail"></i>
-    {{ auth()->user()->email }}
-</a>
+                    <i class="ti ti-school"></i> Enseignant
+                </div>
+                <a href="mailto:{{ auth()->user()->email }}" class="teacher-email-link">
+                    <i class="ti ti-mail"></i>
+                    {{ auth()->user()->email }}
+                </a>
             </div>
         </div>
 
@@ -569,6 +597,27 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             </div>
         @endif
 
+        {{-- Course PDF --}}
+        @if($course->course_pdf)
+            <div class="pdf-card">
+                <div class="pdf-card-header">
+                    <div class="pdf-card-label">
+                        <i class="ti ti-file-type-pdf"></i> Fichier du cours
+                    </div>
+                    <a href="{{ asset('storage/' . $course->course_pdf) }}"
+                       download
+                       class="pdf-download-btn">
+                        <i class="ti ti-download"></i> Télécharger
+                    </a>
+                </div>
+                <iframe
+                    src="{{ asset('storage/' . $course->course_pdf) }}"
+                    style="width:100%; height:600px; border:none; display:block;"
+                    title="Aperçu PDF du cours">
+                </iframe>
+            </div>
+        @endif
+
         {{-- Join code — slim inline strip at bottom --}}
         <div class="join-code-box">
             <div class="join-code-left">
@@ -582,7 +631,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 <form method="POST" action="{{ route('teacher.courses.regenerate-code', $course->id) }}">
                     @csrf
                     <button type="submit" class="btn-regen"
-                            onclick="return confirm('Générer un nouveau code? L'ancien ne fonctionnera plus.')">
+                            onclick="return confirm('Générer un nouveau code? L\'ancien ne fonctionnera plus.')">
                         <i class="ti ti-refresh"></i> Nouveau code
                     </button>
                 </form>

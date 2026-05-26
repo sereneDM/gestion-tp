@@ -100,6 +100,7 @@ class StudentController extends Controller
                 }
             ])
             ->withCount('tps')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         return view('student.courses.index', compact('courses'));
