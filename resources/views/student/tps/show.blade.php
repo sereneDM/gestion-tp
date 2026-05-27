@@ -352,16 +352,8 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     }
     _cwTick(); setInterval(_cwTick, 1000);
 
-    function showEditFileName(input) {
-        const box  = document.getElementById('edit-file-selected');
-        const span = box.querySelector('span');
-        if (input.files && input.files[0]) {
-            span.textContent = input.files[0].name;
-            box.style.display = 'flex';
-        } else {
-            box.style.display = 'none';
-        }
-    }
+</script>
+    // ...existing code...
 </script>
 @endif
 
@@ -530,6 +522,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
 </div>
 <script>
+// PDF toggle function (always available)
 function toggleTpPdf(btn) {
     const viewer  = document.getElementById(btn.dataset.target);
     const span    = btn.querySelector('span');
@@ -538,6 +531,18 @@ function toggleTpPdf(btn) {
     viewer.style.display = open ? 'none' : 'block';
     icon.className  = open ? 'ti ti-eye' : 'ti ti-eye-off';
     span.textContent = open ? 'Afficher' : 'Masquer';
+}
+
+// File name display for edit form (always available)
+function showEditFileName(input) {
+    const box  = document.getElementById('edit-file-selected');
+    const span = box.querySelector('span');
+    if (input.files && input.files[0]) {
+        span.textContent = input.files[0].name;
+        box.style.display = 'flex';
+    } else {
+        box.style.display = 'none';
+    }
 }
 </script>
 @endsection
