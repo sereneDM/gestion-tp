@@ -36,7 +36,7 @@ return [
     ],
 
     'rag' => [
-        'url' => env('RAG_SERVICE_URL', 'http://localhost:8001'),
-    ],
+    'url' => env('RAG_URL', 'http://127.0.0.1:8001'),
+],
 
 ];

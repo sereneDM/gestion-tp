@@ -4,17 +4,24 @@ from pypdf import PdfReader
 from llama_cpp import Llama
 
 def extract_text_from_pdf(pdf_path):
-    """Extracts text from all pages of the target PDF file."""
+    """Extracts text from all pages of the target PDF file, or reads it as plain text if it is a text file."""
     if not os.path.exists(pdf_path):
-        raise FileNotFoundError(f"Could not find the PDF at: {pdf_path}")
+        raise FileNotFoundError(f"Could not find the file at: {pdf_path}")
         
-    reader = PdfReader(pdf_path)
-    full_text = ""
-    for page in reader.pages:
-        text = page.extract_text()
-        if text:
-            full_text += text + "\n"
-    return full_text
+    with open(pdf_path, 'rb') as f:
+        header = f.read(4)
+        
+    if header == b'%PDF':
+        reader = PdfReader(pdf_path)
+        full_text = ""
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                full_text += text + "\n"
+        return full_text
+    else:
+        with open(pdf_path, 'r', encoding='utf-8', errors='ignore') as f:
+            return f.read()
 
 def generate_resume_from_course(pdf_path, model_path, custom_query=None):
     # 1. Extract content from your course PDF
@@ -25,15 +32,40 @@ def generate_resume_from_course(pdf_path, model_path, custom_query=None):
     if len(course_content) > max_chars:
         course_content = course_content[:max_chars]
 
-    # Adjust the instructions if Laravel passes a specific question/request
+    # Enforce JSON output format matching the frontend structure
+    json_schema_instruction = (
+        "You MUST respond with a valid JSON object ONLY. Do NOT wrap your response in markdown code blocks "
+        "(such as ```json or ```). Do NOT include any conversational intro/outro text. The response must be "
+        "a valid JSON parseable string.\n\n"
+        "The JSON object MUST strictly follow this schema:\n"
+        "{\n"
+        "  \"title\": \"Course Title / Topic Title\",\n"
+        "  \"overview\": \"An elegant overview or summary explaining the content or answering the query\",\n"
+        "  \"difficulty\": \"Beginner, Intermediate, or Advanced\",\n"
+        "  \"chapters\": [\n"
+        "    {\n"
+        "      \"title\": \"Chapter or Topic Name\",\n"
+        "      \"summary\": \"Key summary of this chapter or topic\",\n"
+        "      \"key_concepts\": [\"concept 1\", \"concept 2\"]\n"
+        "    }\n"
+        "  ],\n"
+        "  \"key_terms\": {\n"
+        "    \"Term\": \"Definition/explanation\"\n"
+        "  },\n"
+        "  \"formulas\": [\n"
+        "    \"Formula, code snippet, or key expression\"\n"
+        "  ]\n"
+        "}"
+    )
+
     if custom_query:
-        user_instruction = f"Based on the course material below, answer this request: {custom_query}"
+        user_instruction = f"Based on the course material below, answer this request: {custom_query}\n\n{json_schema_instruction}"
     else:
-        user_instruction = "Please generate a professional resume section (Summary, Technical Skills, and Projects) based ONLY on the skills and knowledge taught in this course text."
+        user_instruction = f"Please generate a comprehensive course summary based on the course text.\n\n{json_schema_instruction}"
 
     # 2. Structure the prompt cleanly for Llama 3.2 Instruct
     prompt = f"""<|start_header_id|>system<|end_header_id|>
-You are a professional assistant specialized in analyzing course materials and structuring resumes.<|eot_id|><|start_header_id|>user<|end_header_id|>
+You are a professional assistant specialized in analyzing course materials and structuring course summaries as JSON.<|eot_id|><|start_header_id|>user<|end_header_id|>
 
 Here is the course material:
 ---
@@ -50,7 +82,7 @@ Here is the course material:
     # Note: If you ever want GPU acceleration later, add: n_gpu_layers=-1
     llm = Llama(
         model_path=model_path,
-        n_ctx=2048,
+        n_ctx=4096,
         verbose=False
     )
 

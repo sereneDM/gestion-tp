@@ -63,7 +63,7 @@ class TeacherController extends Controller
             try {
                 $response = Http::timeout(180)
                     ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
-                    ->post(config('services.rag.url') . '/process', [
+                    ->post(config('services.rag.url') . '/ingest', [
                         'doc_id' => $docId,
                         'query'  => 'ingest document',
                     ]);
@@ -121,7 +121,7 @@ class TeacherController extends Controller
             try {
                 Http::timeout(180)
                     ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
-                    ->post(config('services.rag.url') . '/process', [
+                    ->post(config('services.rag.url') . '/ingest', [
                         'doc_id' => $docId,
                         'query'  => 'ingest document',
                     ]);

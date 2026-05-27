@@ -32,12 +32,37 @@ class PdfSummaryController extends Controller
                     'query'  => $query,
                 ]);
 
+            if ($response->status() === 404) {
+                // Try to find the course with this doc_id to auto-ingest
+                $course = \App\Models\ClassModel::where('course_doc_id', $docId)->first();
+                if ($course && $course->course_pdf && \Illuminate\Support\Facades\Storage::disk('public')->exists($course->course_pdf)) {
+                    $fileContent = \Illuminate\Support\Facades\Storage::disk('public')->get($course->course_pdf);
+                    $fileName = basename($course->course_pdf);
+
+                    // Re-ingest the PDF and run the query in one shot via /process
+                    $response = Http::timeout(600)
+                        ->attach('file', $fileContent, $fileName)
+                        ->post(config('services.rag.url') . '/process', [
+                            'doc_id' => $docId,
+                            'query'  => $query,
+                        ]);
+                }
+            }
+
             if ($response->failed()) {
                 $errorMessage = $response->json('error') ?? $response->body() ?? 'Processing failed. Is the RAG service running?';
                 return response()->json(['error' => $errorMessage], 502);
             }
 
-            return response()->json($response->json());
+            $responseData = $response->json();
+            if (isset($responseData['result'])) {
+                $decoded = json_decode($responseData['result'], true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    return response()->json(array_merge($responseData, $decoded));
+                }
+            }
+
+            return response()->json($responseData);
         }
 
         // Otherwise expect a PDF upload from student
@@ -60,6 +85,14 @@ class PdfSummaryController extends Controller
             return response()->json(['error' => $errorMessage], 502);
         }
 
-        return response()->json($response->json());
+        $responseData = $response->json();
+        if (isset($responseData['result'])) {
+            $decoded = json_decode($responseData['result'], true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                return response()->json(array_merge($responseData, $decoded));
+            }
+        }
+
+        return response()->json($responseData);
     }
 }
