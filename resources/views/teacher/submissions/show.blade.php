@@ -217,17 +217,30 @@ textarea.form-input { min-height: 120px; resize: vertical; line-height: 1.6; }
             @endif
 
             @if($submission->attachments)
-                <div class="info-row">
-                    <div class="info-label">Fichier soumis</div>
-                    <div class="info-value" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start;">
-                        @foreach((array)$submission->attachments as $attachment)
-                            <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
-                                <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
-                            </a>
-                        @endforeach
-                    </div>
+    <div class="info-row">
+        <div class="info-label">Fichier soumis</div>
+        <div class="info-value" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start;">
+            @foreach((array)$submission->attachments as $attachment)
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                    <button type="button" class="attachment-btn" onclick="toggleSubmissionPdf(this)"
+                            data-target="sub-pdf-{{ $loop->index }}">
+                        <i class="ti ti-eye"></i>
+                        <span>Afficher</span>
+                    </button>
+                    <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
+                        <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
+                    </a>
                 </div>
-            @endif
+                <div id="sub-pdf-{{ $loop->index }}"
+                     style="display:none; width:100%; margin-top:0.5rem; border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;">
+                    <iframe src="{{ asset('storage/' . $attachment) }}"
+                            style="width:100%; height:600px; border:none; display:block;"
+                            title="Aperçu PDF"></iframe>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
 
             <div class="info-row" style="border-bottom:none; display:block;">
                 <div class="info-label" style="margin-bottom: 0.75rem;">Contenu de la soumission :</div>
@@ -286,4 +299,15 @@ textarea.form-input { min-height: 120px; resize: vertical; line-height: 1.6; }
     </div>
 
 </div>
+<script>
+function toggleSubmissionPdf(btn) {
+    const viewer = document.getElementById(btn.dataset.target);
+    const span   = btn.querySelector('span');
+    const icon   = btn.querySelector('i');
+    const open   = viewer.style.display === 'block';
+    viewer.style.display = open ? 'none' : 'block';
+    icon.className   = open ? 'ti ti-eye' : 'ti ti-eye-off';
+    span.textContent = open ? 'Afficher' : 'Masquer';
+}
+</script>
 @endsection

@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', Str::limit($tp->title, 50))
@@ -100,6 +101,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     color: var(--ink-2); font-size: 0.85rem; font-weight: 600;
     text-decoration: none;
     transition: background 0.15s, border-color 0.15s;
+    cursor: pointer;
 }
 .attachment-btn i { font-size: 16px; color: var(--accent); }
 .attachment-btn:hover { background: var(--surface-3); border-color: var(--line-2); }
@@ -209,7 +211,9 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             <div class="info-row">
                 <div class="info-label">Enseignant</div>
                 <div class="info-value">
-                    <span style="display:inline-flex;align-items:center;gap:0.4rem;background:var(--surface-2);padding:0.2rem 0.6rem;border-radius:100px;font-size:0.85rem;border:1px solid var(--line);"><i class="ti ti-user" style="color:var(--ink-4);"></i> {{ $tp->teacher->name }}</span>
+                    <span style="display:inline-flex;align-items:center;gap:0.4rem;background:var(--surface-2);padding:0.2rem 0.6rem;border-radius:100px;font-size:0.85rem;border:1px solid var(--line);">
+                        <i class="ti ti-user" style="color:var(--ink-4);"></i> {{ $tp->teacher->name }}
+                    </span>
                 </div>
             </div>
             <div class="info-row">
@@ -229,25 +233,41 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                             {{ $tp->due_date->format('d/m/Y à H:i') }}
                         </span>
                         @if(now()->gt($tp->due_date))
-                            <span style="color: var(--danger); font-weight: 600; margin-left:0.5rem; background:var(--danger-bg); padding:0.1rem 0.5rem; border-radius:100px; font-size:0.75rem;">Échéance dépassée</span>
+                            <span style="color:var(--danger);font-weight:600;margin-left:0.5rem;background:var(--danger-bg);padding:0.1rem 0.5rem;border-radius:100px;font-size:0.75rem;">Échéance dépassée</span>
                         @endif
                     @else
                         <span style="color:var(--ink-4);font-style:italic;">Pas d'échéance définie</span>
                     @endif
                 </div>
             </div>
+
+            {{-- Énoncé PDF — top info card (always visible) --}}
             @if($tp->attachments)
                 <div class="info-row">
                     <div class="info-label">Énoncé PDF</div>
-                    <div class="info-value" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start;">
+                    <div class="info-value" style="display:flex; flex-direction:column; gap:0.5rem; align-items:flex-start;">
                         @foreach((array)$tp->attachments as $attachment)
-                            <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
-                                <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
-                            </a>
+                            <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                                <button type="button" class="attachment-btn" onclick="toggleTpPdf(this)"
+                                        data-target="tp-pdf-top-{{ $loop->index }}">
+                                    <i class="ti ti-eye"></i>
+                                    <span>Afficher</span>
+                                </button>
+                                <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
+                                    <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
+                                </a>
+                            </div>
+                            <div id="tp-pdf-top-{{ $loop->index }}"
+                                 style="display:none; width:100%; margin-top:0.5rem; border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;">
+                                <iframe src="{{ asset('storage/' . $attachment) }}"
+                                        style="width:100%; height:600px; border:none; display:block;"
+                                        title="Aperçu PDF"></iframe>
+                            </div>
                         @endforeach
                     </div>
                 </div>
             @endif
+
         </div>
     </div>
 
@@ -418,14 +438,28 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                     </div>
                 @endif
 
-                @if($submission->attachments)
+                {{-- Énoncé PDF — inside submission card (unique tp-pdf-sub- prefix) --}}
+                @if($tp->attachments)
                     <div class="info-row">
-                        <div class="info-label">Fichier(s) soumis</div>
-                        <div class="info-value" style="display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start;">
-                            @foreach((array)$submission->attachments as $attachment)
-                                <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
-                                    <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
-                                </a>
+                        <div class="info-label">Énoncé PDF</div>
+                        <div class="info-value" style="display:flex; flex-direction:column; gap:0.5rem; align-items:flex-start;">
+                            @foreach((array)$tp->attachments as $attachment)
+                                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                                    <button type="button" class="attachment-btn" onclick="toggleTpPdf(this)"
+                                            data-target="tp-pdf-sub-{{ $loop->index }}">
+                                        <i class="ti ti-eye"></i>
+                                        <span>Afficher</span>
+                                    </button>
+                                    <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
+                                        <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
+                                    </a>
+                                </div>
+                                <div id="tp-pdf-sub-{{ $loop->index }}"
+                                     style="display:none; width:100%; margin-top:0.5rem; border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;">
+                                    <iframe src="{{ asset('storage/' . $attachment) }}"
+                                            style="width:100%; height:600px; border:none; display:block;"
+                                            title="Aperçu PDF"></iframe>
+                                </div>
                             @endforeach
                         </div>
                     </div>
@@ -495,4 +529,15 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     @endif
 
 </div>
+<script>
+function toggleTpPdf(btn) {
+    const viewer  = document.getElementById(btn.dataset.target);
+    const span    = btn.querySelector('span');
+    const icon    = btn.querySelector('i');
+    const open    = viewer.style.display === 'block';
+    viewer.style.display = open ? 'none' : 'block';
+    icon.className  = open ? 'ti ti-eye' : 'ti ti-eye-off';
+    span.textContent = open ? 'Afficher' : 'Masquer';
+}
+</script>
 @endsection

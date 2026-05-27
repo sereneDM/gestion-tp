@@ -598,25 +598,33 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
         @endif
 
         {{-- Course PDF --}}
-        @if($course->course_pdf)
-            <div class="pdf-card">
-                <div class="pdf-card-header">
-                    <div class="pdf-card-label">
-                        <i class="ti ti-file-type-pdf"></i> Fichier du cours
-                    </div>
-                    <a href="{{ asset('storage/' . $course->course_pdf) }}"
-                       download
-                       class="pdf-download-btn">
-                        <i class="ti ti-download"></i> Télécharger
-                    </a>
-                </div>
-                <iframe
-                    src="{{ asset('storage/' . $course->course_pdf) }}"
-                    style="width:100%; height:600px; border:none; display:block;"
-                    title="Aperçu PDF du cours">
-                </iframe>
+@if($course->course_pdf)
+    <div class="pdf-card">
+        <div class="pdf-card-header">
+            <div class="pdf-card-label">
+                <i class="ti ti-file-type-pdf"></i> Fichier du cours
             </div>
-        @endif
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <button type="button" class="pdf-download-btn" id="pdf-toggle-btn" onclick="togglePdf()">
+                    <i class="ti ti-eye" id="pdf-toggle-icon"></i>
+                    <span id="pdf-toggle-label">Afficher</span>
+                </button>
+                <a href="{{ asset('storage/' . $course->course_pdf) }}"
+                   download
+                   class="pdf-download-btn">
+                    <i class="ti ti-download"></i> Télécharger
+                </a>
+            </div>
+        </div>
+        <div id="pdf-viewer" style="display:none; border-top:1px solid var(--line);">
+            <iframe
+                src="{{ asset('storage/' . $course->course_pdf) }}"
+                style="width:100%; height:600px; border:none; display:block;"
+                title="Aperçu PDF du cours">
+            </iframe>
+        </div>
+    </div>
+@endif
 
         {{-- Join code — slim inline strip at bottom --}}
         <div class="join-code-box">
@@ -822,6 +830,15 @@ if (tabParam && validTabs.includes(tabParam)) {
     document.querySelectorAll('.tab').forEach(tab => {
         if (tab.getAttribute('onclick')?.includes("'" + tabParam + "'")) tab.classList.add('active');
     });
+}
+function togglePdf() {
+    const viewer = document.getElementById('pdf-viewer');
+    const icon   = document.getElementById('pdf-toggle-icon');
+    const label  = document.getElementById('pdf-toggle-label');
+    const open   = viewer.style.display === 'block';
+    viewer.style.display = open ? 'none' : 'block';
+    icon.className  = open ? 'ti ti-eye' : 'ti ti-eye-off';
+    label.textContent = open ? 'Afficher' : 'Masquer';
 }
 </script>
 @endsection

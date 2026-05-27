@@ -19,7 +19,7 @@ class TP extends Model
     ];
 
     protected $casts = [
-        'attachments' => 'array',
+
         'due_date' => 'datetime',
     ];
 

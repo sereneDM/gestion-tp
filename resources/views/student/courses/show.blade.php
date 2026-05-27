@@ -571,6 +571,35 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             </div>
         @endif
 
+        {{-- Course PDF --}}
+@if($course->course_pdf)
+    <div class="course-desc-card" style="padding:0; overflow:hidden;">
+        <div style="padding:1rem 1.5rem; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; gap:1rem;">
+            <div class="course-desc-title" style="margin:0; display:flex; align-items:center; gap:0.4rem;">
+                <i class="ti ti-file-type-pdf"></i> Fichier du cours
+            </div>
+            <div style="display:flex; align-items:center; gap:0.5rem;">
+                <button type="button" class="btn-copy" id="pdf-toggle-btn" onclick="togglePdf()">
+                    <i class="ti ti-eye" id="pdf-toggle-icon"></i>
+                    <span id="pdf-toggle-label">Afficher</span>
+                </button>
+                <a href="{{ asset('storage/' . $course->course_pdf) }}"
+                   download
+                   class="btn-copy">
+                    <i class="ti ti-download"></i> Télécharger
+                </a>
+            </div>
+        </div>
+        <div id="pdf-viewer" style="display:none;">
+            <iframe
+                src="{{ asset('storage/' . $course->course_pdf) }}"
+                style="width:100%; height:600px; border:none; display:block;"
+                title="Aperçu PDF du cours">
+            </iframe>
+        </div>
+    </div>
+@endif
+
         {{-- Join code — bottom, inline layout --}}
         <div class="join-code-box">
             <div class="join-code-left">
@@ -954,5 +983,14 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             setTimeout(() => btn.innerHTML = original, 2000);
         });
     }
+    function togglePdf() {
+    const viewer = document.getElementById('pdf-viewer');
+    const icon   = document.getElementById('pdf-toggle-icon');
+    const label  = document.getElementById('pdf-toggle-label');
+    const open   = viewer.style.display === 'block';
+    viewer.style.display = open ? 'none' : 'block';
+    icon.className  = open ? 'ti ti-eye' : 'ti ti-eye-off';
+    label.textContent = open ? 'Afficher' : 'Masquer';
+}
 </script>
 @endsection

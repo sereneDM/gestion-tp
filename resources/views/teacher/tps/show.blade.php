@@ -241,17 +241,30 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 </div>
             </div>
             @if($tp->attachments)
-                <div class="info-row">
-                    <div class="info-label">Fichier joint</div>
-                    <div class="info-value" style="display:flex; flex-direction:column; gap:0.5rem; align-items:flex-start;">
-                        @foreach((array)$tp->attachments as $attachment)
-                            <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
-                                <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
-                            </a>
-                        @endforeach
-                    </div>
+    <div class="info-row">
+        <div class="info-label">Fichier joint</div>
+        <div class="info-value" style="display:flex; flex-direction:column; gap:0.5rem; align-items:flex-start;">
+            @foreach((array)$tp->attachments as $attachment)
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                    <button type="button" class="attachment-btn" onclick="toggleTpPdf(this)"
+                            data-target="tp-pdf-{{ $loop->index }}">
+                        <i class="ti ti-eye"></i>
+                        <span>Afficher</span>
+                    </button>
+                    <a href="{{ asset('storage/' . $attachment) }}" target="_blank" class="attachment-btn">
+                        <i class="ti ti-download"></i> Télécharger {{ basename($attachment) }}
+                    </a>
                 </div>
-            @endif
+                <div id="tp-pdf-{{ $loop->index }}"
+                     style="display:none; width:100%; margin-top:0.5rem; border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;">
+                    <iframe src="{{ asset('storage/' . $attachment) }}"
+                            style="width:100%; height:600px; border:none; display:block;"
+                            title="Aperçu PDF"></iframe>
+                </div>
+            @endforeach
+        </div>
+    </div>
+@endif
         </div>
     </div>
 
@@ -323,4 +336,16 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     </div>
 
 </div>
+<script>
+function toggleTpPdf(btn) {
+    const targetId = btn.dataset.target;
+    const viewer   = document.getElementById(targetId);
+    const span     = btn.querySelector('span');
+    const icon     = btn.querySelector('i');
+    const open     = viewer.style.display === 'block';
+    viewer.style.display = open ? 'none' : 'block';
+    icon.className  = open ? 'ti ti-eye' : 'ti ti-eye-off';
+    span.textContent = open ? 'Afficher' : 'Masquer';
+}
+</script>
 @endsection
