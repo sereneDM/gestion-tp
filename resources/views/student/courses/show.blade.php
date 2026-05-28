@@ -714,7 +714,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
                 {{-- Buttons --}}
                 <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                    <button type="button" class="btn btn-primary" id="resume-submit" disabled>
+                    <button type="button" class="btn btn-primary" id="resume-submit">
                         <i class="ti ti-brain" id="resume-submit-icon"></i> Analyser le PDF
                     </button>
                     @if(!empty($course->course_doc_id))
@@ -781,8 +781,27 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
         history.replaceState(null, null, '#' + tabName);
     }
 
-    // Also abort if the user navigates to a completely different page
+    // Abort on full page navigation (back/forward, address bar, refresh, etc.)
     window.addEventListener('beforeunload', cancelResumeIfRunning);
+
+    // Abort when the user clicks ANY link that navigates away
+    document.addEventListener('click', function (e) {
+        const link = e.target.closest('a[href]');
+        if (!link) return;
+        const href = link.getAttribute('href');
+        // Ignore anchors, javascript:, mailto:, and target=_blank tabs
+        if (!href || href.startsWith('#') || href.startsWith('javascript:') ||
+            href.startsWith('mailto:') || link.target === '_blank') return;
+        cancelResumeIfRunning();
+    }, true); // capture phase — fires before any child stopPropagation
+
+    // Abort when any form is submitted (navigates away)
+    document.addEventListener('submit', function (e) {
+        // Don't abort for the summarize upload form itself
+        const action = e.target.action || '';
+        if (action.includes('/summarize/')) return;
+        cancelResumeIfRunning();
+    }, true);
 
     document.addEventListener('DOMContentLoaded', function () {
         const fragment = window.location.hash.replace('#', '');
@@ -820,9 +839,15 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
         const termsEl        = document.getElementById('resume-terms');
         const formulasEl     = document.getElementById('resume-formulas');
 
-        // Step 1 – clicking the dropzone or the button opens the OS file picker
+        // Step 1 – button opens picker if no file chosen yet, or re-runs analysis if one is
         if (submitBtn) {
-            submitBtn.addEventListener('click', () => pdfInput && pdfInput.click());
+            submitBtn.addEventListener('click', () => {
+                if (pdfInput?.files?.length) {
+                    sendResume();
+                } else {
+                    pdfInput && pdfInput.click();
+                }
+            });
         }
 
         // Step 2 – when a file is chosen, update the UI and enable the button
