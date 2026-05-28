@@ -27,15 +27,7 @@
     {{-- Logo --}}
     <a href="{{ Auth::user()->isAdmin() ? route('admin.dashboard') : route('feed.index') }}"
        style="display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0;">
-        <div style="width:34px; height:34px; border-radius:9px; background:#3d5afe;
-                    display:flex; align-items:center; justify-content:center;">
-            <svg width="16" height="16" viewBox="0 0 14 14" fill="none">
-                <rect x="1" y="1" width="4" height="4" rx="1" fill="white"/>
-                <rect x="9" y="1" width="4" height="4" rx="1" fill="white"/>
-                <rect x="1" y="9" width="4" height="4" rx="1" fill="white"/>
-                <rect x="9" y="9" width="4" height="4" rx="1" fill="white"/>
-            </svg>
-        </div>
+        <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height:40px; width:auto; object-fit:contain;">
         <span style="font-size:0.88rem; font-weight:700; color:#0d1117; letter-spacing:-0.01em; display:inline-block; max-width:220px; white-space:normal; word-break:break-word;">{{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</span>
     </a>
 

@@ -350,7 +350,7 @@ button[type="submit"]:active { transform: scale(0.99); }
 <div class="right">
   <div class="login-box">
 
-    <div class="logo-mark"><i class="ti ti-code"></i></div>
+    <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height:50px; width:auto; object-fit:contain; margin-bottom:1.4rem;">
 
     <h2>Connexion</h2>
     <p class="login-subtitle">Bon retour — sélectionnez votre profil et entrez vos identifiants.</p>
