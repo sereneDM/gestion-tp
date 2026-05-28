@@ -256,9 +256,16 @@
 <body>
 
     <aside class="sidebar">
-        <a href="{{ route('admin.dashboard') }}" class="sidebar-brand">
-            <div class="sidebar-brand-icon"><i class="ti ti-code"></i></div>
-            <span class="sidebar-brand-name">{{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</span>
+        <a href="{{ route('admin.dashboard') }}" class="sidebar-brand" style="height: auto; padding: 12px 16px; min-height: var(--topbar-h); display: flex; align-items: center; gap: 10px;">
+            <div class="sidebar-brand-icon" style="flex-shrink: 0;"><i class="ti ti-code"></i></div>
+            <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
+                <span class="sidebar-brand-name" style="line-height: 1.2;">{{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</span>
+                @if($semesterName = \App\Models\Setting::get('semester_name'))
+                    <span style="font-size: 8.5px; color: var(--ink-4); font-weight: 700; display: inline-flex; align-items: center; gap: 3px; margin-top: 3px; background: var(--surface-3); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--line); width: fit-content; text-transform: uppercase; letter-spacing: 0.02em;">
+                        <i class="ti ti-calendar" style="font-size: 10px;"></i> {{ $semesterName }}
+                    </span>
+                @endif
+            </div>
         </a>
 
         <nav class="sidebar-nav">

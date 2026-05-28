@@ -26,7 +26,7 @@ class PdfSummaryController extends Controller
         // If a doc_id is provided (pre-ingested by teacher), query RAG directly
         if ($request->filled('doc_id') && !$request->hasFile('pdf')) {
             $docId = $request->input('doc_id');
-            $response = Http::timeout(600)
+            $response = Http::timeout(120)
                 ->post(config('services.rag.url') . '/query', [
                     'doc_id' => $docId,
                     'query'  => $query,
@@ -40,7 +40,7 @@ class PdfSummaryController extends Controller
                     $fileName = basename($course->course_pdf);
 
                     // Re-ingest the PDF and run the query in one shot via /process
-                    $response = Http::timeout(600)
+                    $response = Http::timeout(120)
                         ->attach('file', $fileContent, $fileName)
                         ->post(config('services.rag.url') . '/process', [
                             'doc_id' => $docId,
@@ -73,7 +73,7 @@ class PdfSummaryController extends Controller
         $file   = $request->file('pdf');
         $docId  = Str::uuid()->toString();
 
-        $response = Http::timeout(600)
+        $response = Http::timeout(120)
             ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
             ->post(config('services.rag.url') . '/process', [
                 'doc_id' => $docId,

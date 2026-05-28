@@ -301,20 +301,20 @@
             </div>
         </div>
 
-        {{-- Footer --}}
-        <div class="footer-actions">
-            <button type="submit" class="btn-save">
-                <i class="ti ti-device-floppy"></i> Enregistrer les paramètres
-            </button>
-            <form method="POST" action="{{ route('admin.settings.reset') }}" style="margin:0;"
-                  onsubmit="return confirm('Réinitialiser tous les paramètres aux valeurs par défaut ?')">
-                @csrf
-                <button type="submit" class="btn-reset">
-                    <i class="ti ti-refresh"></i> Réinitialiser
-                </button>
-            </form>
-        </div>
-
     </form>
+
+    {{-- Footer --}}
+    <div class="footer-actions">
+        <button form="settings-form" type="submit" class="btn-save">
+            <i class="ti ti-device-floppy"></i> Enregistrer les paramètres
+        </button>
+        <form method="POST" action="{{ route('admin.settings.reset') }}" style="margin:0;"
+              onsubmit="return confirm('Réinitialiser tous les paramètres aux valeurs par défaut ?')">
+            @csrf
+            <button type="submit" class="btn-reset">
+                <i class="ti ti-refresh"></i> Réinitialiser
+            </button>
+        </form>
+    </div>
 </div>
 @endsection

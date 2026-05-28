@@ -123,16 +123,11 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 .section-title i { color: var(--accent); font-size: 17px; }
 
 /* ── Chart bars ── */
-.chart-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
-
-.chart-bar-item {}
-.chart-bar-header {
-    display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 0.4rem;
-}
+.chart-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; max-height: 300px; overflow-y: auto; }
+.chart-bar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem; gap: 0.5rem; }
 .chart-label {
     font-size: 0.82rem; font-weight: 600; color: var(--ink-2);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60%; margin-right: 0.5rem;
 }
 .chart-count { font-size: 0.78rem; font-weight: 700; color: var(--accent); white-space: nowrap; }
 .chart-track {
@@ -272,28 +267,42 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
         {{-- Students per course ── --}}
         <div class="section-card">
-            <div class="section-header">
+                        <div class="section-header">
                 <div class="section-title"><i class="ti ti-users"></i> Étudiants par cours</div>
             </div>
-            <div class="chart-body">
-                @forelse($classes as $class)
-                    @php
-                        $maxStudents = $classes->max('students_count') ?: 1;
-                        $pct = ($class->students_count / $maxStudents) * 100;
-                    @endphp
-                    <div class="chart-bar-item">
-                        <div class="chart-bar-header">
-                            <span class="chart-label" title="{{ $class->name }}">{{ $class->name }}</span>
-                            <span class="chart-count">{{ $class->students_count }} étudiant(s)</span>
-                        </div>
-                        <div class="chart-track">
-                            <div class="chart-fill" style="width:{{ max($pct, 1) }}%"></div>
-                        </div>
-                    </div>
-                @empty
-                    <div class="empty-row"><i class="ti ti-mood-empty" style="font-size:1.5rem; display:block; margin-bottom:0.4rem;"></i>Aucun cours</div>
-                @endforelse
+            <div class="filter-bar">
+                <div class="filter-input-wrap">
+                    <i class="ti ti-search"></i>
+                    <input type="text" class="filter-input" id="student-search"
+                           placeholder="Rechercher un cours..." oninput="filterStudentCourse()">
+                </div>
+                <span class="filter-divider">ou</span>
+                <select class="filter-select" id="student-select" onchange="selectStudentCourse(this.value)">
+                    <option value="">Tous les cours</option>
+                    @foreach($classes as $class)
+                        <option value="{{ $class->id }}">{{ $class->name }}</option>
+                    @endforeach
+                </select>
             </div>
+            <div class="chart-body" id="students-container">
+    @forelse($classes as $class)
+        @php
+            $maxStudents = $classes->max('students_count') ?: 1;
+            $pct = ($class->students_count / $maxStudents) * 100;
+        @endphp
+        <div class="chart-bar-item" data-class-id="{{ $class->id }}">
+            <div class="chart-bar-header">
+                <span class="chart-label" title="{{ $class->name }}">{{ $class->name }}</span>
+                <span class="chart-count">{{ $class->students_count }} étudiant(s)</span>
+            </div>
+            <div class="chart-track">
+                <div class="chart-fill" style="width:{{ max($pct, 1) }}%"></div>
+            </div>
+        </div>
+    @empty
+        <div class="empty-row"><i class="ti ti-mood-empty" style="font-size:1.5rem; display:block; margin-bottom:0.4rem;"></i>Aucun cours</div>
+    @endforelse
+</div>
         </div>
 
         {{-- Grade distribution ── --}}
@@ -476,6 +485,43 @@ function selectGradeCourse(classId) {
     if (!classId) { renderChart(allDistribution); return; }
     renderChart(perClassDistribution[classId] ?? {});
     document.getElementById('grade-search').value = classesList.find(c => c.id == classId)?.name ?? '';
+}
+
+// Student filter functions
+function filterStudentCourse() {
+    const query = document.getElementById('student-search').value.toLowerCase().trim();
+    const select = document.getElementById('student-select');
+    Array.from(select.options).forEach(opt => {
+        if (!opt.value) return;
+        opt.style.display = !query || opt.text.toLowerCase().includes(query) ? '' : 'none';
+    });
+    const visible = Array.from(select.options).filter(o => o.value && o.style.display !== 'none');
+    if (visible.length === 1) {
+        select.value = visible[0].value;
+        selectStudentCourse(visible[0].value);
+    } else {
+        select.value = '';
+        // Show all students
+        document.querySelectorAll('.chart-bar-item[data-class-id]').forEach(el => {
+            el.style.display = 'flex';
+        });
+        document.getElementById('student-search').value = '';
+    }
+}
+
+function selectStudentCourse(classId) {
+    if (!classId) {
+        // Show all
+        document.querySelectorAll('.chart-bar-item[data-class-id]').forEach(el => {
+            el.style.display = 'flex';
+        });
+        document.getElementById('student-search').value = '';
+        return;
+    }
+    document.querySelectorAll('.chart-bar-item[data-class-id]').forEach(el => {
+        el.style.display = (el.dataset.classId == classId) ? 'flex' : 'none';
+    });
+    document.getElementById('student-search').value = classesList.find(c => c.id == classId)?.name ?? '';
 }
 </script>
 @endsection

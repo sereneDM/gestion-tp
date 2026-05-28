@@ -68,6 +68,13 @@ class StudentController extends Controller
             return back()->withErrors(['join_code' => 'Vous êtes déjà inscrit à ce cours.']);
         }
 
+        // Enforce maximum courses (TPs/modules) a student can join
+        $maxCourses = intval(\App\Models\Setting::get('max_tp_per_student', 10));
+        $currentEnrolledCount = Auth::user()->enrolledClasses()->where('status', 'active')->count();
+        if ($currentEnrolledCount >= $maxCourses) {
+            return back()->withErrors(['join_code' => "Vous avez atteint la limite maximale de {$maxCourses} cours auxquels vous pouvez vous inscrire pour ce semestre."]);
+        }
+
         $course->students()->attach(Auth::id());
 
         if (NotificationSetting::shouldNotify($course->teacher_id, $course->id, 'student_joined')) {
@@ -176,8 +183,23 @@ class StudentController extends Controller
             return back()->withErrors(['error' => 'Ce TP n\'accepte plus de soumissions.']);
         }
 
+        // 1. Enforce Semester Date range if configured
+        $startDate = \App\Models\Setting::get('semester_start_date');
+        $endDate = \App\Models\Setting::get('semester_end_date');
+        if ($startDate && now()->lt(\Carbon\Carbon::parse($startDate))) {
+            return back()->withErrors(['error' => 'Le semestre n\'a pas encore commencé. Les soumissions ne sont pas encore ouvertes.']);
+        }
+        if ($endDate && now()->gt(\Carbon\Carbon::parse($endDate)->endOfDay())) {
+            return back()->withErrors(['error' => 'Le semestre est terminé. Les soumissions sont fermées.']);
+        }
+
+        // 2. Dynamic file validation rules
+        $allowedTypes = \App\Models\Setting::get('allowed_file_types', 'pdf,zip,doc,docx');
+        $maxSizeMb = intval(\App\Models\Setting::get('max_file_size', 10));
+        $maxSizeKb = $maxSizeMb * 1024;
+
         $request->validate([
-            'submission_file' => 'required|file|mimes:pdf,zip,doc,docx|max:51200',
+            'submission_file' => "required|file|mimes:{$allowedTypes}|max:{$maxSizeKb}",
             'comments'        => 'nullable|string',
         ]);
 
@@ -233,8 +255,23 @@ class StudentController extends Controller
             return back()->withErrors(['error' => 'Vous ne pouvez pas modifier une soumission déjà notée.']);
         }
 
+        // 1. Enforce Semester Date range if configured
+        $startDate = \App\Models\Setting::get('semester_start_date');
+        $endDate = \App\Models\Setting::get('semester_end_date');
+        if ($startDate && now()->lt(\Carbon\Carbon::parse($startDate))) {
+            return back()->withErrors(['error' => 'Le semestre n\'a pas encore commencé. Les soumissions ne sont pas encore ouvertes.']);
+        }
+        if ($endDate && now()->gt(\Carbon\Carbon::parse($endDate)->endOfDay())) {
+            return back()->withErrors(['error' => 'Le semestre est terminé. Les soumissions sont fermées.']);
+        }
+
+        // 2. Dynamic file validation rules
+        $allowedTypes = \App\Models\Setting::get('allowed_file_types', 'pdf,zip,doc,docx');
+        $maxSizeMb = intval(\App\Models\Setting::get('max_file_size', 10));
+        $maxSizeKb = $maxSizeMb * 1024;
+
         $request->validate([
-            'submission_file' => 'nullable|file|mimes:pdf,zip,doc,docx|max:51200',
+            'submission_file' => "nullable|file|mimes:{$allowedTypes}|max:{$maxSizeKb}",
             'comments'        => 'nullable|string',
         ]);
 

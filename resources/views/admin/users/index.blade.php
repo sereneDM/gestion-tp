@@ -335,7 +335,7 @@
                                 </a>
                                 @if(Auth::id() !== $user->id)
                                     <form method="POST" action="{{ route('admin.users.destroy', $user->id) }}" style="display:inline;"
-                                          onsubmit="return confirm('Supprimer l\'utilisateur &quot;{{ $user->name }}&quot; ? Cette action est irréversible.')">
+                                          onsubmit="return confirm('Supprimer l'utilisateur &quot;{{ $user->name }}&quot; ? Cette action est irréversible.')">
                                         @csrf @method('DELETE')
                                         <button type="submit" class="btn-icon danger" title="Supprimer">
                                             <i class="ti ti-trash"></i>

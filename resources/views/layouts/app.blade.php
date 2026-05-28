@@ -42,6 +42,12 @@
     {{-- Divider --}}
     <div style="width:1px; height:24px; background:#e8ebef; flex-shrink:0;"></div>
 
+    @if($semesterName = \App\Models\Setting::get('semester_name'))
+        <div style="font-size:0.72rem; background:#f0f2f5; color:#6b7585; padding:4px 8px; border-radius:6px; font-weight:600; display:inline-flex; align-items:center; gap:4px; flex-shrink:0; border: 1px solid #e8ebef;">
+            <i class="ti ti-calendar" style="font-size:12px;"></i> {{ $semesterName }}
+        </div>
+    @endif
+
     {{-- Nav links --}}
     <div style="display:flex; align-items:center; gap:2px; flex:1; overflow-x:auto;" class="hide-scrollbar">
         @if(Auth::user()->isTeacher())

@@ -694,47 +694,50 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
         <div class="course-desc-card">
             <div class="course-desc-title">Résumé IA</div>
-            <div style="margin-top:10px;">
-                <form id="resume-form" enctype="multipart/form-data" method="POST" onsubmit="return false;">
-                    @csrf
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        <div>
-                            <label class="course-desc-title" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:6px;">Fichier PDF</label>
-                            <input type="file" name="pdf" accept="application/pdf" required style="width:100%;">
-                        </div>
-                        <div>
-                            <label class="course-desc-title" style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:6px;">Requête (optionnelle)</label>
-                            <input type="text" name="query" placeholder="Ex: expliquer les formules clés" style="width:100%; padding:8px; border-radius:8px; border:1px solid var(--line-2);">
-                        </div>
-                        <div>
-                            <div style="display:flex; gap:8px; align-items:center;">
-                                <button type="submit" class="btn btn-primary" id="resume-submit">
-                                    <i class="ti ti-arrow-right" id="resume-submit-icon"></i> Générer le résumé
-                                </button>
-                                @if(!empty($course->course_doc_id))
-                                    <button type="button" class="btn btn-primary" id="resume-use-uploaded" data-docid="{{ $course->course_doc_id }}">
-                                        <i class="ti ti-cloud-upload"></i> Utiliser le PDF du cours
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
-                        <div id="resume-error" style="display:none; color:var(--danger); font-weight:700;"></div>
-                    </div>
-                </form>
+            <div style="margin-top:10px; display:flex; flex-direction:column; gap:12px;">
 
-                <div id="resume-result" style="display:none; margin-top:16px;">
+                {{-- Hidden real file input --}}
+                <input type="file" id="resume-pdf-input" name="pdf" accept="application/pdf" style="display:none;">
+
+                {{-- Drop zone / file selector --}}
+                <div id="resume-dropzone" onclick="document.getElementById('resume-pdf-input').click()" style="border:2px dashed var(--line-2); border-radius:var(--radius-lg); padding:2rem 1rem; text-align:center; cursor:pointer; transition:border-color 0.2s, background 0.2s; background:var(--surface-2);">
+                    <i class="ti ti-file-type-pdf" style="font-size:2.2rem; color:var(--accent); display:block; margin-bottom:0.5rem;"></i>
+                    <div id="resume-file-name" style="font-weight:600; color:var(--ink-2); margin-bottom:0.25rem;">Cliquer pour choisir un PDF</div>
+                    <div style="font-size:0.8rem; color:var(--ink-4);">Format accepté : PDF — max 20 Mo</div>
+                </div>
+
+                {{-- Optional query --}}
+                <div>
+                    <label style="font-size:0.82rem; font-weight:600; color:var(--ink-3); display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:.04em;">Requête (optionnelle)</label>
+                    <input type="text" id="resume-query" placeholder="Ex: expliquer les formules clés" style="width:100%; padding:8px 12px; border-radius:var(--radius-md); border:1px solid var(--line-2); font-family:var(--font-body); font-size:0.9rem;">
+                </div>
+
+                {{-- Buttons --}}
+                <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-primary" id="resume-submit" disabled>
+                        <i class="ti ti-brain" id="resume-submit-icon"></i> Analyser le PDF
+                    </button>
+                    @if(!empty($course->course_doc_id))
+                        <button type="button" class="btn btn-info" id="resume-use-uploaded" data-docid="{{ $course->course_doc_id }}">
+                            <i class="ti ti-cloud-upload"></i> Utiliser le PDF du cours
+                        </button>
+                    @endif
+                </div>
+
+                <div id="resume-error" style="display:none; color:var(--danger); font-weight:600; font-size:0.88rem;"></div>
+
+                {{-- Result area --}}
+                <div id="resume-result" style="display:none; margin-top:8px;">
                     <div class="course-desc-card">
                         <h3 id="resume-title" class="teacher-name"></h3>
                         <p id="resume-overview" class="course-desc-body" style="margin-top:6px;"></p>
                         <span id="resume-difficulty" class="teacher-role-badge" style="margin-top:8px; display:inline-block;"></span>
                     </div>
-
                     <div id="resume-chapters" style="margin-top:12px;"></div>
-
                     <div id="resume-terms" style="margin-top:12px;"></div>
-
                     <div id="resume-formulas" style="margin-top:12px;"></div>
                 </div>
+
             </div>
         </div>
 
@@ -757,13 +760,29 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
         }
     });
 
+    // Holds the active AbortController for the AI summarization fetch so it
+    // can be cancelled if the user navigates away before it completes.
+    let resumeAbortController = null;
+
+    function cancelResumeIfRunning() {
+        if (resumeAbortController) {
+            resumeAbortController.abort();
+            resumeAbortController = null;
+        }
+    }
+
     function switchTab(tabName, event) {
+        // Cancel any in-flight AI request when leaving the resume tab
+        if (tabName !== 'resume') cancelResumeIfRunning();
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         event.target.closest('.tab').classList.add('active');
         document.getElementById('tab-' + tabName).classList.add('active');
         history.replaceState(null, null, '#' + tabName);
     }
+
+    // Also abort if the user navigates to a completely different page
+    window.addEventListener('beforeunload', cancelResumeIfRunning);
 
     document.addEventListener('DOMContentLoaded', function () {
         const fragment = window.location.hash.replace('#', '');
@@ -787,190 +806,157 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             });
         }
 
-        // Resume form handler
-        const resumeForm = document.getElementById('resume-form');
-        const resumeEndpoint = @json(route('student.summarize.upload'));
-        if (resumeForm) {
-            resumeForm.addEventListener('submit', async function (e) {
-                e.preventDefault();
-                const submitBtn = document.getElementById('resume-submit');
-                const submitIcon = document.getElementById('resume-submit-icon');
-                const errorEl = document.getElementById('resume-error');
-                const resultEl = document.getElementById('resume-result');
-                const chaptersEl = document.getElementById('resume-chapters');
-                const termsEl = document.getElementById('resume-terms');
-                const formulasEl = document.getElementById('resume-formulas');
+        // ── Résumé IA ──────────────────────────────────────────────────────────
+        const resumeEndpoint = '/student/summarize/upload';
+        const csrfToken      = '{{ csrf_token() }}';
+        const pdfInput       = document.getElementById('resume-pdf-input');
+        const dropzone       = document.getElementById('resume-dropzone');
+        const fileNameEl     = document.getElementById('resume-file-name');
+        const submitBtn      = document.getElementById('resume-submit');
+        const submitIcon     = document.getElementById('resume-submit-icon');
+        const errorEl        = document.getElementById('resume-error');
+        const resultEl       = document.getElementById('resume-result');
+        const chaptersEl     = document.getElementById('resume-chapters');
+        const termsEl        = document.getElementById('resume-terms');
+        const formulasEl     = document.getElementById('resume-formulas');
 
-                errorEl.style.display = 'none';
-                resultEl.style.display = 'none';
-                chaptersEl.innerHTML = '';
-                termsEl.innerHTML = '';
-                formulasEl.innerHTML = '';
+        // Step 1 – clicking the dropzone or the button opens the OS file picker
+        if (submitBtn) {
+            submitBtn.addEventListener('click', () => pdfInput && pdfInput.click());
+        }
 
-                submitBtn.disabled = true;
-                submitIcon.classList.add('spin');
-
-                const fd = new FormData(resumeForm);
-
-                try {
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), 590000);
-
-                    const res = await fetch(resumeEndpoint, {
-                        method: 'POST',
-                        credentials: 'same-origin',
-                        body: fd,
-                        signal: controller.signal,
-                    });
-                    clearTimeout(timeoutId);
-
-                    if (!res.ok) {
-                        let jsonErr = {};
-                        try { jsonErr = await res.json(); } catch (e) {}
-                        throw new Error(jsonErr.error || res.statusText || 'Erreur du serveur');
+        // Step 2 – when a file is chosen, update the UI and enable the button
+        if (pdfInput) {
+            pdfInput.addEventListener('change', function () {
+                if (this.files && this.files.length > 0) {
+                    const name = this.files[0].name;
+                    if (fileNameEl) fileNameEl.textContent = name;
+                    if (dropzone) {
+                        dropzone.style.borderColor = 'var(--accent)';
+                        dropzone.style.background  = 'var(--accent-bg)';
                     }
-
-                    const data = await res.json();
-
-                    document.getElementById('resume-title').textContent = data.title || '';
-                    document.getElementById('resume-overview').textContent = data.overview || '';
-                    document.getElementById('resume-difficulty').textContent = data.difficulty || '';
-
-                    // chapters
-                    if (Array.isArray(data.chapters)) {
-                        data.chapters.forEach(ch => {
-                            const card = document.createElement('div');
-                            card.className = 'course-desc-card';
-                            const title = ch.title || '';
-                            const summary = ch.summary || '';
-                            let html = `<h4 style="font-size:1.05rem; font-weight:700; margin-bottom:6px;">${escapeHtml(title)}</h4>`;
-                            html += `<p style="color:var(--ink-2); margin-bottom:8px;">${escapeHtml(summary)}</p>`;
-                            if (Array.isArray(ch.key_concepts) && ch.key_concepts.length) {
-                                html += '<ul style="color:var(--ink-3); margin-top:6px; padding-left:18px;">' + ch.key_concepts.map(k=>`<li>${escapeHtml(k)}</li>`).join('') + '</ul>';
-                            }
-                            card.innerHTML = html;
-                            chaptersEl.appendChild(card);
-                        });
-                    }
-
-                    // key terms
-                    if (data.key_terms && Object.keys(data.key_terms).length) {
-                        const dl = document.createElement('dl');
-                        Object.entries(data.key_terms).forEach(([t, d]) => {
-                            const dt = document.createElement('dt'); dt.textContent = t; dt.style.fontWeight = '700';
-                            const dd = document.createElement('dd'); dd.textContent = d; dd.style.marginLeft = '12px'; dd.style.color = 'var(--ink-3)';
-                            dl.appendChild(dt); dl.appendChild(dd);
-                        });
-                        termsEl.appendChild(dl);
-                    }
-
-                    // formulas
-                    if (Array.isArray(data.formulas) && data.formulas.length) {
-                        const wrap = document.createElement('div');
-                        wrap.innerHTML = '<h4 class="course-desc-title">Formulas</h4>' + data.formulas.map(f=>`<pre style="background:var(--surface-2); padding:10px; border-radius:8px; font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
-                        formulasEl.appendChild(wrap);
-                    }
-
-                    resultEl.style.display = 'block';
-
-                } catch (err) {
-                    console.error(err);
-                    errorEl.textContent = err.message || 'Erreur lors du traitement. Le service RAG est peut-être indisponible.';
-                    errorEl.style.display = 'block';
-                } finally {
-                    submitBtn.disabled = false;
-                    submitIcon.classList.remove('spin');
+                    if (submitBtn) submitBtn.disabled = false;
+                    // auto-start the summarization
+                    sendResume();
                 }
             });
+        }
 
-            // handle use uploaded doc button
-            const useBtn = document.getElementById('resume-use-uploaded');
-            if (useBtn) {
-                useBtn.addEventListener('click', async function () {
-                    const docId = this.dataset.docid;
-                    const queryInput = resumeForm.querySelector('input[name="query"]');
-                    const q = queryInput ? queryInput.value : '';
-                    const submitIcon = document.getElementById('resume-submit-icon');
-                    const submitBtn = document.getElementById('resume-submit');
-                    const errorEl = document.getElementById('resume-error');
-                    const resultEl = document.getElementById('resume-result');
-                    const chaptersEl = document.getElementById('resume-chapters');
-                    const termsEl = document.getElementById('resume-terms');
-                    const formulasEl = document.getElementById('resume-formulas');
+        // Shared helper to reset & render results
+        function clearResults() {
+            if (errorEl)   { errorEl.style.display = 'none'; errorEl.textContent = ''; }
+            if (resultEl)  { resultEl.style.display = 'none'; }
+            if (chaptersEl) chaptersEl.innerHTML = '';
+            if (termsEl)    termsEl.innerHTML = '';
+            if (formulasEl) formulasEl.innerHTML = '';
+        }
 
-                    errorEl.style.display = 'none';
-                    resultEl.style.display = 'none';
-                    chaptersEl.innerHTML = '';
-                    termsEl.innerHTML = '';
-                    formulasEl.innerHTML = '';
+        function renderResults(data) {
+            if (!resultEl) return;
+            const titleEl      = document.getElementById('resume-title');
+            const overviewEl   = document.getElementById('resume-overview');
+            const difficultyEl = document.getElementById('resume-difficulty');
+            if (titleEl)      titleEl.textContent = data.title || '';
+            if (overviewEl)   overviewEl.textContent = data.overview || '';
+            if (difficultyEl) difficultyEl.textContent = data.difficulty || '';
 
-                    submitBtn.disabled = true;
-                    submitIcon.classList.add('spin');
-
-                    try {
-                        const res = await fetch(resumeEndpoint, {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                            body: JSON.stringify({ doc_id: docId, query: q })
-                        });
-
-                        if (!res.ok) {
-                            let jsonErr = {};
-                            try { jsonErr = await res.json(); } catch (e) {}
-                            throw new Error(jsonErr.error || res.statusText || 'Erreur du serveur');
-                        }
-
-                        const data = await res.json();
-
-                        document.getElementById('resume-title').textContent = data.title || '';
-                        document.getElementById('resume-overview').textContent = data.overview || '';
-                        document.getElementById('resume-difficulty').textContent = data.difficulty || '';
-
-                        if (Array.isArray(data.chapters)) {
-                            data.chapters.forEach(ch => {
-                                const card = document.createElement('div');
-                                card.className = 'course-desc-card';
-                                const title = ch.title || '';
-                                const summary = ch.summary || '';
-                                let html = `<h4 style="font-size:1.05rem; font-weight:700; margin-bottom:6px;">${escapeHtml(title)}</h4>`;
-                                html += `<p style="color:var(--ink-2); margin-bottom:8px;">${escapeHtml(summary)}</p>`;
-                                if (Array.isArray(ch.key_concepts) && ch.key_concepts.length) {
-                                    html += '<ul style="color:var(--ink-3); margin-top:6px; padding-left:18px;">' + ch.key_concepts.map(k=>`<li>${escapeHtml(k)}</li>`).join('') + '</ul>';
-                                }
-                                card.innerHTML = html;
-                                chaptersEl.appendChild(card);
-                            });
-                        }
-
-                        if (data.key_terms && Object.keys(data.key_terms).length) {
-                            const dl = document.createElement('dl');
-                            Object.entries(data.key_terms).forEach(([t, d]) => {
-                                const dt = document.createElement('dt'); dt.textContent = t; dt.style.fontWeight = '700';
-                                const dd = document.createElement('dd'); dd.textContent = d; dd.style.marginLeft = '12px'; dd.style.color = 'var(--ink-3)';
-                                dl.appendChild(dt); dl.appendChild(dd);
-                            });
-                            termsEl.appendChild(dl);
-                        }
-
-                        if (Array.isArray(data.formulas) && data.formulas.length) {
-                            const wrap = document.createElement('div');
-                            wrap.innerHTML = '<h4 class="course-desc-title">Formulas</h4>' + data.formulas.map(f=>`<pre style="background:var(--surface-2); padding:10px; border-radius:8px; font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
-                            formulasEl.appendChild(wrap);
-                        }
-
-                        resultEl.style.display = 'block';
-
-                    } catch (err) {
-                        console.error(err);
-                        errorEl.textContent = err.message || 'Erreur lors du traitement. Le service RAG est peut-être indisponible.';
-                        errorEl.style.display = 'block';
-                    } finally {
-                        submitBtn.disabled = false;
-                        submitIcon.classList.remove('spin');
+            if (Array.isArray(data.chapters) && chaptersEl) {
+                data.chapters.forEach(ch => {
+                    const card = document.createElement('div');
+                    card.className = 'course-desc-card';
+                    let html = `<h4 style="font-size:1.05rem; font-weight:700; margin-bottom:6px;">${escapeHtml(ch.title || '')}</h4>`;
+                    html += `<p style="color:var(--ink-2); margin-bottom:8px;">${escapeHtml(ch.summary || '')}</p>`;
+                    if (Array.isArray(ch.key_concepts) && ch.key_concepts.length) {
+                        html += '<ul style="color:var(--ink-3);margin-top:6px;padding-left:18px;">' +
+                                ch.key_concepts.map(k => `<li>${escapeHtml(k)}</li>`).join('') + '</ul>';
                     }
+                    card.innerHTML = html;
+                    chaptersEl.appendChild(card);
                 });
             }
+
+            if (data.key_terms && Object.keys(data.key_terms).length && termsEl) {
+                const dl = document.createElement('dl');
+                Object.entries(data.key_terms).forEach(([t, d]) => {
+                    const dt = document.createElement('dt'); dt.textContent = t; dt.style.fontWeight = '700';
+                    const dd = document.createElement('dd'); dd.textContent = d; dd.style.marginLeft = '12px'; dd.style.color = 'var(--ink-3)';
+                    dl.appendChild(dt); dl.appendChild(dd);
+                });
+                termsEl.appendChild(dl);
+            }
+
+            if (Array.isArray(data.formulas) && data.formulas.length && formulasEl) {
+                const wrap = document.createElement('div');
+                wrap.innerHTML = '<h4 class="course-desc-title">Formules</h4>' +
+                    data.formulas.map(f => `<pre style="background:var(--surface-2);padding:10px;border-radius:8px;font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
+                formulasEl.appendChild(wrap);
+            }
+
+            resultEl.style.display = 'block';
+        }
+
+        // Core fetch function used by both flows
+        async function doFetch(body, isJson) {
+            // Cancel any previous in-flight request first
+            cancelResumeIfRunning();
+            clearResults();
+            if (submitBtn) submitBtn.disabled = true;
+            if (submitIcon) submitIcon.classList.add('spin');
+
+            resumeAbortController = new AbortController();
+            const { signal } = resumeAbortController;
+
+            const headers = { 'X-CSRF-TOKEN': csrfToken };
+            if (isJson) headers['Content-Type'] = 'application/json';
+
+            try {
+                const res = await fetch(resumeEndpoint, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers,
+                    body,
+                    signal,
+                });
+                if (!res.ok) {
+                    let msg = res.statusText;
+                    try { const j = await res.json(); msg = j.error || msg; } catch (_) {}
+                    throw new Error(msg);
+                }
+                const data = await res.json();
+                renderResults(data);
+            } catch (err) {
+                // Silently ignore aborts triggered by navigation / tab switch
+                if (err.name === 'AbortError') return;
+                console.error(err);
+                if (errorEl) {
+                    errorEl.textContent = err.message || 'Erreur réseau. Vérifiez que le service IA est démarré.';
+                    errorEl.style.display = 'block';
+                }
+            } finally {
+                resumeAbortController = null;
+                if (submitBtn) submitBtn.disabled = !pdfInput?.files?.length;
+                if (submitIcon) submitIcon.classList.remove('spin');
+            }
+        }
+
+        // Flow A – student uploads their own PDF
+        function sendResume() {
+            if (!pdfInput || !pdfInput.files.length) return;
+            const fd = new FormData();
+            fd.append('pdf', pdfInput.files[0]);
+            const q = document.getElementById('resume-query');
+            if (q && q.value.trim()) fd.append('query', q.value.trim());
+            doFetch(fd, false);
+        }
+
+        // Flow B – use the teacher-uploaded course PDF
+        const useBtn = document.getElementById('resume-use-uploaded');
+        if (useBtn) {
+            useBtn.addEventListener('click', function () {
+                const docId = this.dataset.docid;
+                const q = document.getElementById('resume-query');
+                doFetch(JSON.stringify({ doc_id: docId, query: q ? q.value.trim() : '' }), true);
+            });
         }
     });
 
