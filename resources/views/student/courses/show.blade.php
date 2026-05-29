@@ -878,15 +878,29 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
         function renderResults(data) {
             if (!resultEl) return;
+            
+            // Unwrap data if it's inside a 'result' property
+            let finalData = data;
+            if (data.result && typeof data.result === 'object') {
+                finalData = data.result;
+            } else if (typeof data.result === 'string') {
+                try {
+                    finalData = JSON.parse(data.result);
+                } catch (e) {
+                    console.error("Failed to parse nested result string", e);
+                }
+            }
+
             const titleEl      = document.getElementById('resume-title');
             const overviewEl   = document.getElementById('resume-overview');
             const difficultyEl = document.getElementById('resume-difficulty');
-            if (titleEl)      titleEl.textContent = data.title || '';
-            if (overviewEl)   overviewEl.textContent = data.overview || '';
-            if (difficultyEl) difficultyEl.textContent = data.difficulty || '';
+            
+            if (titleEl)      titleEl.textContent = finalData.title || '';
+            if (overviewEl)   overviewEl.textContent = finalData.overview || '';
+            if (difficultyEl) difficultyEl.textContent = finalData.difficulty || '';
 
-            if (Array.isArray(data.chapters) && chaptersEl) {
-                data.chapters.forEach(ch => {
+            if (Array.isArray(finalData.chapters) && chaptersEl) {
+                finalData.chapters.forEach(ch => {
                     const card = document.createElement('div');
                     card.className = 'course-desc-card';
                     let html = `<h4 style="font-size:1.05rem; font-weight:700; margin-bottom:6px;">${escapeHtml(ch.title || '')}</h4>`;
@@ -900,9 +914,9 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 });
             }
 
-            if (data.key_terms && Object.keys(data.key_terms).length && termsEl) {
+            if (finalData.key_terms && Object.keys(finalData.key_terms).length && termsEl) {
                 const dl = document.createElement('dl');
-                Object.entries(data.key_terms).forEach(([t, d]) => {
+                Object.entries(finalData.key_terms).forEach(([t, d]) => {
                     const dt = document.createElement('dt'); dt.textContent = t; dt.style.fontWeight = '700';
                     const dd = document.createElement('dd'); dd.textContent = d; dd.style.marginLeft = '12px'; dd.style.color = 'var(--ink-3)';
                     dl.appendChild(dt); dl.appendChild(dd);
@@ -910,10 +924,10 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 termsEl.appendChild(dl);
             }
 
-            if (Array.isArray(data.formulas) && data.formulas.length && formulasEl) {
+            if (Array.isArray(finalData.formulas) && finalData.formulas.length && formulasEl) {
                 const wrap = document.createElement('div');
                 wrap.innerHTML = '<h4 class="course-desc-title">Formules</h4>' +
-                    data.formulas.map(f => `<pre style="background:var(--surface-2);padding:10px;border-radius:8px;font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
+                    finalData.formulas.map(f => `<pre style="background:var(--surface-2);padding:10px;border-radius:8px;font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
                 formulasEl.appendChild(wrap);
             }
 
@@ -922,7 +936,6 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
         // Core fetch function used by both flows
         async function doFetch(body, isJson) {
-            // Cancel any previous in-flight request first
             cancelResumeIfRunning();
             clearResults();
             if (submitBtn) submitBtn.disabled = true;
@@ -932,7 +945,9 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             const { signal } = resumeAbortController;
 
             const headers = { 'X-CSRF-TOKEN': csrfToken };
-            if (isJson) headers['Content-Type'] = 'application/json';
+            if (isJson) {
+                headers['Content-Type'] = 'application/json';
+            }
 
             try {
                 const res = await fetch(resumeEndpoint, {
@@ -948,9 +963,9 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                     throw new Error(msg);
                 }
                 const data = await res.json();
+                console.log('AI Response Data:', data);
                 renderResults(data);
             } catch (err) {
-                // Silently ignore aborts triggered by navigation / tab switch
                 if (err.name === 'AbortError') return;
                 console.error(err);
                 if (errorEl) {
