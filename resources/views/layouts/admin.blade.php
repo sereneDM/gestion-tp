@@ -53,8 +53,12 @@
 
         .sidebar-brand-icon {
             width: 30px; height: 30px; border-radius: 8px;
-            background: var(--accent); display: flex; align-items: center;
+            background: transparent; display: flex; align-items: center;
             justify-content: center; color: white; font-size: 15px; flex-shrink: 0;
+        }
+        
+        .sidebar-brand-icon img {
+            width: 100%; height: 100%; object-fit: contain;
         }
 
         .sidebar-brand-name {
@@ -257,7 +261,7 @@
 
     <aside class="sidebar">
         <a href="{{ route('admin.dashboard') }}" class="sidebar-brand" style="height: auto; padding: 12px 16px; min-height: var(--topbar-h); display: flex; align-items: center; gap: 10px;">
-            <div class="sidebar-brand-icon" style="flex-shrink: 0;"><i class="ti ti-code"></i></div>
+            <div class="sidebar-brand-icon" style="flex-shrink: 0;"><img src="{{ asset('images/logo.png') }}" alt="Logo" style="width: 100%; height: 100%; object-fit: contain;"></div>
             <div style="display: flex; flex-direction: column; min-width: 0; flex: 1;">
                 <span class="sidebar-brand-name" style="line-height: 1.2;">{{ \App\Models\Setting::get('site_name', 'Plateforme TP') }}</span>
                 @if($semesterName = \App\Models\Setting::get('semester_name'))
