@@ -15,18 +15,32 @@ class PdfSummaryController extends Controller
 
         public function upload(Request $request)
     {
+        // Increase PHP execution time for long-running AI operations
+        set_time_limit(180); // 3 minutes
+        
+        // Handle JSON requests (Content-Type: application/json)
+        $data = $request->all();
+        if ($request->header('Content-Type') === 'application/json' && empty($data)) {
+            $jsonData = json_decode($request->getContent(), true);
+            if (is_array($jsonData)) {
+                $data = $jsonData;
+            }
+        }
+
+        // Validate the incoming data
         $request->validate([
             'pdf'    => 'nullable|file|mimes:pdf|max:20480', // 20MB
             'doc_id' => 'nullable|string',
             'query'  => 'nullable|string|max:500',
         ]);
 
-        $query = $request->input('query', 'summarize this document');
+        $query = $data['query'] ?? $request->input('query', 'summarize this document');
 
-        // Flow: Using existing doc_id
-        if ($request->filled('doc_id') && !$request->hasFile('pdf')) {
-            $docId = $request->input('doc_id');
-            $response = Http::timeout(120)
+        // Flow: Using existing doc_id (prioritized over file upload)
+        if ((isset($data['doc_id']) && !empty($data['doc_id'])) || $request->filled('doc_id')) {
+            $docId = $data['doc_id'] ?? $request->input('doc_id');
+            $response = Http::timeout(150)
+                ->asJson()
                 ->post(config('services.rag.url') . '/query', [
                     'doc_id' => $docId,
                     'query'  => $query,
@@ -36,7 +50,7 @@ class PdfSummaryController extends Controller
                 $course = \App\Models\ClassModel::where('course_doc_id', $docId)->first();
                 if ($course && $course->course_pdf && \Illuminate\Support\Facades\Storage::disk('public')->exists($course->course_pdf)) {
                     $fileContent = \Illuminate\Support\Facades\Storage::disk('public')->get($course->course_pdf);
-                    $response = Http::timeout(120)
+                    $response = Http::timeout(150)
                         ->attach('file', $fileContent, basename($course->course_pdf))
                         ->post(config('services.rag.url') . '/process', [
                             'doc_id' => $docId,
@@ -53,7 +67,7 @@ class PdfSummaryController extends Controller
         }
 
         $file = $request->file('pdf');
-        $response = Http::timeout(120)
+        $response = Http::timeout(150)
             ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
             ->post(config('services.rag.url') . '/process', [
                 'doc_id' => \Illuminate\Support\Str::uuid()->toString(),

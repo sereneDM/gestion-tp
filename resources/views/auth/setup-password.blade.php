@@ -39,6 +39,10 @@
             font-size: 4rem;
             margin-bottom: 1rem;
         }
+        .icon svg {
+            width: 64px;
+            height: 64px;
+        }
         .form-group {
             margin-bottom: 1.5rem;
         }
@@ -54,6 +58,7 @@
             border: 2px solid #ddd;
             border-radius: 4px;
             font-size: 1rem;
+            box-sizing: border-box;
         }
         input:focus {
             outline: none;
@@ -72,6 +77,18 @@
             border-radius: 4px;
             font-size: 0.9rem;
         }
+        .requirements-title {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: bold;
+            margin-bottom: 0.4rem;
+        }
+        .requirements-title svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
         .requirements ul {
             margin: 0.5rem 0 0 1.5rem;
             padding: 0;
@@ -89,6 +106,14 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn svg {
+            width: 18px;
+            height: 18px;
         }
         .btn:hover {
             background: #0056b3;
@@ -112,12 +137,25 @@
 </head>
 <body>
     <div class="container">
-        <div class="icon">🔐</div>
+        <div class="icon">
+            <!-- Lock icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                <circle cx="12" cy="16" r="1" fill="#007bff"/>
+            </svg>
+        </div>
         <h1>Configurez votre mot de passe</h1>
         <p class="subtitle">Créez un mot de passe sécurisé pour votre compte</p>
 
         <div class="requirements">
-            <strong>🛡️ Exigences du mot de passe:</strong>
+            <div class="requirements-title">
+                <!-- Shield icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#007bff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                Exigences du mot de passe:
+            </div>
             <ul>Min. 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</ul>
         </div>
 
@@ -156,7 +194,11 @@
             </div>
 
             <button type="submit" class="btn">
-                ✓ Configurer mon compte
+                <!-- Checkmark icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Configurer mon compte
             </button>
         </form>
     </div>

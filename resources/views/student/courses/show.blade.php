@@ -726,16 +726,29 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
 
                 <div id="resume-error" style="display:none; color:var(--danger); font-weight:600; font-size:0.88rem;"></div>
 
-                {{-- Result area --}}
-                <div id="resume-result" style="display:none; margin-top:8px;">
-                    <div class="course-desc-card">
-                        <h3 id="resume-title" class="teacher-name"></h3>
-                        <p id="resume-overview" class="course-desc-body" style="margin-top:6px;"></p>
-                        <span id="resume-difficulty" class="teacher-role-badge" style="margin-top:8px; display:inline-block;"></span>
+                {{-- Result area — single unified card --}}
+                <div id="resume-result" style="display:none; margin-top:12px;">
+                    <div class="course-desc-card" style="padding:0; overflow:hidden;">
+
+                        {{-- Header with title + overview --}}
+                        <div style="padding:1.5rem 1.75rem 1.25rem; border-bottom:1px solid var(--line);">
+                            <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.6rem;">
+                                <i class="ti ti-sparkles" style="color:var(--accent); font-size:1.1rem;"></i>
+                                <h3 id="resume-title" style="font-size:1.15rem; font-weight:700; color:var(--ink); margin:0;"></h3>
+                            </div>
+                            <p id="resume-overview" style="color:var(--ink-2); font-size:0.92rem; line-height:1.65; margin:0;"></p>
+                        </div>
+
+                        {{-- Chapters --}}
+                        <div id="resume-chapters"></div>
+
+                        {{-- Key terms --}}
+                        <div id="resume-terms"></div>
+
+                        {{-- Formulas --}}
+                        <div id="resume-formulas"></div>
+
                     </div>
-                    <div id="resume-chapters" style="margin-top:12px;"></div>
-                    <div id="resume-terms" style="margin-top:12px;"></div>
-                    <div id="resume-formulas" style="margin-top:12px;"></div>
                 </div>
 
             </div>
@@ -838,6 +851,8 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
         const chaptersEl     = document.getElementById('resume-chapters');
         const termsEl        = document.getElementById('resume-terms');
         const formulasEl     = document.getElementById('resume-formulas');
+        const titleEl        = document.getElementById('resume-title');
+        const overviewEl     = document.getElementById('resume-overview');
 
         // Step 1 – button opens picker if no file chosen yet, or re-runs analysis if one is
         if (submitBtn) {
@@ -874,11 +889,13 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
             if (chaptersEl) chaptersEl.innerHTML = '';
             if (termsEl)    termsEl.innerHTML = '';
             if (formulasEl) formulasEl.innerHTML = '';
+            if (titleEl)    titleEl.textContent = '';
+            if (overviewEl) overviewEl.textContent = '';
         }
 
         function renderResults(data) {
             if (!resultEl) return;
-            
+
             // Unwrap data if it's inside a 'result' property
             let finalData = data;
             if (data.result && typeof data.result === 'object') {
@@ -891,44 +908,64 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
                 }
             }
 
-            const titleEl      = document.getElementById('resume-title');
-            const overviewEl   = document.getElementById('resume-overview');
-            const difficultyEl = document.getElementById('resume-difficulty');
-            
-            if (titleEl)      titleEl.textContent = finalData.title || '';
-            if (overviewEl)   overviewEl.textContent = finalData.overview || '';
-            if (difficultyEl) difficultyEl.textContent = finalData.difficulty || '';
+            // ── Title & Overview ──
+            if (titleEl) titleEl.textContent = finalData.title || 'Résumé du document';
+            if (overviewEl) overviewEl.textContent = finalData.overview || '';
 
-            if (Array.isArray(finalData.chapters) && chaptersEl) {
-                finalData.chapters.forEach(ch => {
-                    const card = document.createElement('div');
-                    card.className = 'course-desc-card';
-                    let html = `<h4 style="font-size:1.05rem; font-weight:700; margin-bottom:6px;">${escapeHtml(ch.title || '')}</h4>`;
-                    html += `<p style="color:var(--ink-2); margin-bottom:8px;">${escapeHtml(ch.summary || '')}</p>`;
+            // ── Chapters — numbered sections inside the same card ──
+            if (Array.isArray(finalData.chapters) && finalData.chapters.length && chaptersEl) {
+                let html = '<div style="padding:1.25rem 1.75rem; border-bottom:1px solid var(--line);">' +
+                    '<div style="display:flex; align-items:center; gap:0.45rem; margin-bottom:1rem;">' +
+                    '<i class="ti ti-list-details" style="color:var(--accent); font-size:1rem;"></i>' +
+                    '<span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-4);">Chapitres</span></div>';
+
+                finalData.chapters.forEach((ch, idx) => {
+                    const isLast = idx === finalData.chapters.length - 1;
+                    html += '<div style="display:flex; gap:1rem; ' + (isLast ? '' : 'margin-bottom:1.25rem; padding-bottom:1.25rem; border-bottom:1px dashed var(--line);') + '">' +
+                        '<div style="flex-shrink:0; width:28px; height:28px; border-radius:50%; background:var(--accent-bg); color:var(--accent); font-size:0.78rem; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:2px;">' + (idx + 1) + '</div>' +
+                        '<div style="flex:1; min-width:0;">' +
+                        '<div style="font-size:0.98rem; font-weight:700; color:var(--ink); margin-bottom:0.3rem;">' + escapeHtml(ch.title || '') + '</div>' +
+                        '<p style="color:var(--ink-2); font-size:0.88rem; line-height:1.6; margin:0 0 0.5rem;">' + escapeHtml(ch.summary || '') + '</p>';
                     if (Array.isArray(ch.key_concepts) && ch.key_concepts.length) {
-                        html += '<ul style="color:var(--ink-3);margin-top:6px;padding-left:18px;">' +
-                                ch.key_concepts.map(k => `<li>${escapeHtml(k)}</li>`).join('') + '</ul>';
+                        html += '<div style="display:flex; flex-wrap:wrap; gap:0.35rem; margin-top:0.4rem;">' +
+                            ch.key_concepts.map(k => '<span style="display:inline-block; padding:0.2rem 0.6rem; background:var(--surface-2); border:1px solid var(--line); border-radius:100px; font-size:0.76rem; color:var(--ink-3); font-weight:500;">' + escapeHtml(k) + '</span>').join('') +
+                            '</div>';
                     }
-                    card.innerHTML = html;
-                    chaptersEl.appendChild(card);
+                    html += '</div></div>';
                 });
+                html += '</div>';
+                chaptersEl.innerHTML = html;
             }
 
+            // ── Key Terms — compact grid ──
             if (finalData.key_terms && Object.keys(finalData.key_terms).length && termsEl) {
-                const dl = document.createElement('dl');
-                Object.entries(finalData.key_terms).forEach(([t, d]) => {
-                    const dt = document.createElement('dt'); dt.textContent = t; dt.style.fontWeight = '700';
-                    const dd = document.createElement('dd'); dd.textContent = d; dd.style.marginLeft = '12px'; dd.style.color = 'var(--ink-3)';
-                    dl.appendChild(dt); dl.appendChild(dd);
+                const entries = Object.entries(finalData.key_terms);
+                let html = '<div style="padding:1.25rem 1.75rem; border-bottom:1px solid var(--line);">' +
+                    '<div style="display:flex; align-items:center; gap:0.45rem; margin-bottom:1rem;">' +
+                    '<i class="ti ti-vocabulary" style="color:var(--accent); font-size:1rem;"></i>' +
+                    '<span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-4);">Termes clés</span></div>' +
+                    '<div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:0.75rem;">';
+                entries.forEach(([term, def]) => {
+                    html += '<div style="padding:0.75rem 1rem; background:var(--surface-2); border-radius:var(--radius-md); border:1px solid var(--line);">' +
+                        '<div style="font-size:0.85rem; font-weight:700; color:var(--accent); margin-bottom:0.2rem;">' + escapeHtml(term) + '</div>' +
+                        '<div style="font-size:0.82rem; color:var(--ink-3); line-height:1.5;">' + escapeHtml(def) + '</div></div>';
                 });
-                termsEl.appendChild(dl);
+                html += '</div></div>';
+                termsEl.innerHTML = html;
             }
 
+            // ── Formulas ──
             if (Array.isArray(finalData.formulas) && finalData.formulas.length && formulasEl) {
-                const wrap = document.createElement('div');
-                wrap.innerHTML = '<h4 class="course-desc-title">Formules</h4>' +
-                    finalData.formulas.map(f => `<pre style="background:var(--surface-2);padding:10px;border-radius:8px;font-family:monospace;">${escapeHtml(f)}</pre>`).join('');
-                formulasEl.appendChild(wrap);
+                let html = '<div style="padding:1.25rem 1.75rem;">' +
+                    '<div style="display:flex; align-items:center; gap:0.45rem; margin-bottom:1rem;">' +
+                    '<i class="ti ti-math-function" style="color:var(--accent); font-size:1rem;"></i>' +
+                    '<span style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--ink-4);">Formules</span></div>' +
+                    '<div style="display:flex; flex-direction:column; gap:0.5rem;">';
+                finalData.formulas.forEach(f => {
+                    html += '<pre style="margin:0; background:var(--surface-2); padding:0.75rem 1rem; border-radius:var(--radius-md); font-family:\'DM Mono\', monospace; font-size:0.84rem; color:var(--ink-2); border:1px solid var(--line); overflow-x:auto; white-space:pre-wrap; word-break:break-word;">' + escapeHtml(f) + '</pre>';
+                });
+                html += '</div></div>';
+                formulasEl.innerHTML = html;
             }
 
             resultEl.style.display = 'block';

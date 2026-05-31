@@ -1,7 +1,7 @@
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Form, Request
 from fastapi.responses import JSONResponse
 from fastapi.concurrency import run_in_threadpool
-import tempfile, os, json
+import tempfile, os, json, hashlib
 from main import extract_text_from_pdf, generate_resume_from_course
 
 app = FastAPI()
@@ -9,6 +9,7 @@ app = FastAPI()
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_FILE = os.path.join(BASE_DIR, "models", "llama-3.2-3b-instruct-q4_k_m.gguf")
 STORE_FILE = os.path.join(BASE_DIR, "doc_store.json")
+CACHE_FILE = os.path.join(BASE_DIR, "results_cache.json")
 
 
 def load_store():
@@ -23,10 +24,28 @@ def save_store(store):
         json.dump(store, f)
 
 
+def load_cache():
+    if os.path.exists(CACHE_FILE):
+        try:
+            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+
+def save_cache(cache):
+    with open(CACHE_FILE, 'w', encoding='utf-8') as f:
+        json.dump(cache, f)
+
+
 doc_store = load_store()
+results_cache = load_cache()
 
 
-@app.post("/ingest")
+@app.get("/health")
+async def health():
+    return {"status": "ok", "service": "rag-service"}
 async def ingest(
     file: UploadFile = File(...),
     doc_id: str = Form(...),
@@ -60,6 +79,11 @@ async def process(
         tmp_path = tmp.name
 
     try:
+        # Check cache first
+        cache_key = f"{doc_id}:{query}"
+        if cache_key in results_cache:
+            return {"result": results_cache[cache_key], "cached": True, "doc_id": doc_id}
+
         # Run blocking PDF extraction in thread pool
         text = await run_in_threadpool(extract_text_from_pdf, tmp_path)
         doc_store[doc_id] = text
@@ -69,6 +93,9 @@ async def process(
         result = await run_in_threadpool(
             generate_resume_from_course, tmp_path, MODEL_FILE, query
         )
+        # Cache the result
+        results_cache[cache_key] = result
+        save_cache(results_cache)
         return {"result": result, "doc_id": doc_id}
     except FileNotFoundError as e:
         return JSONResponse(status_code=404, content={"error": str(e)})
@@ -80,12 +107,22 @@ async def process(
 
 
 @app.post("/query")
-async def query_doc(data: dict):
+async def query_doc(request: Request):
+    try:
+        data = await request.json()
+    except:
+        return JSONResponse(status_code=400, content={"error": "Invalid JSON in request body"})
+    
     doc_id = data.get("doc_id")
     query = data.get("query", "summarize")
 
     if not doc_id:
         return JSONResponse(status_code=400, content={"error": "doc_id is required"})
+
+    # Check cache first
+    cache_key = f"{doc_id}:{query}"
+    if cache_key in results_cache:
+        return {"result": results_cache[cache_key], "cached": True, "doc_id": doc_id}
 
     if doc_id not in doc_store:
         return JSONResponse(status_code=404, content={"error": f"doc_id '{doc_id}' not found"})
@@ -99,7 +136,10 @@ async def query_doc(data: dict):
         result = await run_in_threadpool(
             generate_resume_from_course, tmp_path, MODEL_FILE, query
         )
-        return {"result": result}
+        # Cache the result
+        results_cache[cache_key] = result
+        save_cache(results_cache)
+        return {"result": result, "doc_id": doc_id}
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
     finally:

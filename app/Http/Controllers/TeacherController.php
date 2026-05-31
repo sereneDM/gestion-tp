@@ -37,6 +37,9 @@ class TeacherController extends Controller
 
     public function storeCourse(Request $request)
     {
+        // Increase PHP execution time for long-running AI operations
+        set_time_limit(180); // 3 minutes
+        
         $request->validate([
             'name'        => 'required|string|max:50',
             'description' => 'nullable|string',
@@ -93,6 +96,9 @@ class TeacherController extends Controller
 
     public function updateCourse(Request $request, $id)
     {
+        // Increase PHP execution time for long-running AI operations
+        set_time_limit(180); // 3 minutes
+        
         $course = ClassModel::where('teacher_id', Auth::id())->findOrFail($id);
 
         $request->validate([
