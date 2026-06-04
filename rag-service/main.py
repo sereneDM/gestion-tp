@@ -13,13 +13,13 @@ FRENCH_TRANSLATIONS = {
     # JSON structure keys
     "title": "titre",
     "overview": "aperçu",
-    "summary": "résumé",
+    "summary": "résumé",   
     "difficulty": "difficulté",
     "chapters": "chapitres",
     "chapter": "chapitre",
     "key_concepts": "concepts_clés",
     "key_terms": "termes_clés",
-    "formulas": "formules",
+    "formulas": "formules",    
     "text": "texte",
     "content": "contenu",
     # Difficulty levels

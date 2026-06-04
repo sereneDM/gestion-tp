@@ -360,8 +360,7 @@ body { font-family: var(--font-body); background: var(--surface-2); color: var(-
     _cwTick(); setInterval(_cwTick, 1000);
 
 </script>
-    // ...existing code...
-</script>
+
 @endif
 
     {{-- Submission form for students who haven't submitted yet --}}
