@@ -45,11 +45,11 @@
                 {{ session('success') }}
             </div>
         @endif
-        <form method="POST" action="{{ route('password.email') }}">
+        <form method="POST" action="{{ route('password.email') }}" autocomplete="off">
             @csrf
             <div>
                 <label for="email">Adresse email</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus>
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="off">
                 @error('email')
                     <div class="error">{{ $message }}</div>
                 @enderror

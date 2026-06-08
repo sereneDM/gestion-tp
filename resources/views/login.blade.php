@@ -494,7 +494,7 @@ body {
       </button>
     </div>
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('login') }}" autocomplete="off">
       @csrf
       <input type="hidden" name="role" id="role-input" value="etudiant">
 
@@ -503,7 +503,7 @@ body {
         <div class="input-wrap">
           <i class="ti ti-mail input-icon"></i>
           <input type="email" id="email" name="email" value="{{ old('email') }}"
-                 placeholder="prenom.nom@univ.tn" required autofocus>
+                 placeholder="prenom.nom@univ.tn" required autofocus autocomplete="off">
         </div>
         @error('email')
           <div class="error">{{ $message }}</div>
@@ -514,7 +514,7 @@ body {
         <label for="password">Mot de passe</label>
         <div class="input-wrap">
           <i class="ti ti-lock input-icon"></i>
-          <input type="password" id="password" name="password" placeholder="••••••••" required>
+          <input type="password" id="password" name="password" placeholder="••••••••" required autocomplete="new-password">
         </div>
         <div class="input-meta">
           <label class="remember">

@@ -327,12 +327,12 @@
     <p class="page-subtitle">Définissez un nouveau cours et assignez un enseignant.</p>
 
     <div class="card" style="padding: 28px;">
-        <form method="POST" action="{{ route('admin.classes.store') }}" id="create-course-form">
+        <form method="POST" action="{{ route('admin.classes.store') }}" id="create-course-form" autocomplete="off">
             @csrf
 
             <div class="form-group">
                 <label class="label" for="name">Nom du cours</label>
-                <input type="text" id="name" name="name" class="input" value="{{ old('name') }}" placeholder="Ex: Licence Informatique - Groupe A" required autofocus>
+                <input type="text" id="name" name="name" class="input" value="{{ old('name') }}" placeholder="Ex: Licence Informatique - Groupe A" required autofocus autocomplete="off">
                 @error('name') <div class="error">{{ $message }}</div> @enderror
             </div>
 

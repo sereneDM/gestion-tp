@@ -19,18 +19,18 @@
             Un mot de passe temporaire sera généré et envoyé par e-mail. L'utilisateur devra le changer à sa première connexion.
         </div>
 
-        <form method="POST" action="{{ route('admin.users.store') }}">
+        <form method="POST" action="{{ route('admin.users.store') }}" autocomplete="off">
             @csrf
 
             <div class="form-group">
                 <label class="label" for="name">Nom complet</label>
-                <input type="text" id="name" name="name" class="input" value="{{ old('name') }}" required autofocus placeholder="ex : Jean Dupont">
+                <input type="text" id="name" name="name" class="input" value="{{ old('name') }}" required autofocus placeholder="ex : Jean Dupont" autocomplete="off">
                 @error('name') <div class="error">{{ $message }}</div> @enderror
             </div>
 
             <div class="form-group">
                 <label class="label" for="email">Adresse e-mail</label>
-                <input type="email" id="email" name="email" class="input" value="{{ old('email') }}" required placeholder="jean.dupont@exemple.com">
+                <input type="email" id="email" name="email" class="input" value="{{ old('email') }}" required placeholder="jean.dupont@exemple.com" autocomplete="off">
                 @error('email') <div class="error">{{ $message }}</div> @enderror
             </div>
 

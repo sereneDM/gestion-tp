@@ -14,18 +14,18 @@
     <p class="page-subtitle">Mise à jour des informations de l'utilisateur.</p>
 
     <div class="card" style="padding: 28px;">
-        <form method="POST" action="{{ route('admin.users.update', $user->id) }}">
+        <form method="POST" action="{{ route('admin.users.update', $user->id) }}" autocomplete="off">
             @csrf @method('PUT')
 
             <div class="form-group">
                 <label class="label" for="name">Nom complet</label>
-                <input type="text" id="name" name="name" class="input" value="{{ old('name', $user->name) }}" required autofocus>
+                <input type="text" id="name" name="name" class="input" value="{{ old('name', $user->name) }}" required autofocus autocomplete="off">
                 @error('name') <div class="error">{{ $message }}</div> @enderror
             </div>
 
             <div class="form-group">
                 <label class="label" for="email">Adresse e-mail</label>
-                <input type="email" id="email" name="email" class="input" value="{{ old('email', $user->email) }}" required>
+                <input type="email" id="email" name="email" class="input" value="{{ old('email', $user->email) }}" required autocomplete="off">
                 @error('email') <div class="error">{{ $message }}</div> @enderror
             </div>
 
@@ -35,7 +35,7 @@
                     <i class="ti ti-info-circle" style="font-size:15px; flex-shrink:0; margin-top:1px;"></i>
                     Laissez vide pour conserver le mot de passe actuel.
                 </div>
-                <input type="password" id="password" name="password" class="input" placeholder="••••••••">
+                <input type="password" id="password" name="password" class="input" placeholder="••••••••" autocomplete="new-password">
                 @error('password') <div class="error">{{ $message }}</div> @enderror
             </div>
 

@@ -31,13 +31,13 @@
             </svg>
             Nouveau mot de passe
         </h1>
-        <form method="POST" action="{{ route('password.update') }}">
+        <form method="POST" action="{{ route('password.update') }}" autocomplete="off">
             @csrf
             <input type="hidden" name="token" value="{{ $token }}">
             <input type="hidden" name="email" value="{{ $email }}">
             <div class="form-group">
                 <label for="password">Nouveau mot de passe</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required autocomplete="new-password">
                 <div class="hint">Min. 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</div>
                 @error('password')
                     <div class="error">{{ $message }}</div>
@@ -45,7 +45,7 @@
             </div>
             <div class="form-group">
                 <label for="password_confirmation">Confirmer le mot de passe</label>
-                <input type="password" id="password_confirmation" name="password_confirmation" required>
+                <input type="password" id="password_confirmation" name="password_confirmation" required autocomplete="new-password">
             </div>
             <button type="submit">
                 <!-- Checkmark icon -->

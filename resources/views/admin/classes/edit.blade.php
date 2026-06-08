@@ -337,7 +337,7 @@
     <p class="page-subtitle">Mise à jour des informations et des étudiants assignés.</p>
 
     <div class="card" style="padding: 28px;">
-        <form method="POST" action="{{ route('admin.classes.update', $class->id) }}" id="edit-form">
+        <form method="POST" action="{{ route('admin.classes.update', $class->id) }}" id="edit-form" autocomplete="off">
             @csrf
             @method('PUT')
 
@@ -345,7 +345,7 @@
             <div class="form-group">
                 <label class="label" for="name">Nom de la classe</label>
                 <input type="text" id="name" name="name" class="input"
-                       value="{{ old('name', $class->name) }}" required autofocus>
+                       value="{{ old('name', $class->name) }}" required autofocus autocomplete="off">
                 @error('name') <div class="error">{{ $message }}</div> @enderror
             </div>
 

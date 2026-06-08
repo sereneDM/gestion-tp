@@ -46,6 +46,9 @@ results_cache = load_cache()
 @app.get("/health")
 async def health():
     return {"status": "ok", "service": "rag-service"}
+
+
+@app.post("/ingest")
 async def ingest(
     file: UploadFile = File(...),
     doc_id: str = Form(...),

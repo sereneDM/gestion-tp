@@ -159,7 +159,7 @@
             <ul>Min. 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</ul>
         </div>
 
-        <form method="POST" action="{{ route('password.setup.submit') }}">
+        <form method="POST" action="{{ route('password.setup.submit') }}" autocomplete="off">
             @csrf
             
             <input type="hidden" name="token" value="{{ $token }}">
@@ -167,7 +167,7 @@
             
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" value="{{ $email }}" disabled>
+                <input type="email" id="email" value="{{ $email }}" disabled autocomplete="off">
             </div>
 
             <div class="form-group">
@@ -176,6 +176,7 @@
                        id="password" 
                        name="password" 
                        required
+                       autocomplete="new-password"
                        oninput="checkPasswordStrength(this.value)">
                 <div class="password-strength">
                     <div class="password-strength-bar" id="strengthBar"></div>
@@ -190,7 +191,8 @@
                 <input type="password" 
                        id="password_confirmation" 
                        name="password_confirmation" 
-                       required>
+                       required
+                       autocomplete="new-password">
             </div>
 
             <button type="submit" class="btn">
