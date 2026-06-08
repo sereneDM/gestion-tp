@@ -215,7 +215,7 @@ select.form-input {
             </div>
         </div>
 
-        <form method="POST" action="{{ route('teacher.courses.tps.store', $course->id) }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('teacher.courses.tps.store', $course->id) }}" enctype="multipart/form-data" novalidate>
             @csrf
 
             <div class="form-card-body">
@@ -255,7 +255,7 @@ select.form-input {
                     <label class="form-label" for="due_date">Date d'échéance <span style="color:var(--ink-4);font-weight:400;text-transform:none;letter-spacing:0;">(optionnel)</span></label>
                     <input type="datetime-local" class="form-input" id="due_date" name="due_date"
                            value="{{ old('due_date', '') }}">
-                    <div class="form-hint">Par défaut: minuit (00:00) si l'heure n'est pas modifiée</div>
+                    <div class="form-hint">Heure optionnelle — par défaut minuit (00:00)</div>
                     @error('due_date') <div class="error"><i class="ti ti-alert-circle"></i> {{ $message }}</div> @enderror
                 </div>
 
@@ -314,10 +314,32 @@ document.getElementById('status').addEventListener('change', function () {
 document.getElementById('status').dispatchEvent(new Event('change'));
 
 const dueDateInput = document.getElementById('due_date');
-const now = new Date();
-now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-const nowStr = now.toISOString().slice(0, 16);
-const currentValue = dueDateInput.value;
-if (!currentValue || currentValue >= nowStr) dueDateInput.min = nowStr;
+const today = new Date();
+today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+const todayStr = today.toISOString().slice(0, 10);
+dueDateInput.min = todayStr;
+
+// Handle optional time: allow date-only input and default to midnight
+const form = document.querySelector('form');
+form.addEventListener('submit', function(e) {
+    const value = dueDateInput.value.trim();
+    
+    // If empty, that's fine (optional)
+    if (!value) return true;
+    
+    // If has T, it's a valid datetime-local format - accept as is
+    if (value.includes('T')) return true;
+    
+    // If only date (YYYY-MM-DD), append midnight time
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        dueDateInput.value = value + 'T00:00';
+        return true;
+    }
+    
+    // Invalid format
+    return true;
+        return;
+    }
+});
 </script>
 @endsection

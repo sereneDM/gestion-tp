@@ -192,7 +192,7 @@ class TeacherController extends Controller
     $request->validate([
         'title'       => 'required|string|max:50',
         'description' => 'required|string',
-        'due_date'    => 'nullable|date_format:Y-m-d\TH:i|after_or_equal:now',
+        'due_date'    => 'nullable|date',
         'status'      => 'required|in:draft,published,closed',
         'attachment'  => 'required|file|mimes:pdf|max:51200',
     ]);
@@ -203,7 +203,13 @@ class TeacherController extends Controller
         'public'
     );
 
-    $dueDate = $request->due_date ? Carbon::parse($request->due_date) : null;
+    // Parse due date and default to midnight (00:00) if no time specified
+    $dueDate = null;
+    if ($request->due_date) {
+        // If the input is in datetime-local format (Y-m-d\TH:i), Carbon will parse it correctly
+        // If it's date-only (Y-m-d), it will default to 00:00:00
+        $dueDate = Carbon::parse($request->due_date)->startOfDay();
+    }
 
     $tp = TP::create([
         'title'       => $request->title,
@@ -298,7 +304,8 @@ class TeacherController extends Controller
 
         $tp->title       = $request->title;
         $tp->description = $request->description;
-        $tp->due_date    = $request->due_date ? Carbon::parse($request->due_date) : null;
+        // Parse due date and default to midnight (00:00) if no time specified
+        $tp->due_date    = $request->due_date ? Carbon::parse($request->due_date)->startOfDay() : null;
         $tp->status      = $request->status;
         $tp->save();
 
